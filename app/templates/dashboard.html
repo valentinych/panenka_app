@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Panenka Live{% endblock %}
+{% block content %}
+<section class="card">
+  <h2 class="card-title">Welcome, Player {{ login_code }}</h2>
+  <p class="card-description">You're in! We'll soon add buzzers, scoreboards, and more interactive tools.</p>
+  <div class="placeholder-grid">
+    <article class="placeholder">
+      <h3>Buzzer Pad</h3>
+      <p>Coming soon: a responsive buzzer so you can ring in instantly.</p>
+    </article>
+    <article class="placeholder">
+      <h3>Game Lobby</h3>
+      <p>Stay tuned for host-managed rooms and quick joining via shareable codes.</p>
+    </article>
+    <article class="placeholder">
+      <h3>Scoreboard</h3>
+      <p>Track rankings and streaks once gameplay features are enabled.</p>
+    </article>
+  </div>
+  <a class="btn-secondary" href="{{ url_for('main.logout') }}">Log out</a>
+</section>
+{% endblock %}
