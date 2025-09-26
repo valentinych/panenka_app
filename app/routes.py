@@ -21,7 +21,18 @@ def load_credentials():
     with AUTH_FILE.open("r", encoding="utf-8") as f:
         payload = json.load(f)
     users = payload.get("users", [])
-    return {user["login"]: user["password"] for user in users if "login" in user and "password" in user}
+    users_by_login = {}
+    for user in users:
+        login = user.get("login")
+        password = user.get("password")
+        if not login or not password:
+            continue
+        users_by_login[login] = {
+            "password": password,
+            "name": user.get("name"),
+        }
+
+    return users_by_login
 
 
 def login_required(func):
@@ -51,9 +62,10 @@ def login():
             except AuthFileMissingError as exc:
                 error = str(exc)
             else:
-                stored_password = credentials.get(login_code)
-                if stored_password and stored_password == password_code:
+                user_record = credentials.get(login_code)
+                if user_record and user_record["password"] == password_code:
                     session["user_id"] = login_code
+                    session["user_name"] = user_record.get("name")
                     return redirect(url_for("main.dashboard"))
                 error = "Invalid login or password."
 
@@ -65,7 +77,11 @@ def login():
 @bp.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html", login_code=session.get("user_id"))
+    return render_template(
+        "dashboard.html",
+        login_code=session.get("user_id"),
+        user_name=session.get("user_name"),
+    )
 
 
 @bp.route("/logout")
