@@ -23,14 +23,15 @@ This repository contains a lightweight prototype inspired by [buzzin.live](https
    ```json
    {
      "users": [
-       { "login": "123", "password": "4567" },
-       { "login": "234", "password": "5678" }
+      { "login": "123", "password": "4567", "name": "Alex Morgan" },
+      { "login": "234", "password": "5678", "name": "Jordan Smith" }
      ]
    }
    ```
 
    - Logins must be exactly three digits.
    - Passwords must be exactly four digits.
+   - `name` is displayed on the dashboard and should include the player's first and last name.
 
 4. Run the development server:
 
