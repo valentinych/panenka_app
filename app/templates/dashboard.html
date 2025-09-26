@@ -2,7 +2,14 @@
 {% block title %}Dashboard · Panenka Live{% endblock %}
 {% block content %}
 <section class="card">
-  <h2 class="card-title">Welcome, Player {{ login_code }}</h2>
+  <h2 class="card-title">
+    Welcome,
+    {% if user_name %}
+      {{ user_name }}
+    {% else %}
+      Player {{ login_code }}
+    {% endif %}
+  </h2>
   <p class="card-description">You're in! We'll soon add buzzers, scoreboards, and more interactive tools.</p>
   <div class="placeholder-grid">
     <article class="placeholder">
