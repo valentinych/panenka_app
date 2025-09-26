@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Log in · Panenka Live{% endblock %}
+{% block content %}
+<section class="card">
+  <h2 class="card-title">Sign in</h2>
+  <p class="card-description">Enter your three-digit login and four-digit passcode to access the buzzer dashboard.</p>
+  <form method="post" class="form">
+    <label class="field">
+      <span class="field-label">Login</span>
+      <input type="text" name="login" inputmode="numeric" pattern="\\d{3}" maxlength="3" required placeholder="123">
+    </label>
+    <label class="field">
+      <span class="field-label">Password</span>
+      <input type="password" name="password" inputmode="numeric" pattern="\\d{4}" maxlength="4" required placeholder="1234">
+    </label>
+    <button type="submit" class="btn-primary">Enter Lobby</button>
+  </form>
+  <p class="helper-text">Accounts are provisioned by the host. Keep your codes confidential.</p>
+</section>
+{% endblock %}
