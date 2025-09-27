@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import secrets
 import time
 from functools import wraps
@@ -10,6 +11,7 @@ from uuid import uuid4
 from flask import (
     Blueprint,
     abort,
+    current_app,
     flash,
     jsonify,
     redirect,
@@ -19,7 +21,10 @@ from flask import (
     url_for,
 )
 
+import requests
+
 from .lobby_store import lobby_store
+from .question_store import question_store
 
 bp = Blueprint("main", __name__)
 
@@ -150,6 +155,98 @@ def _get_sanitized_env(name):
         return None
     value = value.strip()
     return value or None
+
+
+def _extract_keywords(text):
+    text = (text or "").strip()
+    if not text:
+        return []
+
+    normalized_query = re.sub(r"\s+", " ", text).strip().lower()
+    candidates = []
+    if normalized_query:
+        candidates.append(normalized_query)
+
+    candidates.extend(
+        match.lower()
+        for match in re.findall(r"[\w-]+", text, flags=re.UNICODE)
+    )
+
+    deduped = []
+    seen = set()
+    for keyword in candidates:
+        if keyword and keyword not in seen:
+            deduped.append(keyword)
+            seen.add(keyword)
+
+    # Avoid overly large queries.
+    return deduped[:10]
+
+
+def _ai_expand_keywords(query):
+    api_key = _get_sanitized_env("OPENAI_API_KEY")
+    if not api_key:
+        return [], "Чтобы включить ИИ-поиск, задайте переменную окружения OPENAI_API_KEY."
+
+    payload = {
+        "model": "gpt-4o-mini",
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You expand trivia search queries. Respond with up to six concise "
+                    "keywords separated by commas, prioritizing important names, "
+                    "dates, and topics from the request."
+                ),
+            },
+            {
+                "role": "user",
+                "content": f"Search query: {query}",
+            },
+        ],
+        "temperature": 0,
+        "max_tokens": 120,
+    }
+
+    try:
+        response = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json=payload,
+            timeout=15,
+        )
+        response.raise_for_status()
+        data = response.json()
+    except Exception as exc:  # pragma: no cover - depends on external API
+        current_app.logger.warning("AI keyword expansion failed: %s", exc)
+        return [], "Не удалось получить подсказки ИИ. Используем обычный поиск."
+
+    choices = data.get("choices") or []
+    if not choices:
+        current_app.logger.warning("AI keyword expansion returned no choices: %s", data)
+        return [], "ИИ не вернул дополнительные подсказки."
+
+    message = choices[0].get("message", {}).get("content", "")
+    if not message:
+        return [], "ИИ не вернул дополнительные подсказки."
+
+    suggested = [
+        item.strip().lower()
+        for item in re.split(r"[,\n]+", message)
+        if item.strip()
+    ]
+
+    deduped = []
+    seen = set()
+    for keyword in suggested:
+        if keyword and keyword not in seen:
+            deduped.append(keyword)
+            seen.add(keyword)
+
+    return deduped[:10], None
 
 
 def _load_from_env():
@@ -968,6 +1065,53 @@ def dashboard():
         "dashboard.html",
         login_code=session.get("user_id"),
         user_name=session.get("user_name"),
+    )
+
+
+@bp.route("/questions")
+@login_required
+def question_browser():
+    query = request.args.get("q", "").strip()
+    limit_value = request.args.get("limit", type=int)
+    if not limit_value or limit_value <= 0:
+        limit_value = 50
+    limit_value = min(limit_value, 100)
+
+    ai_enabled = _get_sanitized_env("OPENAI_API_KEY") is not None
+    use_ai = request.args.get("ai") == "1"
+
+    manual_keywords = _extract_keywords(query)
+    ai_keywords = []
+    ai_feedback = None
+
+    if use_ai and not ai_enabled:
+        ai_feedback = "Чтобы включить ИИ-поиск, задайте переменную окружения OPENAI_API_KEY."
+    elif use_ai and not query:
+        ai_feedback = "Введите поисковый запрос, чтобы использовать ИИ-подсказки."
+    elif use_ai and query:
+        ai_keywords, ai_message = _ai_expand_keywords(query)
+        if ai_message:
+            ai_feedback = ai_message
+        elif ai_keywords:
+            ai_feedback = "ИИ добавил ключевые слова: " + ", ".join(ai_keywords)
+
+    combined_keywords = list(dict.fromkeys(manual_keywords + ai_keywords))
+
+    results = question_store.search_questions(combined_keywords, limit=limit_value)
+    result_count = len(results)
+
+    return render_template(
+        "question_browser.html",
+        query=query,
+        results=results,
+        manual_keywords=manual_keywords,
+        ai_keywords=ai_keywords,
+        combined_keywords=combined_keywords,
+        ai_feedback=ai_feedback,
+        ai_enabled=ai_enabled,
+        use_ai=use_ai,
+        limit_value=limit_value,
+        result_count=result_count,
     )
 
 

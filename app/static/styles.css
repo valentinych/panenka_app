@@ -213,6 +213,98 @@ input:focus {
   color: var(--text-muted);
 }
 
+.question-card {
+  gap: 1.75rem;
+}
+
+.question-search {
+  display: grid;
+  gap: 1rem;
+}
+
+.question-search__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.checkbox-inline {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.checkbox input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--accent);
+}
+
+.input-number {
+  width: 5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(12, 20, 43, 0.9);
+  color: inherit;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.input-number:focus {
+  outline: none;
+  border-color: var(--border-glow);
+  box-shadow: 0 0 0 3px rgba(111, 123, 247, 0.35);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(11, 19, 43, 0.75);
+}
+
+.question-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.question-table thead th {
+  text-align: left;
+  padding: 0.85rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.question-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  vertical-align: top;
+}
+
+.question-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.question-table__text {
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
 .buzzer-card {
   display: grid;
   gap: 1.75rem;
