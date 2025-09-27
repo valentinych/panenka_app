@@ -1,3 +1,5 @@
+import json
+import logging
 import os
 import sqlite3
 import threading
@@ -11,6 +13,9 @@ try:  # pragma: no cover - optional dependency for Postgres deployments
     import psycopg2.extras
 except ImportError:  # pragma: no cover - optional dependency for Postgres deployments
     psycopg2 = None  # type: ignore[assignment]
+
+
+logger = logging.getLogger(__name__)
 
 
 QuestionRecord = Tuple[
@@ -145,6 +150,7 @@ class QuestionStore:
                     ON questions (season_number)
                 """
             )
+            self._seed_from_fixture_sqlite(conn)
 
     def _initialize_postgres(self) -> None:  # pragma: no cover - exercised in production
         with self._postgres_connection() as conn:
@@ -177,6 +183,132 @@ class QuestionStore:
                         ON questions (season_number)
                     """
                 )
+                self._seed_from_fixture_postgres(cur)
+
+    @staticmethod
+    def _seed_fixture_path() -> Path:
+        return Path(__file__).resolve().parent / "sample_questions.json"
+
+    def _load_seed_records(self) -> List[Tuple[object, ...]]:
+        seed_path = self._seed_fixture_path()
+        if not seed_path.exists():
+            return []
+
+        try:
+            with seed_path.open("r", encoding="utf-8") as fh:
+                payload = json.load(fh)
+        except (OSError, json.JSONDecodeError) as exc:
+            logger.warning("Unable to load sample questions: %s", exc)
+            return []
+
+        if not isinstance(payload, list):
+            logger.warning(
+                "Sample questions file has unexpected structure: %s", type(payload).__name__
+            )
+            return []
+
+        imported_at = time.time()
+        rows: List[Tuple[object, ...]] = []
+        for entry in payload:
+            if not isinstance(entry, dict):
+                logger.warning("Skipping malformed sample question entry: %r", entry)
+                continue
+            season_number = entry.get("season_number")
+            row_number = entry.get("row_number")
+            if season_number is None or row_number is None:
+                logger.warning(
+                    "Skipping sample question without mandatory identifiers: %r", entry
+                )
+                continue
+            rows.append(
+                (
+                    int(season_number),
+                    int(row_number),
+                    entry.get("played_at_raw"),
+                    entry.get("played_at"),
+                    entry.get("editor"),
+                    entry.get("topic"),
+                    entry.get("question_value"),
+                    entry.get("author"),
+                    entry.get("question_text"),
+                    entry.get("answer_text"),
+                    entry.get("taken_count"),
+                    entry.get("not_taken_count"),
+                    entry.get("comment"),
+                    imported_at,
+                )
+            )
+
+        return rows
+
+    def _seed_from_fixture_sqlite(self, conn: sqlite3.Connection) -> None:
+        cur = conn.execute("SELECT COUNT(*) FROM questions")
+        (existing_total,) = cur.fetchone()
+        if existing_total:
+            return
+
+        rows = self._load_seed_records()
+        if not rows:
+            return
+
+        conn.executemany(
+            """
+            INSERT INTO questions (
+                season_number,
+                row_number,
+                played_at_raw,
+                played_at,
+                editor,
+                topic,
+                question_value,
+                author,
+                question_text,
+                answer_text,
+                taken_count,
+                not_taken_count,
+                comment,
+                imported_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            rows,
+        )
+        logger.info("Seeded %d sample question(s) into SQLite store", len(rows))
+
+    def _seed_from_fixture_postgres(self, cur) -> None:  # pragma: no cover - exercised in production
+        cur.execute("SELECT COUNT(*) AS total FROM questions")
+        row = cur.fetchone() or {}
+        existing_total = row.get("total", 0)
+        if existing_total:
+            return
+
+        rows = self._load_seed_records()
+        if not rows:
+            return
+
+        psycopg2.extras.execute_batch(
+            cur,
+            """
+            INSERT INTO questions (
+                season_number,
+                row_number,
+                played_at_raw,
+                played_at,
+                editor,
+                topic,
+                question_value,
+                author,
+                question_text,
+                answer_text,
+                taken_count,
+                not_taken_count,
+                comment,
+                imported_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            rows,
+            page_size=50,
+        )
+        logger.info("Seeded %d sample question(s) into Postgres store", len(rows))
 
     def replace_all(self, records: Iterable[QuestionRecord]) -> int:
         """Replace all stored questions with the provided records."""
