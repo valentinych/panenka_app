@@ -39,6 +39,34 @@ class BuzzerFlowTestCase(unittest.TestCase):
             self.assertEqual(payload["code"], code)
             self.assertTrue(payload["buzz_open"])
 
+    def test_host_landing_page_renders_after_creation(self):
+        response = self.client.post("/buzzer/create", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Lobby", response.data)
+        self.assertIn(b"Buzzers open", response.data)
+
+    def test_host_without_token_gets_redirected(self):
+        response = self.client.post("/buzzer/create", follow_redirects=False)
+        code = response.headers["Location"].rstrip("/").rsplit("/", 1)[-1]
+
+        with self.client.session_transaction() as sess:
+            sess.clear()
+
+        with self.client:
+            self.client.post(
+                "/",
+                data={"login": LOGIN_CODE, "password": PASSWORD_CODE},
+            )
+            host_response = self.client.get(
+                f"/buzzer/host/{code}", follow_redirects=False
+            )
+            self.assertEqual(host_response.status_code, 302)
+            self.assertIn("/buzzer", host_response.headers["Location"])
+
+            redirected = self.client.get(f"/buzzer/host/{code}", follow_redirects=True)
+            self.assertEqual(redirected.status_code, 200)
+            self.assertIn(b"You&#39;re not hosting this lobby.", redirected.data)
+
     def test_host_can_rejoin_with_token(self):
         response = self.client.post("/buzzer/create", follow_redirects=False)
         code = response.headers["Location"].rstrip("/").rsplit("/", 1)[-1]
