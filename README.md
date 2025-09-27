@@ -36,9 +36,14 @@ This repository contains a lightweight prototype inspired by [buzzin.live](https
    - Passwords must be exactly four digits.
    - `name` is displayed on the dashboard and should include the player's first and last name.
 
-   - **Amazon S3:** set the `AUTH_JSON_S3_BUCKET` environment variable to the bucket name that contains `auth.json`. If the
-     object key is not `auth.json`, set `AUTH_JSON_S3_KEY` accordingly. The application will download the file at startup using
-     your configured AWS credentials (for example, `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`).
+   - **Amazon S3 or remote URL:**
+     - Set the `AUTH_JSON_S3_BUCKET` environment variable to the bucket name that contains `auth.json`. If the object key is
+       not `auth.json`, set `AUTH_JSON_S3_KEY` accordingly. The application will download the file at startup using your
+       configured AWS credentials (for example, `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`).
+     - Alternatively, set `AUTH_JSON_S3_URI` (for example, `s3://my-bucket/path/to/auth.json`) or `AUTH_JSON_URL`
+       (`https://my-bucket.s3.amazonaws.com/auth.json`) if you prefer to provide the location as a single value. When
+       `AUTH_JSON_URL` is used, the file is downloaded over HTTPS, which is useful for public buckets that do not require
+       AWS credentials.
 
 4. Run the development server:
 
