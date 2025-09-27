@@ -18,10 +18,16 @@
     </div>
     <span class="status-pill" data-lock-indicator>Buzzers open</span>
   </header>
-  <p class="card-description">
-    Share the code <span class="status-pill status-pill--muted">{{ code }}</span> or send this link:
-    <code class="share-link">{{ share_url }}</code>
-  </p>
+  <div class="buzzer-share">
+    <p class="card-description">
+      Share the code <span class="status-pill status-pill--muted">{{ code }}</span> or send this link to players:
+      <code class="share-link">{{ share_url }}</code>
+    </p>
+    <p class="helper-text">
+      Need to reopen this lobby later? Bookmark your host link:
+      <code class="share-link">{{ host_manage_url }}</code>
+    </p>
+  </div>
   <div class="buzzer-actions">
     <button class="btn-primary" type="button" data-lock-button>Lock buzzers</button>
     <button class="btn-secondary" type="button" data-reset-button>Reset buzzers</button>

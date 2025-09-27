@@ -66,6 +66,7 @@ def _clear_buzzer_session():
     session.pop("buzzer_code", None)
     session.pop("buzzer_id", None)
     session.pop("buzzer_name", None)
+    session.pop("buzzer_host_token", None)
 
 
 def _generate_lobby_code():
@@ -402,12 +403,14 @@ def buzzer_create():
     code = _generate_lobby_code()
     host_id = str(uuid4())
     host_name = _current_display_name()
+    host_token = secrets.token_urlsafe(16)
     now = time.time()
 
     LOBBIES[code] = {
         "code": code,
         "host_id": host_id,
         "host_name": host_name,
+        "host_token": host_token,
         "created_at": now,
         "updated_at": now,
         "host_seen": now,
@@ -420,6 +423,7 @@ def buzzer_create():
     session["buzzer_code"] = code
     session["buzzer_id"] = host_id
     session["buzzer_name"] = host_name
+    session["buzzer_host_token"] = host_token
 
     return redirect(url_for("main.buzzer_host", code=code))
 
@@ -474,16 +478,34 @@ def buzzer_host(code):
     code = code.upper()
     lobby = _get_lobby_or_404(code)
 
+    token = request.args.get("token")
+    session_token = session.get("buzzer_host_token")
+    if token and token == lobby.get("host_token"):
+        session["buzzer_role"] = "host"
+        session["buzzer_code"] = code
+        session["buzzer_id"] = lobby["host_id"]
+        session["buzzer_name"] = lobby["host_name"]
+        session["buzzer_host_token"] = lobby["host_token"]
+    elif session_token and session_token == lobby.get("host_token"):
+        session.setdefault("buzzer_role", "host")
+        session.setdefault("buzzer_code", code)
+        session.setdefault("buzzer_id", lobby["host_id"])
+        session.setdefault("buzzer_name", lobby["host_name"])
+
     if session.get("buzzer_role") != "host" or session.get("buzzer_id") != lobby["host_id"]:
         flash("You're not hosting this lobby.", "error")
         return redirect(url_for("main.buzzer_home"))
 
     share_url = url_for("main.buzzer_home", _external=True, code=code)
+    host_manage_url = url_for(
+        "main.buzzer_host", _external=True, code=code, token=lobby["host_token"]
+    )
     return render_template(
         "buzzer_host.html",
         code=code,
         host_name=lobby["host_name"],
         share_url=share_url,
+        host_manage_url=host_manage_url,
     )
 
 
