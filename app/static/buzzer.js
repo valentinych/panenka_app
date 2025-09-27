@@ -182,11 +182,23 @@
       }
 
       if (buzzButton) {
+        const position = typeof state.you.position === 'number' ? state.you.position : null;
+        const isLocked = Boolean(state.locked);
+        const buttonState = isLocked
+          ? 'locked'
+          : position
+            ? 'queued'
+            : 'ready';
+
         buzzButton.disabled = !state.you.can_buzz;
-        if (state.you.position) {
-          buzzButton.textContent = 'Buzzed';
+        buzzButton.dataset.state = buttonState;
+
+        if (isLocked) {
+          buzzButton.textContent = 'LOCKED';
+        } else if (position) {
+          buzzButton.textContent = `#${position}`;
         } else {
-          buzzButton.textContent = 'Buzz in';
+          buzzButton.textContent = 'BUZZ!';
         }
       }
     }
