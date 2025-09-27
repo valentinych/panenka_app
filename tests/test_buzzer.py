@@ -39,6 +39,27 @@ class BuzzerFlowTestCase(unittest.TestCase):
             self.assertEqual(payload["code"], code)
             self.assertTrue(payload["buzz_open"])
 
+    def test_host_can_rejoin_with_token(self):
+        response = self.client.post("/buzzer/create", follow_redirects=False)
+        code = response.headers["Location"].rstrip("/").rsplit("/", 1)[-1]
+        lobby = LOBBIES[code]
+        host_token = lobby["host_token"]
+
+        with self.client.session_transaction() as sess:
+            sess.clear()
+
+        with self.client:
+            self.client.post(
+                "/",
+                data={"login": LOGIN_CODE, "password": PASSWORD_CODE},
+            )
+            rejoin_response = self.client.get(
+                f"/buzzer/host/{code}?token={host_token}", follow_redirects=False
+            )
+            self.assertEqual(rejoin_response.status_code, 200)
+            state_response = self.client.get(f"/buzzer/api/lobbies/{code}/state")
+            self.assertEqual(state_response.status_code, 200)
+
     def test_player_can_join_and_buzz(self):
         response = self.client.post("/buzzer/create", follow_redirects=False)
         code = response.headers["Location"].rstrip("/").rsplit("/", 1)[-1]
