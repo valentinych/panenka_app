@@ -453,6 +453,7 @@ class LobbyStore:
                 "joined_at": pdata["joined_at"],
                 "last_seen": pdata["last_seen"],
                 "buzzed_at": pdata.get("buzzed_at"),
+                "score": pdata["score"] if pdata.get("score") is not None else 0,
             }
 
         return list(lobbies.values())
