@@ -36,6 +36,10 @@ This repository contains a lightweight prototype inspired by [buzzin.live](https
    - Passwords must be exactly four digits.
    - `name` is displayed on the dashboard and should include the player's first and last name.
 
+   - **Amazon S3:** set the `AUTH_JSON_S3_BUCKET` environment variable to the bucket name that contains `auth.json`. If the
+     object key is not `auth.json`, set `AUTH_JSON_S3_KEY` accordingly. The application will download the file at startup using
+     your configured AWS credentials (for example, `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`).
+
 4. Run the development server:
 
    ```bash
