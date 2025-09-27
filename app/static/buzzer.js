@@ -271,15 +271,32 @@
     });
   }
 
+  const triggerBuzz = async () => {
+    if (!buzzButton || !buzzUrl || buzzButton.disabled) {
+      return;
+    }
+    buzzButton.disabled = true;
+    await postJson(buzzUrl);
+    fetchState();
+  };
+
   if (buzzButton && buzzUrl) {
-    buzzButton.addEventListener('click', async () => {
-      if (buzzButton.disabled) {
-        return;
-      }
-      buzzButton.disabled = true;
-      await postJson(buzzUrl);
-      fetchState();
-    });
+    buzzButton.addEventListener('click', triggerBuzz);
+
+    if (role === 'player') {
+      document.addEventListener('keydown', (event) => {
+        const isSpace = event.code === 'Space' || event.key === ' ' || event.key === 'Spacebar';
+        const isTypingTarget = ['INPUT', 'TEXTAREA', 'SELECT'].includes(event.target.tagName)
+          || event.target.isContentEditable;
+
+        if (!isSpace || isTypingTarget) {
+          return;
+        }
+
+        event.preventDefault();
+        triggerBuzz();
+      });
+    }
   }
 
   if (leaveButton && leaveUrl) {
