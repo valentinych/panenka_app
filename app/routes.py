@@ -22,6 +22,14 @@ class AuthFileMissingError(FileNotFoundError):
     """Raised when the auth.json file is missing."""
 
 
+def _get_sanitized_env(name):
+    value = os.getenv(name)
+    if value is None:
+        return None
+    value = value.strip()
+    return value or None
+
+
 def _load_from_env():
     auth_payload = os.getenv(AUTH_ENV_VAR)
     if not auth_payload:
@@ -46,26 +54,50 @@ def _load_from_file():
 
 
 def _parse_s3_reference(reference):
+    """Return (bucket, key) parsed from different S3 URI/URL formats."""
+
     if not reference:
         return None, None
 
     parsed = urlparse(reference)
-    if parsed.scheme == "s3":
-        bucket = parsed.netloc
-        key = parsed.path.lstrip("/") or DEFAULT_S3_KEY
+    scheme = (parsed.scheme or "").lower()
+    host = (parsed.netloc or "").split("@")[-1]  # strip credentials if provided
+    host = host.split(":")[0]  # strip port information
+    path = parsed.path.lstrip("/")
+
+    if scheme == "s3":
+        bucket = host.strip()
+        key = path or DEFAULT_S3_KEY
         return bucket or None, key
 
-    if parsed.scheme in {"https", "http"}:
-        host = parsed.netloc
-        path = parsed.path.lstrip("/")
-        if host.endswith(".s3.amazonaws.com"):
-            bucket = host.split(".s3.amazonaws.com", 1)[0]
-            return bucket or None, path or DEFAULT_S3_KEY
-        if host == "s3.amazonaws.com" and path:
-            parts = path.split("/", 1)
-            if len(parts) == 2:
-                bucket, key = parts
-                return bucket or None, key or DEFAULT_S3_KEY
+    if scheme in {"https", "http"} and host:
+        host_lower = host.lower()
+
+        # Virtual-hosted style URLs (bucket.s3.amazonaws.com, bucket.s3.us-east-1.amazonaws.com, bucket.s3-us-west-2.amazonaws.com)
+        if host_lower.endswith(".amazonaws.com") and ".s3" in host_lower:
+            for marker in (".s3.", ".s3-", ".s3.amazonaws.com"):
+                if marker in host_lower:
+                    bucket = host_lower.split(marker, 1)[0]
+                    if bucket:
+                        return bucket or None, path or DEFAULT_S3_KEY
+
+        # Path-style URLs (s3.amazonaws.com/bucket/key, s3.us-east-1.amazonaws.com/bucket/key, s3-accelerate.amazonaws.com/bucket/key)
+        path_style_hosts = {
+            "s3.amazonaws.com",
+            "s3-accelerate.amazonaws.com",
+        }
+        if host_lower in path_style_hosts or (
+            host_lower.startswith("s3.") and host_lower.endswith(".amazonaws.com")
+        ) or (
+            host_lower.startswith("s3-") and host_lower.endswith(".amazonaws.com")
+        ):
+            if path:
+                parts = path.split("/", 1)
+                if parts[0]:
+                    bucket = parts[0]
+                    key = parts[1] if len(parts) == 2 else DEFAULT_S3_KEY
+                    return bucket or None, key or DEFAULT_S3_KEY
+
     return None, None
 
 
@@ -96,17 +128,19 @@ def _load_from_url(url):
 
 
 def _load_from_s3():
-    bucket_name = os.getenv(AUTH_S3_BUCKET_ENV) or os.getenv(AUTH_S3_BUCKET_FALLBACK_ENV)
-    object_key = os.getenv(AUTH_S3_KEY_ENV, DEFAULT_S3_KEY)
+    bucket_name = _get_sanitized_env(AUTH_S3_BUCKET_ENV) or _get_sanitized_env(
+        AUTH_S3_BUCKET_FALLBACK_ENV
+    )
+    object_key = _get_sanitized_env(AUTH_S3_KEY_ENV) or DEFAULT_S3_KEY
 
-    bucket_from_uri, key_from_uri = _parse_s3_reference(os.getenv(AUTH_S3_URI_ENV))
+    bucket_from_uri, key_from_uri = _parse_s3_reference(_get_sanitized_env(AUTH_S3_URI_ENV))
     if bucket_from_uri:
         bucket_name = bucket_from_uri
     if key_from_uri:
         object_key = key_from_uri
 
     if not bucket_name:
-        return _load_from_url(os.getenv(AUTH_JSON_URL_ENV))
+        return _load_from_url(_get_sanitized_env(AUTH_JSON_URL_ENV))
 
     try:
         import boto3
