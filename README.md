@@ -45,6 +45,10 @@ This repository contains a lightweight prototype inspired by [buzzin.live](https
        `AUTH_JSON_URL` is used, the file is downloaded over HTTPS, which is useful for public buckets that do not require
        AWS credentials.
 
+   If no credentials source is configured, the application falls back to a built-in demo
+   account (`888` / `6969`) so the interface remains usable in hosted environments. You
+   should still provide your own credentials for production deployments.
+
 4. Run the development server:
 
    ```bash

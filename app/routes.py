@@ -17,6 +17,14 @@ AUTH_S3_URI_ENV = "AUTH_JSON_S3_URI"
 AUTH_JSON_URL_ENV = "AUTH_JSON_URL"
 DEFAULT_S3_KEY = "auth.json"
 
+DEFAULT_FALLBACK_USERS = [
+    {
+        "login": "888",
+        "password": "6969",
+        "name": "Integration Test Player",
+    }
+]
+
 
 class AuthFileMissingError(FileNotFoundError):
     """Raised when the auth.json file is missing."""
@@ -183,7 +191,10 @@ def load_credentials():
             raise ValueError(str(exc)) from exc
 
     if payload is None:
-        payload = _load_from_file()
+        try:
+            payload = _load_from_file()
+        except AuthFileMissingError:
+            payload = {"users": DEFAULT_FALLBACK_USERS}
     users = payload.get("users", [])
     users_by_login = {}
     for user in users:
