@@ -79,5 +79,28 @@ if git push heroku $BRANCH; then
     echo "   heroku ps -a $APP_NAME"
 else
     echo "❌ Ошибка деплоя в Heroku"
+
+    if git remote get-url heroku >/dev/null 2>&1; then
+        if git fetch heroku $BRANCH >/dev/null 2>&1; then
+            if git merge-base --is-ancestor heroku/$BRANCH HEAD; then
+                echo "ℹ️  Локальная ветка отстаёт от Heroku. Сначала обновите её:"
+                echo "   git fetch heroku"
+                echo "   git merge heroku/$BRANCH"
+            elif git merge-base --is-ancestor HEAD heroku/$BRANCH; then
+                echo "ℹ️  Heroku содержит коммиты, которых нет локально."
+                echo "   Если всё верно, можно перезаписать Heroku:"
+                echo "   git push heroku $BRANCH --force-with-lease"
+            else
+                echo "ℹ️  Ветки разошлись. Сравните изменения перед деплоем:"
+                echo "   git log --oneline heroku/$BRANCH..HEAD"
+                echo "   git log --oneline HEAD..heroku/$BRANCH"
+            fi
+        else
+            echo "⚠️  Не удалось получить состояние ветки Heroku"
+        fi
+    else
+        echo "⚠️  Удалённый репозиторий 'heroku' не настроен"
+    fi
+
     exit 1
 fi
