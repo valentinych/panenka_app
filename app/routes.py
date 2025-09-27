@@ -19,6 +19,8 @@ from flask import (
     url_for,
 )
 
+from .lobby_store import lobby_store
+
 bp = Blueprint("main", __name__)
 
 AUTH_FILE = Path("auth.json")
@@ -45,9 +47,6 @@ LOBBY_EXPIRATION_SECONDS = 60 * 60
 # Give them a generous window before considering the session stale so they
 # are not unexpectedly kicked out of a lobby.
 PLAYER_EXPIRATION_SECONDS = 180
-
-
-LOBBIES = {}
 
 
 class AuthFileMissingError(FileNotFoundError):
@@ -77,7 +76,7 @@ def _generate_lobby_code():
         code = "".join(
             secrets.choice(LOBBY_CODE_ALPHABET) for _ in range(LOBBY_CODE_LENGTH)
         )
-        if code not in LOBBIES:
+        if not lobby_store.exists(code):
             return code
 
 
@@ -94,29 +93,34 @@ def _expire_stale_players(lobby, now):
             player_id for player_id in lobby["buzz_order"] if player_id not in removed_ids
         ]
         lobby["updated_at"] = now
+        return True
+
+    return False
 
 
 def _expire_stale_lobbies():
     now = time.time()
-    expired_codes = []
-    for code, lobby in list(LOBBIES.items()):
-        _expire_stale_players(lobby, now)
+    for lobby in lobby_store.get_all_lobbies():
+        modified = _expire_stale_players(lobby, now)
         host_seen = lobby.get("host_seen", lobby["created_at"])
+        should_expire = False
         if now - lobby.get("updated_at", lobby["created_at"]) > LOBBY_EXPIRATION_SECONDS:
-            expired_codes.append(code)
+            should_expire = True
         elif now - host_seen > LOBBY_EXPIRATION_SECONDS:
-            expired_codes.append(code)
+            should_expire = True
         elif not lobby["players"] and now - host_seen > PLAYER_EXPIRATION_SECONDS * 2:
-            expired_codes.append(code)
+            should_expire = True
 
-    for code in expired_codes:
-        del LOBBIES[code]
+        if should_expire:
+            lobby_store.delete_lobby(lobby["code"])
+        elif modified:
+            lobby_store.save_lobby(lobby)
 
 
 def _remove_player_from_lobby(code, player_id):
     if not code or not player_id:
         return
-    lobby = LOBBIES.get(code)
+    lobby = lobby_store.get_lobby(code)
     if not lobby:
         return
 
@@ -126,11 +130,12 @@ def _remove_player_from_lobby(code, player_id):
             existing for existing in lobby["buzz_order"] if existing != player_id
         ]
         lobby["updated_at"] = time.time()
+        lobby_store.save_lobby(lobby)
 
 
 def _get_lobby_or_404(code):
     _expire_stale_lobbies()
-    lobby = LOBBIES.get(code)
+    lobby = lobby_store.get_lobby(code)
     if not lobby:
         abort(404)
     return lobby
@@ -377,13 +382,13 @@ def buzzer_home():
     role = session.get("buzzer_role")
     player_id = session.get("buzzer_id")
 
-    if role == "host" and code in LOBBIES:
-        lobby = LOBBIES.get(code)
+    if role == "host" and code:
+        lobby = lobby_store.get_lobby(code)
         if lobby and lobby.get("host_id") == player_id:
             return redirect(url_for("main.buzzer_host", code=code))
 
-    if role == "player" and code in LOBBIES:
-        lobby = LOBBIES.get(code)
+    if role == "player" and code:
+        lobby = lobby_store.get_lobby(code)
         if lobby and player_id in lobby["players"]:
             return redirect(url_for("main.buzzer_player", code=code))
 
@@ -409,7 +414,7 @@ def buzzer_create():
     host_token = secrets.token_urlsafe(16)
     now = time.time()
 
-    LOBBIES[code] = {
+    lobby = {
         "code": code,
         "host_id": host_id,
         "host_name": host_name,
@@ -421,6 +426,8 @@ def buzzer_create():
         "players": {},
         "buzz_order": [],
     }
+
+    lobby_store.save_lobby(lobby)
 
     session["buzzer_role"] = "host"
     session["buzzer_code"] = code
@@ -446,7 +453,7 @@ def buzzer_join():
         flash("Enter a valid lobby code to join.", "error")
         return redirect(url_for("main.buzzer_home", code=code))
 
-    lobby = LOBBIES.get(code)
+    lobby = lobby_store.get_lobby(code)
     if not lobby:
         flash("We couldn't find a lobby with that code.", "error")
         return redirect(url_for("main.buzzer_home"))
@@ -466,6 +473,8 @@ def buzzer_join():
         "buzzed_at": None,
     }
     lobby["updated_at"] = now
+
+    lobby_store.save_lobby(lobby)
 
     session["buzzer_role"] = "player"
     session["buzzer_code"] = code
@@ -544,15 +553,22 @@ def buzzer_state(code):
     role = session.get("buzzer_role")
     session_id = session.get("buzzer_id")
     now = time.time()
+    save_needed = False
 
     if role == "host" and session_id == lobby["host_id"]:
         lobby["host_seen"] = now
+        save_needed = True
     elif role == "player" and session_id in lobby["players"]:
         lobby["players"][session_id]["last_seen"] = now
+        save_needed = True
     else:
         return jsonify({"error": "not-in-lobby"}), 403
 
-    _expire_stale_players(lobby, now)
+    if _expire_stale_players(lobby, now):
+        save_needed = True
+
+    if save_needed:
+        lobby_store.save_lobby(lobby)
 
     players = []
     for player_id, player in sorted(
@@ -642,6 +658,8 @@ def buzzer_buzz(code):
     if len(lobby["buzz_order"]) == 1:
         lobby["locked"] = True
 
+    lobby_store.save_lobby(lobby)
+
     return jsonify({"status": "ok", "position": len(lobby["buzz_order"])})
 
 
@@ -661,6 +679,8 @@ def buzzer_reset(code):
         player["buzzed_at"] = None
     lobby["updated_at"] = now
 
+    lobby_store.save_lobby(lobby)
+
     return jsonify({"status": "ok"})
 
 
@@ -676,6 +696,8 @@ def buzzer_lock(code):
     lobby["locked"] = not lobby["locked"]
     lobby["updated_at"] = time.time()
 
+    lobby_store.save_lobby(lobby)
+
     return jsonify({"status": "ok", "locked": lobby["locked"]})
 
 
@@ -688,7 +710,7 @@ def buzzer_close(code):
     if session.get("buzzer_role") != "host" or session.get("buzzer_id") != lobby["host_id"]:
         return jsonify({"error": "forbidden"}), 403
 
-    del LOBBIES[code]
+    lobby_store.delete_lobby(code)
     _clear_buzzer_session()
 
     return jsonify({"status": "ok"})
