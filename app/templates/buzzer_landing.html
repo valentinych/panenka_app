@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Buzzer Lobby · Panenka Live{% endblock %}
+{% block content %}
+<section class="card buzzer-card">
+  <h2 class="card-title">Buzzer Lobby</h2>
+  <p class="card-description">Create a room for your trivia night or join an existing game to buzz in instantly.</p>
+  <div class="buzzer-grid">
+    <article class="buzzer-panel">
+      <h3>Host a lobby</h3>
+      <p class="helper-text">You'll appear as <strong>{{ default_name }}</strong>.</p>
+      <form class="form" method="post" action="{{ url_for('main.buzzer_create') }}">
+        <button class="btn-primary" type="submit">Create lobby</button>
+      </form>
+    </article>
+    <article class="buzzer-panel">
+      <h3>Join a lobby</h3>
+      <form class="form" method="post" action="{{ url_for('main.buzzer_join') }}">
+        <div class="field">
+          <label class="field-label" for="code">Lobby code</label>
+          <input id="code" name="code" type="text" inputmode="text" minlength="{{ lobby_code_length }}" maxlength="{{ lobby_code_length }}" pattern="[A-Za-z0-9]{4}" placeholder="ABCD" value="{{ requested_code }}" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="display_name">Display name</label>
+          <input id="display_name" name="display_name" type="text" maxlength="32" placeholder="Enter your name" value="{{ default_name }}" required>
+        </div>
+        <button class="btn-primary" type="submit">Join lobby</button>
+      </form>
+    </article>
+  </div>
+</section>
+{% endblock %}
