@@ -63,6 +63,22 @@ This repository contains a lightweight prototype inspired by [buzzin.live](https
 
 5. Open [http://localhost:5000](http://localhost:5000) in your browser and sign in with one of the configured accounts.
 
+## Importing project questions
+
+The trivia questions that power the in-game rounds are stored in the same SQLite
+database as the lobby data. Because binary database files are not tracked in
+the repository, you should populate your local database by running the importer
+script once after setting up the project:
+
+```bash
+python -m app.question_importer
+```
+
+The script downloads every season from the shared Google Sheet, normalizes the
+fields, and replaces the contents of the `questions` table. A fresh
+`app/lobbies.sqlite3` file will be created automatically if it does not already
+exist.
+
 ## Deploying to Heroku
 
 The project is configured for the [Heroku Python buildpack](https://devcenter.heroku.com/articles/getting-started-with-python). The steps below assume you already have the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) installed and are logged in.

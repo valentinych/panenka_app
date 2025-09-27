@@ -4,5 +4,5 @@ instance/
 .env
 auth.json
 .pytest_cache/
-app/lobbies.sqlite3
 .DS_Store
+*.sqlite3
