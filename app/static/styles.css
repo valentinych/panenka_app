@@ -301,6 +301,62 @@ input:focus {
   gap: 0.75rem;
 }
 
+.scoreboard {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.scoreboard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.scoreboard__header h3 {
+  margin: 0;
+}
+
+.scoreboard__info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.scoreboard__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.scoreboard__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.85rem;
+  border-radius: 0.85rem;
+  background: rgba(11, 19, 43, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scoreboard__item.is-active {
+  border-color: rgba(255, 183, 3, 0.7);
+  box-shadow: 0 0 18px rgba(255, 183, 3, 0.25);
+}
+
+.scoreboard__item strong {
+  font-size: 1.1rem;
+  color: #fff;
+}
+
 .buzz-queue,
 .buzzer-roster {
   list-style: none;
@@ -335,6 +391,12 @@ input:focus {
   color: var(--accent);
 }
 
+.buzz-queue li.is-active,
+.buzzer-roster li.is-active {
+  border-color: rgba(255, 183, 3, 0.75);
+  box-shadow: 0 0 18px rgba(255, 183, 3, 0.25);
+}
+
 .buzzer-roster li.is-buzzed span {
   color: var(--error);
 }
@@ -346,6 +408,12 @@ input:focus {
 
 .buzzer-roster li.is-self {
   border-color: rgba(111, 123, 247, 0.6);
+}
+
+.player-score {
+  margin-left: auto;
+  font-weight: 700;
+  color: #fff;
 }
 
 .buzzer-button {
@@ -388,6 +456,110 @@ input:focus {
   cursor: not-allowed;
   transform: none;
   filter: none;
+}
+
+.answer-controls {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.answer-controls.is-disabled {
+  opacity: 0.6;
+}
+
+.answer-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btn-score {
+  min-width: 4.5rem;
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-score:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 10px 25px rgba(255, 183, 3, 0.2);
+}
+
+.btn-score:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.value-picker {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.value-picker__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.value-button {
+  min-width: 3.5rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: 0.85rem;
+  border: none;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.value-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.24);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(80, 143, 255, 0.22);
+}
+
+.value-button.is-selected {
+  background: rgba(80, 143, 255, 0.85);
+  box-shadow: 0 12px 28px rgba(80, 143, 255, 0.35);
+}
+
+.value-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-queue-confirm {
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.75rem;
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn-queue-confirm:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+.btn-queue-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .share-link {
