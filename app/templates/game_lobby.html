@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Game Lobby · Panenka Live{% endblock %}
+{% block content %}
+<section class="card buzzer-card">
+  <h2 class="card-title">Game Lobby</h2>
+  <p class="card-description">Host-managed rooms with quick shareable codes for your trivia nights.</p>
+
+  {% if host_lobby %}
+    <article class="buzzer-panel">
+      <h3>You're hosting</h3>
+      <p class="helper-text">
+        Share the lobby code <span class="status-pill status-pill--muted">{{ host_lobby.code }}</span>
+        or send this link:
+        <code class="share-link">{{ host_lobby.share_url }}</code>
+      </p>
+      <p class="helper-text">
+        Bookmark your host controls:
+        <code class="share-link">{{ host_lobby.manage_url }}</code>
+      </p>
+      <p class="helper-text">
+        {% if host_lobby.player_count %}
+          {{ host_lobby.player_count }} player{% if host_lobby.player_count != 1 %}s{% endif %} connected.
+        {% else %}
+          No players have joined yet.
+        {% endif %}
+      </p>
+      <a class="btn-primary" href="{{ host_lobby.resume_url }}">Open host view</a>
+    </article>
+  {% elif player_lobby %}
+    <article class="buzzer-panel">
+      <h3>You're in a lobby</h3>
+      <p class="helper-text">
+        Buzzing as <strong>{{ player_lobby.display_name }}</strong> in lobby
+        <span class="status-pill status-pill--muted">{{ player_lobby.code }}</span> hosted by {{ player_lobby.host_name }}.
+      </p>
+      <a class="btn-primary" href="{{ player_lobby.resume_url }}">Rejoin lobby</a>
+    </article>
+  {% endif %}
+
+  <div class="buzzer-grid">
+    <article class="buzzer-panel">
+      <h3>Host a lobby</h3>
+      <p class="helper-text">You'll appear as <strong>{{ default_name }}</strong>.</p>
+      <form class="form" method="post" action="{{ url_for('main.buzzer_create') }}">
+        <button class="btn-primary" type="submit">Create lobby</button>
+      </form>
+    </article>
+    <article class="buzzer-panel">
+      <h3>Join a lobby</h3>
+      <form class="form" method="post" action="{{ url_for('main.buzzer_join') }}">
+        <div class="field">
+          <label class="field-label" for="code">Lobby code</label>
+          <input
+            id="code"
+            name="code"
+            type="text"
+            inputmode="text"
+            minlength="{{ lobby_code_length }}"
+            maxlength="{{ lobby_code_length }}"
+            pattern="[A-Za-z0-9]{4}"
+            placeholder="ABCD"
+            value="{{ requested_code }}"
+            required
+          >
+        </div>
+        <div class="field">
+          <label class="field-label" for="display_name">Display name</label>
+          <input
+            id="display_name"
+            name="display_name"
+            type="text"
+            maxlength="32"
+            placeholder="Enter your name"
+            value="{{ default_name }}"
+            required
+          >
+        </div>
+        <button class="btn-primary" type="submit">Join lobby</button>
+      </form>
+    </article>
+  </div>
+</section>
+{% endblock %}

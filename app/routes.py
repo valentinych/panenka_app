@@ -402,6 +402,53 @@ def buzzer_home():
     )
 
 
+@bp.route("/game-lobby")
+@login_required
+def game_lobby():
+    _expire_stale_lobbies()
+
+    requested_code = request.args.get("code", "").strip().upper()
+    code = session.get("buzzer_code")
+    role = session.get("buzzer_role")
+    session_id = session.get("buzzer_id")
+
+    host_lobby = None
+    player_lobby = None
+
+    if role == "host" and code:
+        lobby = lobby_store.get_lobby(code)
+        if lobby and lobby.get("host_id") == session_id:
+            host_lobby = {
+                "code": code,
+                "host_name": lobby["host_name"],
+                "share_url": url_for("main.buzzer_home", _external=True, code=code),
+                "manage_url": url_for(
+                    "main.buzzer_host", _external=True, code=code, token=lobby["host_token"]
+                ),
+                "resume_url": url_for("main.buzzer_host", code=code),
+                "player_count": len(lobby.get("players", {})),
+            }
+    elif role == "player" and code:
+        lobby = lobby_store.get_lobby(code)
+        if lobby and session_id in lobby["players"]:
+            player = lobby["players"].get(session_id, {})
+            player_lobby = {
+                "code": code,
+                "host_name": lobby["host_name"],
+                "display_name": player.get("name") or session.get("buzzer_name"),
+                "resume_url": url_for("main.buzzer_player", code=code),
+            }
+
+    return render_template(
+        "game_lobby.html",
+        default_name=_current_display_name(),
+        requested_code=requested_code,
+        lobby_code_length=LOBBY_CODE_LENGTH,
+        host_lobby=host_lobby,
+        player_lobby=player_lobby,
+    )
+
+
 @bp.route("/buzzer/create", methods=["POST"])
 @login_required
 def buzzer_create():
