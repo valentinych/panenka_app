@@ -136,35 +136,51 @@ def _load_from_url(url):
 
 
 def _load_from_s3():
+    import logging
+    logger = logging.getLogger(__name__)
+    
     bucket_name = _get_sanitized_env(AUTH_S3_BUCKET_ENV) or _get_sanitized_env(
         AUTH_S3_BUCKET_FALLBACK_ENV
     )
     object_key = _get_sanitized_env(AUTH_S3_KEY_ENV) or DEFAULT_S3_KEY
+    
+    logger.info(f"S3 Config - Bucket: {bucket_name}, Key: {object_key}")
+    logger.info(f"Environment variables: AUTH_S3_BUCKET={_get_sanitized_env(AUTH_S3_BUCKET_ENV)}, AUTH_S3_KEY={_get_sanitized_env(AUTH_S3_KEY_ENV)}")
 
     bucket_from_uri, key_from_uri = _parse_s3_reference(_get_sanitized_env(AUTH_S3_URI_ENV))
     if bucket_from_uri:
         bucket_name = bucket_from_uri
+        logger.info(f"Updated bucket from URI: {bucket_name}")
     if key_from_uri:
         object_key = key_from_uri
+        logger.info(f"Updated key from URI: {object_key}")
 
     if not bucket_name:
+        logger.info("No bucket name found, trying URL fallback")
         return _load_from_url(_get_sanitized_env(AUTH_JSON_URL_ENV))
 
     try:
         import boto3
         from botocore.exceptions import BotoCoreError, ClientError
+        logger.info("boto3 imported successfully")
     except ImportError as exc:
+        logger.error("boto3 not available")
         raise ValueError(
             "Loading credentials from S3 requires the boto3 package. Make sure it is installed or "
             "remove the AUTH_JSON_S3_BUCKET environment variable."
         ) from exc
 
     try:
+        logger.info("Creating S3 client...")
         s3_client = boto3.client("s3")
+        logger.info(f"Attempting to download s3://{bucket_name}/{object_key}")
         response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
+        logger.info("Successfully downloaded file from S3")
     except (BotoCoreError, ClientError) as exc:
+        logger.error(f"S3 error: {exc}")
         raise ValueError(
-            "Unable to download auth.json from S3. Verify the AUTH_JSON_S3_BUCKET and AUTH_JSON_S3_KEY "
+            f"Unable to download auth.json from S3 (s3://{bucket_name}/{object_key}). "
+            f"Error: {exc}. Verify the AUTH_JSON_S3_BUCKET and AUTH_JSON_S3_KEY "
             "values as well as your AWS credentials."
         ) from exc
 
@@ -183,21 +199,45 @@ def _load_from_s3():
 
 
 def load_credentials():
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    
+    logger.info("Starting credential loading process...")
+    
     payload = _load_from_env()
-    if payload is None:
+    if payload is not None:
+        logger.info("Loaded credentials from environment variable")
+    else:
+        logger.info("No credentials in environment variable, trying S3...")
         try:
             payload = _load_from_s3()
+            if payload is not None:
+                logger.info(f"Successfully loaded credentials from S3, found {len(payload.get('users', []))} users")
+            else:
+                logger.warning("S3 returned None payload")
         except ValueError as exc:
+            logger.error(f"Failed to load from S3: {exc}")
             raise ValueError(str(exc)) from exc
+        except Exception as exc:
+            logger.error(f"Unexpected error loading from S3: {exc}")
+            raise ValueError(f"Unexpected S3 error: {exc}") from exc
 
     if payload is None:
+        logger.info("No S3 payload, trying local file...")
         try:
             payload = _load_from_file()
+            logger.info("Loaded credentials from local file")
         except AuthFileMissingError:
+            logger.warning("No local file found, using fallback users")
             payload = {"users": DEFAULT_FALLBACK_USERS}
     users = payload.get("users", [])
     users_by_login = {}
     for user in users:
+        # Skip inactive users
+        if user.get("inactive", False):
+            continue
+            
         login = user.get("login")
         password = user.get("password")
         if login is None or password is None:
