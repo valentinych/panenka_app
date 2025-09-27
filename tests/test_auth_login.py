@@ -93,6 +93,27 @@ class AuthJsonLoginTestCase(unittest.TestCase):
         self.assertIn(self.LOGIN_CODE, body)
         self.assertIn("Logout", body)
 
+    def test_numeric_credentials_are_coerced_to_strings(self):
+        numeric_payload = {
+            "users": [
+                {
+                    "login": 123,
+                    "password": 4567,
+                    "name": "Numeric Player",
+                }
+            ]
+        }
+
+        os.environ[AUTH_ENV_VAR] = json.dumps(numeric_payload)
+        try:
+            credentials = load_credentials()
+        finally:
+            del os.environ[AUTH_ENV_VAR]
+
+        self.assertIn("123", credentials)
+        self.assertEqual(credentials["123"]["password"], "4567")
+        self.assertEqual(credentials["123"]["name"], "Numeric Player")
+
 
 if __name__ == "__main__":  # pragma: no cover - allows running file directly
     unittest.main()
