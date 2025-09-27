@@ -267,7 +267,7 @@ class QuestionStore:
 
         limit = max(1, min(limit, 200))
         placeholder = "?" if self._backend == "sqlite" else "%s"
-        where_parts: List[str] = []
+        keyword_clauses: List[str] = []
         params: List[object] = []
         search_fields = [
             "question_text",
@@ -277,13 +277,33 @@ class QuestionStore:
         ]
 
         for keyword in normalized:
-            conditions = [
-                f"LOWER(COALESCE({field}, '')) LIKE {placeholder}"
-                for field in search_fields
-            ]
-            where_parts.append("(" + " OR ".join(conditions) + ")")
-            pattern = f"%{keyword}%"
-            params.extend([pattern] * len(search_fields))
+            variations = []
+            seen_variations = set()
+            for variant in (
+                keyword,
+                keyword.lower(),
+                keyword.upper(),
+                keyword.capitalize(),
+                keyword.title(),
+            ):
+                if not variant:
+                    continue
+                if variant in seen_variations:
+                    continue
+                seen_variations.add(variant)
+                variations.append(variant)
+
+            keyword_conditions = []
+            for variant in variations:
+                pattern = f"%{variant}%"
+                for field in search_fields:
+                    keyword_conditions.append(
+                        f"COALESCE({field}, '') LIKE {placeholder}"
+                    )
+                    params.append(pattern)
+
+            if keyword_conditions:
+                keyword_clauses.append("(" + " OR ".join(keyword_conditions) + ")")
 
         limit_placeholder = "?" if self._backend == "sqlite" else "%s"
         sql = [
@@ -301,8 +321,8 @@ class QuestionStore:
             "    played_at",
             "FROM questions",
         ]
-        if where_parts:
-            sql.append("WHERE " + " AND ".join(where_parts))
+        if keyword_clauses:
+            sql.append("WHERE " + " OR ".join(keyword_clauses))
         sql.append("ORDER BY imported_at DESC")
         sql.append(f"LIMIT {limit_placeholder}")
 
