@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Lobby {{ code }} · Panenka Live{% endblock %}
+{% block content %}
+<section
+  class="card buzzer-card"
+  data-buzzer
+  data-role="host"
+  data-state-url="{{ url_for('main.buzzer_state', code=code) }}"
+  data-lock-url="{{ url_for('main.buzzer_lock', code=code) }}"
+  data-reset-url="{{ url_for('main.buzzer_reset', code=code) }}"
+  data-close-url="{{ url_for('main.buzzer_close', code=code) }}"
+  data-leave-redirect="{{ url_for('main.buzzer_home') }}"
+>
+  <header class="buzzer-header">
+    <div>
+      <p class="helper-text">Hosting as {{ host_name }}</p>
+      <h2 class="card-title">Lobby {{ code }}</h2>
+    </div>
+    <span class="status-pill" data-lock-indicator>Buzzers open</span>
+  </header>
+  <p class="card-description">
+    Share the code <span class="status-pill status-pill--muted">{{ code }}</span> or send this link:
+    <code class="share-link">{{ share_url }}</code>
+  </p>
+  <div class="buzzer-actions">
+    <button class="btn-primary" type="button" data-lock-button>Lock buzzers</button>
+    <button class="btn-secondary" type="button" data-reset-button>Reset buzzers</button>
+    <button class="btn-tertiary" type="button" data-close-button>Close lobby</button>
+  </div>
+  <div class="buzzer-sections">
+    <section class="buzzer-section">
+      <h3>Buzz queue</h3>
+      <p class="helper-text" data-empty-queue>Waiting for the first buzz...</p>
+      <ol class="buzz-queue" data-queue></ol>
+    </section>
+    <section class="buzzer-section">
+      <h3>Players</h3>
+      <p class="helper-text" data-empty-roster>No players yet.</p>
+      <ul class="buzzer-roster" data-roster></ul>
+    </section>
+  </div>
+</section>
+{% endblock %}
+{% block extra_scripts %}
+  <script src="{{ url_for('static', filename='buzzer.js') }}" defer></script>
+{% endblock %}
