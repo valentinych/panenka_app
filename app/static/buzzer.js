@@ -26,13 +26,11 @@
   const leaveButton = root.querySelector('[data-leave-button]');
 
   let pollTimer = null;
+  let pollInterval = 1500;
   let fetching = false;
 
   const safeRedirect = () => {
-    if (pollTimer) {
-      clearInterval(pollTimer);
-      pollTimer = null;
-    }
+    clearPollingTimer();
     if (leaveRedirect) {
       window.location.href = leaveRedirect;
     }
@@ -280,19 +278,31 @@
     });
   }
 
-  const startPolling = () => {
-    fetchState();
-    pollTimer = setInterval(fetchState, 1500);
+  const clearPollingTimer = () => {
+    if (pollTimer) {
+      clearInterval(pollTimer);
+      pollTimer = null;
+    }
+  };
+
+  const startPolling = (interval = pollInterval, { immediate = true } = {}) => {
+    pollInterval = interval;
+    clearPollingTimer();
+    if (immediate) {
+      fetchState();
+    }
+    pollTimer = setInterval(fetchState, pollInterval);
+  };
+
+  const setPollingInterval = (interval, options) => {
+    startPolling(interval, options);
   };
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-      if (pollTimer) {
-        clearInterval(pollTimer);
-        pollTimer = null;
-      }
-    } else if (!pollTimer) {
-      startPolling();
+      setPollingInterval(8000, { immediate: true });
+    } else {
+      setPollingInterval(1500, { immediate: true });
     }
   });
 
