@@ -9,6 +9,9 @@ bp = Blueprint("main", __name__)
 
 AUTH_FILE = Path("auth.json")
 AUTH_ENV_VAR = "AUTH_JSON"
+AUTH_S3_BUCKET_ENV = "AUTH_JSON_S3_BUCKET"
+AUTH_S3_KEY_ENV = "AUTH_JSON_S3_KEY"
+DEFAULT_S3_KEY = "auth.json"
 
 
 class AuthFileMissingError(FileNotFoundError):
@@ -38,8 +41,53 @@ def _load_from_file():
         return json.load(f)
 
 
+def _load_from_s3():
+    bucket_name = os.getenv(AUTH_S3_BUCKET_ENV)
+    if not bucket_name:
+        return None
+
+    object_key = os.getenv(AUTH_S3_KEY_ENV, DEFAULT_S3_KEY)
+
+    try:
+        import boto3
+        from botocore.exceptions import BotoCoreError, ClientError
+    except ImportError as exc:
+        raise ValueError(
+            "Loading credentials from S3 requires the boto3 package. Make sure it is installed or "
+            "remove the AUTH_JSON_S3_BUCKET environment variable."
+        ) from exc
+
+    try:
+        s3_client = boto3.client("s3")
+        response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
+    except (BotoCoreError, ClientError) as exc:
+        raise ValueError(
+            "Unable to download auth.json from S3. Verify the AUTH_JSON_S3_BUCKET and AUTH_JSON_S3_KEY "
+            "values as well as your AWS credentials."
+        ) from exc
+
+    body = response.get("Body")
+    if body is None:
+        raise ValueError("Received an empty response when downloading auth.json from S3.")
+
+    raw_contents = body.read()
+    if isinstance(raw_contents, bytes):
+        raw_contents = raw_contents.decode("utf-8")
+
+    try:
+        return json.loads(raw_contents)
+    except json.JSONDecodeError as exc:
+        raise ValueError("auth.json file stored in S3 contains invalid JSON.") from exc
+
+
 def load_credentials():
     payload = _load_from_env()
+    if payload is None:
+        try:
+            payload = _load_from_s3()
+        except ValueError as exc:
+            raise ValueError(str(exc)) from exc
+
     if payload is None:
         payload = _load_from_file()
     users = payload.get("users", [])
