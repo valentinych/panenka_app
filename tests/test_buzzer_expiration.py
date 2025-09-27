@@ -1,8 +1,8 @@
 import unittest
 from unittest import mock
 
+from app.lobby_store import lobby_store
 from app.routes import (
-    LOBBIES,
     PLAYER_EXPIRATION_SECONDS,
     _expire_stale_lobbies,
     _expire_stale_players,
@@ -11,10 +11,10 @@ from app.routes import (
 
 class BuzzerExpirationTestCase(unittest.TestCase):
     def setUp(self):
-        LOBBIES.clear()
+        lobby_store.clear_all()
 
     def tearDown(self):
-        LOBBIES.clear()
+        lobby_store.clear_all()
 
     def test_expire_stale_players_removes_from_roster_and_queue(self):
         code = "ABCD"
@@ -51,39 +51,43 @@ class BuzzerExpirationTestCase(unittest.TestCase):
         stale_code = "STAL"
         now = 1_000_000
 
-        LOBBIES[active_code] = {
-            "code": active_code,
-            "host_id": "host-active",
-            "host_name": "Host",
-            "host_token": "token",
-            "created_at": now,
-            "updated_at": now,
-            "host_seen": now,
-            "locked": False,
-            "players": {},
-            "buzz_order": [],
-        }
+        lobby_store.save_lobby(
+            {
+                "code": active_code,
+                "host_id": "host-active",
+                "host_name": "Host",
+                "host_token": "token",
+                "created_at": now,
+                "updated_at": now,
+                "host_seen": now,
+                "locked": False,
+                "players": {},
+                "buzz_order": [],
+            }
+        )
 
-        LOBBIES[stale_code] = {
-            "code": stale_code,
-            "host_id": "host-stale",
-            "host_name": "Host",
-            "host_token": "token",
-            "created_at": 0,
-            "updated_at": -1,
-            "host_seen": -1,
-            "locked": False,
-            "players": {},
-            "buzz_order": [],
-        }
+        lobby_store.save_lobby(
+            {
+                "code": stale_code,
+                "host_id": "host-stale",
+                "host_name": "Host",
+                "host_token": "token",
+                "created_at": 0,
+                "updated_at": -1,
+                "host_seen": -1,
+                "locked": False,
+                "players": {},
+                "buzz_order": [],
+            }
+        )
 
         with mock.patch(
             "app.routes.time.time", return_value=now + PLAYER_EXPIRATION_SECONDS
         ):
             _expire_stale_lobbies()
 
-        self.assertIn(active_code, LOBBIES)
-        self.assertNotIn(stale_code, LOBBIES)
+        self.assertIsNotNone(lobby_store.get_lobby(active_code))
+        self.assertIsNone(lobby_store.get_lobby(stale_code))
 
 
 if __name__ == "__main__":  # pragma: no cover
