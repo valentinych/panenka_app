@@ -200,6 +200,10 @@ def load_credentials():
     for user in users:
         login = user.get("login")
         password = user.get("password")
+        if login is None or password is None:
+            continue
+        login = str(login).strip()
+        password = str(password).strip()
         if not login or not password:
             continue
         users_by_login[login] = {
