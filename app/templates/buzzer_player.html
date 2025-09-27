@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Lobby {{ code }} · Panenka Live{% endblock %}
+{% block content %}
+<section
+  class="card buzzer-card"
+  data-buzzer
+  data-role="player"
+  data-state-url="{{ url_for('main.buzzer_state', code=code) }}"
+  data-buzz-url="{{ url_for('main.buzzer_buzz', code=code) }}"
+  data-leave-url="{{ url_for('main.buzzer_leave', code=code) }}"
+  data-leave-redirect="{{ url_for('main.buzzer_home') }}"
+>
+  <header class="buzzer-header">
+    <div>
+      <p class="helper-text">Buzzing as {{ display_name }}</p>
+      <h2 class="card-title">Lobby {{ code }}</h2>
+    </div>
+    <span class="status-pill" data-lock-indicator>Waiting for host</span>
+  </header>
+  <p class="card-description">Host: {{ host_name }}</p>
+  <button class="buzzer-button" type="button" data-buzz-button>Buzz in</button>
+  <p class="helper-text" data-status>Waiting for buzzers to open…</p>
+  <section class="buzzer-section">
+    <h3>Buzz queue</h3>
+    <p class="helper-text" data-empty-queue>Queue updates in real time.</p>
+    <ol class="buzz-queue" data-queue></ol>
+  </section>
+  <section class="buzzer-section">
+    <h3>Players</h3>
+    <p class="helper-text" data-empty-roster>No one else is here yet.</p>
+    <ul class="buzzer-roster" data-roster></ul>
+  </section>
+  <button class="btn-tertiary" type="button" data-leave-button>Leave lobby</button>
+</section>
+{% endblock %}
+{% block extra_scripts %}
+  <script src="{{ url_for('static', filename='buzzer.js') }}" defer></script>
+{% endblock %}
