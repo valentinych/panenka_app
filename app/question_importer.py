@@ -1,3 +1,4 @@
+import argparse
 import json
 import math
 import re
@@ -5,7 +6,8 @@ import sys
 import time
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Iterator, List, Optional, Tuple
+from pathlib import Path
+from typing import Iterator, List, Optional, Sequence, Tuple
 from urllib.parse import quote
 from urllib.request import Request, urlopen
 
@@ -57,6 +59,23 @@ class ParsedQuestion:
             self.not_taken_count,
             self.comment,
         )
+
+    def as_dict(self) -> dict:
+        return {
+            "season_number": self.season_number,
+            "row_number": self.row_number,
+            "played_at_raw": self.played_at_raw,
+            "played_at": self.played_at,
+            "editor": self.editor,
+            "topic": self.topic,
+            "question_value": self.question_value,
+            "author": self.author,
+            "question_text": self.question_text,
+            "answer_text": self.answer_text,
+            "taken_count": self.taken_count,
+            "not_taken_count": self.not_taken_count,
+            "comment": self.comment,
+        }
 
 
 def _fetch_season_data(season_number: int) -> Tuple[dict, List[dict]]:
@@ -211,18 +230,40 @@ def _iter_season_questions() -> Iterator[ParsedQuestion]:
         season_number += 1
 
 
-def import_questions() -> int:
+def _dump_fixture(path: Path, questions: Sequence[ParsedQuestion]) -> None:
+    payload = [question.as_dict() for question in questions]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as fh:
+        json.dump(payload, fh, ensure_ascii=False, indent=2)
+
+
+def import_questions(*, dump_fixture_path: Optional[Path] = None) -> int:
     start = time.time()
     questions = list(_iter_season_questions())
+    if dump_fixture_path:
+        _dump_fixture(dump_fixture_path, questions)
     count = question_store.replace_all(q.as_record() for q in questions)
     elapsed = time.time() - start
     print(f"Imported {count} questions in {elapsed:.2f}s across {len({q.season_number for q in questions})} seasons.")
     return count
 
 
-if __name__ == "__main__":
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    parser = argparse.ArgumentParser(description="Import trivia questions from Google Sheets.")
+    parser.add_argument(
+        "--dump-fixture",
+        type=Path,
+        help="Optional path to write imported questions as a JSON fixture.",
+    )
+    args = parser.parse_args(argv)
+
     try:
-        import_questions()
+        import_questions(dump_fixture_path=args.dump_fixture)
     except Exception as exc:  # pragma: no cover - manual execution helper
         print(f"Failed to import questions: {exc}", file=sys.stderr)
-        sys.exit(1)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
