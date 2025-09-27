@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Question Explorer · Panenka Live{% endblock %}
+{% block content %}
+<section class="card question-card">
+  <h2 class="card-title">Question Explorer</h2>
+  <p class="card-description">
+    Search and filter the trivia database by keywords. Enable AI assistance to expand your query with smart synonyms and related topics.
+  </p>
+  <form method="get" class="question-search">
+    <div class="field">
+      <label class="field-label" for="query">Keywords</label>
+      <input
+        id="query"
+        type="text"
+        name="q"
+        value="{{ query }}"
+        placeholder="e.g. футбол, сезон 3, музыка"
+      >
+    </div>
+    <div class="question-search__options">
+      <label class="checkbox">
+        <input
+          type="checkbox"
+          name="ai"
+          value="1"
+          {% if use_ai %}checked{% endif %}
+          {% if not ai_enabled %}disabled{% endif %}
+        >
+        <span>Use AI-assisted keyword expansion</span>
+      </label>
+      <label class="checkbox checkbox-inline" for="limit">
+        <span>Results limit</span>
+        <input
+          id="limit"
+          type="number"
+          name="limit"
+          min="5"
+          max="100"
+          value="{{ limit_value }}"
+          class="input-number"
+        >
+      </label>
+      <button type="submit" class="btn-primary">Search</button>
+    </div>
+    {% if not ai_enabled %}
+      <p class="helper-text">Set the <code>OPENAI_API_KEY</code> environment variable to unlock AI-powered search.</p>
+    {% endif %}
+  </form>
+  {% if ai_feedback %}
+    <p class="helper-text">{{ ai_feedback }}</p>
+  {% endif %}
+  {% if combined_keywords %}
+    <p class="helper-text">Applied keywords: {{ combined_keywords | join(", ") }}</p>
+  {% elif not query %}
+    <p class="helper-text">Showing the latest {{ result_count }} questions. Enter a search term to refine the list.</p>
+  {% endif %}
+  {% if results %}
+    <div class="table-wrapper">
+      <table class="question-table">
+        <thead>
+          <tr>
+            <th scope="col">Season</th>
+            <th scope="col">Row</th>
+            <th scope="col">Topic</th>
+            <th scope="col">Value</th>
+            <th scope="col">Question</th>
+            <th scope="col">Answer</th>
+            <th scope="col">Author</th>
+            <th scope="col">Editor</th>
+            <th scope="col">Played</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in results %}
+            <tr>
+              <td>{{ row.season_number }}</td>
+              <td>{{ row.row_number }}</td>
+              <td>{{ row.topic or "—" }}</td>
+              <td>
+                {% if row.question_value %}
+                  {{ row.question_value }}
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td class="question-table__text">{{ row.question_text | default("—") | replace('\n', '<br>') | safe }}</td>
+              <td class="question-table__text">{{ row.answer_text | default("—") | replace('\n', '<br>') | safe }}</td>
+              <td>{{ row.author or "—" }}</td>
+              <td>{{ row.editor or "—" }}</td>
+              <td>
+                {% if row.played_at %}
+                  {{ row.played_at }}
+                {% elif row.played_at_raw %}
+                  {{ row.played_at_raw }}
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="helper-text">No questions match this request yet. Try different keywords or broaden the search.</p>
+  {% endif %}
+</section>
+{% endblock %}

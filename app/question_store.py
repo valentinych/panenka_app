@@ -4,7 +4,7 @@ import threading
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterable, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 try:  # pragma: no cover - optional dependency for Postgres deployments
     import psycopg2
@@ -244,6 +244,85 @@ class QuestionStore:
                         page_size=200,
                     )
         return len(payloads)
+
+
+    def search_questions(
+        self,
+        keywords: Optional[Sequence[str]] = None,
+        *,
+        limit: int = 50,
+    ) -> List[Dict[str, object]]:
+        """Return question rows filtered by the provided keywords."""
+
+        self._initialize()
+
+        normalized: List[str] = []
+        seen = set()
+        if keywords:
+            for keyword in keywords:
+                normalized_keyword = keyword.strip().lower()
+                if normalized_keyword and normalized_keyword not in seen:
+                    normalized.append(normalized_keyword)
+                    seen.add(normalized_keyword)
+
+        limit = max(1, min(limit, 200))
+        placeholder = "?" if self._backend == "sqlite" else "%s"
+        where_parts: List[str] = []
+        params: List[object] = []
+        search_fields = [
+            "question_text",
+            "answer_text",
+            "topic",
+            "author",
+        ]
+
+        for keyword in normalized:
+            conditions = [
+                f"LOWER(COALESCE({field}, '')) LIKE {placeholder}"
+                for field in search_fields
+            ]
+            where_parts.append("(" + " OR ".join(conditions) + ")")
+            pattern = f"%{keyword}%"
+            params.extend([pattern] * len(search_fields))
+
+        limit_placeholder = "?" if self._backend == "sqlite" else "%s"
+        sql = [
+            "SELECT",
+            "    id,",
+            "    season_number,",
+            "    row_number,",
+            "    topic,",
+            "    question_value,",
+            "    author,",
+            "    editor,",
+            "    question_text,",
+            "    answer_text,",
+            "    played_at_raw,",
+            "    played_at",
+            "FROM questions",
+        ]
+        if where_parts:
+            sql.append("WHERE " + " AND ".join(where_parts))
+        sql.append("ORDER BY imported_at DESC")
+        sql.append(f"LIMIT {limit_placeholder}")
+
+        query = "\n".join(sql)
+        params_with_limit = params + [limit]
+
+        if self._backend == "sqlite":
+            with self._connect_sqlite() as conn:
+                cur = conn.execute(query, params_with_limit)
+                rows = cur.fetchall()
+                return [dict(row) for row in rows]
+
+        if psycopg2 is None:
+            raise RuntimeError("psycopg2 must be installed for PostgreSQL support.")
+
+        with self._postgres_connection() as conn:  # pragma: no cover - production
+            with conn.cursor() as cur:
+                cur.execute(query, params_with_limit)
+                rows = cur.fetchall()
+        return [dict(row) for row in rows]
 
 
 question_store = QuestionStore()
