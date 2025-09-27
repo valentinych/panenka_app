@@ -18,6 +18,16 @@
     <span class="status-pill" data-lock-indicator>Waiting for host</span>
   </header>
   <p class="card-description">Host: {{ host_name }}</p>
+  <section class="scoreboard" data-scoreboard>
+    <header class="scoreboard__header">
+      <h3>Счёт</h3>
+      <div class="scoreboard__info">
+        <span>Номинал: <strong data-question-value>0</strong></span>
+      </div>
+    </header>
+    <p class="helper-text" data-empty-scoreboard>Пока нет игроков.</p>
+    <ul class="scoreboard__list" data-score-list></ul>
+  </section>
   <button class="buzzer-button" type="button" data-buzz-button data-state="ready">BUZZ!</button>
   <p class="helper-text" data-status>Waiting for buzzers to open…</p>
   <section class="buzzer-section">
