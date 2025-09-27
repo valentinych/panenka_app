@@ -615,9 +615,6 @@ def buzzer_buzz(code):
     player["buzzed_at"] = now
     player["last_seen"] = now
     lobby["updated_at"] = now
-    if len(lobby["buzz_order"]) == 1:
-        lobby["locked"] = True
-
     lobby_store.save_lobby(lobby)
 
     return jsonify({"status": "ok", "position": len(lobby["buzz_order"])})
