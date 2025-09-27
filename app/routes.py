@@ -1,4 +1,5 @@
 import json
+import os
 from functools import wraps
 from pathlib import Path
 
@@ -7,19 +8,40 @@ from flask import Blueprint, flash, redirect, render_template, request, session,
 bp = Blueprint("main", __name__)
 
 AUTH_FILE = Path("auth.json")
+AUTH_ENV_VAR = "AUTH_JSON"
 
 
 class AuthFileMissingError(FileNotFoundError):
     """Raised when the auth.json file is missing."""
 
 
-def load_credentials():
+def _load_from_env():
+    auth_payload = os.getenv(AUTH_ENV_VAR)
+    if not auth_payload:
+        return None
+    try:
+        payload = json.loads(auth_payload)
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            "AUTH_JSON environment variable contains invalid JSON."
+        ) from exc
+    return payload
+
+
+def _load_from_file():
     if not AUTH_FILE.exists():
         raise AuthFileMissingError(
-            "The auth.json file is missing. Please create it using the format described in README.md."
+            "The auth.json file is missing. Please create it using the format described in README.md "
+            "or configure the AUTH_JSON environment variable."
         )
     with AUTH_FILE.open("r", encoding="utf-8") as f:
-        payload = json.load(f)
+        return json.load(f)
+
+
+def load_credentials():
+    payload = _load_from_env()
+    if payload is None:
+        payload = _load_from_file()
     users = payload.get("users", [])
     users_by_login = {}
     for user in users:
@@ -59,7 +81,7 @@ def login():
         else:
             try:
                 credentials = load_credentials()
-            except AuthFileMissingError as exc:
+            except (AuthFileMissingError, ValueError) as exc:
                 error = str(exc)
             else:
                 user_record = credentials.get(login_code)
