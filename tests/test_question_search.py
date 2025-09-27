@@ -1,10 +1,10 @@
 from app.question_store import QuestionStore
 
 
-def _sample_question(text: str) -> tuple:
+def _sample_question(text: str, *, season: int = 1, row_number: int = 1) -> tuple:
     return (
-        1,  # season_number
-        1,  # row_number
+        season,  # season_number
+        row_number,  # row_number
         None,  # played_at_raw
         None,  # played_at
         None,  # editor
@@ -34,10 +34,43 @@ def test_search_matches_any_keyword(tmp_path):
 
 def test_sample_questions_seeded(tmp_path):
     db_path = tmp_path / "seeded.sqlite3"
+    store = QuestionStore(str(db_path), enable_sample_data=True)
+
+    results = store.search_questions(limit=5)
+
+    assert results, "Expected bundled sample questions to be available when enabled"
+    combined_text = " ".join(
+        row["question_text"].lower() for row in results if row["question_text"]
+    )
+    assert "радебе" in combined_text
+
+
+def test_sample_questions_disabled_by_default(tmp_path):
+    db_path = tmp_path / "empty.sqlite3"
     store = QuestionStore(str(db_path))
 
     results = store.search_questions(limit=5)
 
-    assert results, "Expected bundled sample questions to be available by default"
-    combined_text = " ".join(row["question_text"].lower() for row in results if row["question_text"])
-    assert "радебе" in combined_text
+    assert results == []
+
+
+def test_list_questions_and_stats(tmp_path):
+    db_path = tmp_path / "list.sqlite3"
+    store = QuestionStore(str(db_path))
+    store.replace_all(
+        [
+            _sample_question("Вопрос A", row_number=1),
+            _sample_question("Вопрос B", row_number=2),
+            _sample_question("Вопрос C", row_number=3),
+        ]
+    )
+
+    rows = store.list_questions(limit=2, offset=1)
+    assert [row["row_number"] for row in rows] == [2, 3]
+
+    stats = store.get_question_stats()
+    assert stats["total"] == 3
+    assert stats["last_imported_at"] is not None
+
+    seasons = store.list_seasons()
+    assert seasons == [1]

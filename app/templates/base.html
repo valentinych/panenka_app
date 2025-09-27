@@ -11,7 +11,7 @@
   </head>
   <body>
     <div class="background"></div>
-    <main class="layout">
+    <main class="layout{% block layout_modifier %}{% endblock %}">
       <header class="masthead">
         <h1 class="brand">Panenka Live</h1>
         <p class="subtitle">Interactive buzzer platform for quick-fire trivia.</p>

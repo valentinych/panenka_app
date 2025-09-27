@@ -5,6 +5,7 @@ import sqlite3
 import threading
 import time
 from contextlib import contextmanager
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
@@ -38,7 +39,12 @@ QuestionRecord = Tuple[
 class QuestionStore:
     """Persist parsed questions in a SQLite or PostgreSQL database."""
 
-    def __init__(self, db_path: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        db_path: Optional[str] = None,
+        *,
+        enable_sample_data: Optional[bool] = None,
+    ) -> None:
         db_url: Optional[str] = None
         if db_path is None:
             db_url = os.getenv("PANENKA_LOBBY_DB_URL") or os.getenv("DATABASE_URL")
@@ -69,6 +75,14 @@ class QuestionStore:
             self._backend = "sqlite"
         self._initialized = False
         self._init_lock = threading.Lock()
+        if enable_sample_data is None:
+            flag = os.getenv("PANENKA_ENABLE_SAMPLE_DATA")
+            enable_sample_data = (
+                flag.lower() in {"1", "true", "yes", "on"}
+                if flag
+                else False
+            )
+        self._enable_sample_data = enable_sample_data
 
     @staticmethod
     def _normalize_postgres_url(url: str) -> str:
@@ -150,7 +164,8 @@ class QuestionStore:
                     ON questions (season_number)
                 """
             )
-            self._seed_from_fixture_sqlite(conn)
+            if self._enable_sample_data:
+                self._seed_from_fixture_sqlite(conn)
 
     def _initialize_postgres(self) -> None:  # pragma: no cover - exercised in production
         with self._postgres_connection() as conn:
@@ -183,7 +198,8 @@ class QuestionStore:
                         ON questions (season_number)
                     """
                 )
-                self._seed_from_fixture_postgres(cur)
+                if self._enable_sample_data:
+                    self._seed_from_fixture_postgres(cur)
 
     @staticmethod
     def _seed_fixture_path() -> Path:
@@ -475,6 +491,137 @@ class QuestionStore:
                 cur.execute(query, params_with_limit)
                 rows = cur.fetchall()
         return [dict(row) for row in rows]
+
+    def list_questions(
+        self,
+        *,
+        limit: int = 100,
+        offset: int = 0,
+        season_number: Optional[int] = None,
+    ) -> List[Dict[str, object]]:
+        """Return ordered question rows for table views."""
+
+        self._initialize()
+
+        limit = max(1, min(limit, 500))
+        offset = max(0, offset)
+
+        placeholder = "?" if self._backend == "sqlite" else "%s"
+        sql = [
+            "SELECT",
+            "    id,",
+            "    season_number,",
+            "    row_number,",
+            "    topic,",
+            "    question_value,",
+            "    author,",
+            "    editor,",
+            "    question_text,",
+            "    answer_text,",
+            "    played_at_raw,",
+            "    played_at,",
+            "    comment",
+            "FROM questions",
+        ]
+        params: List[object] = []
+        if season_number is not None:
+            sql.append(f"WHERE season_number = {placeholder}")
+            params.append(season_number)
+        sql.append("ORDER BY season_number ASC, row_number ASC")
+        sql.append(f"LIMIT {placeholder} OFFSET {placeholder}")
+        params.extend([limit, offset])
+
+        query = "\n".join(sql)
+
+        if self._backend == "sqlite":
+            with self._connect_sqlite() as conn:
+                cur = conn.execute(query, params)
+                rows = cur.fetchall()
+                return [dict(row) for row in rows]
+
+        if psycopg2 is None:
+            raise RuntimeError("psycopg2 must be installed for PostgreSQL support.")
+
+        with self._postgres_connection() as conn:  # pragma: no cover - production
+            with conn.cursor() as cur:
+                cur.execute(query, params)
+                rows = cur.fetchall()
+        return [dict(row) for row in rows]
+
+    def get_question_stats(
+        self, season_number: Optional[int] = None
+    ) -> Dict[str, Optional[object]]:
+        """Return aggregate counts and timestamps for stored questions."""
+
+        self._initialize()
+
+        placeholder = "?" if self._backend == "sqlite" else "%s"
+        sql = [
+            "SELECT",
+            "    COUNT(*) AS total,",
+            "    MAX(imported_at) AS last_imported_at",
+            "FROM questions",
+        ]
+        params: List[object] = []
+        if season_number is not None:
+            sql.append(f"WHERE season_number = {placeholder}")
+            params.append(season_number)
+
+        query = "\n".join(sql)
+
+        if self._backend == "sqlite":
+            with self._connect_sqlite() as conn:
+                cur = conn.execute(query, params)
+                row = cur.fetchone()
+        else:  # pragma: no cover - production
+            if psycopg2 is None:
+                raise RuntimeError("psycopg2 must be installed for PostgreSQL support.")
+            with self._postgres_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(query, params)
+                    row = cur.fetchone()
+
+        if not row:
+            return {"total": 0, "last_imported_at": None, "season_number": season_number}
+
+        total = row["total"] if isinstance(row, dict) else row[0]
+        last_imported_raw = row["last_imported_at"] if isinstance(row, dict) else row[1]
+        last_imported_at: Optional[str] = None
+        if last_imported_raw:
+            try:
+                last_imported_at = datetime.fromtimestamp(float(last_imported_raw)).isoformat(
+                    timespec="seconds"
+                )
+            except (TypeError, ValueError, OSError):
+                last_imported_at = None
+
+        return {
+            "total": int(total or 0),
+            "last_imported_at": last_imported_at,
+            "season_number": season_number,
+        }
+
+    def list_seasons(self) -> List[int]:
+        """Return available season numbers in ascending order."""
+
+        self._initialize()
+
+        query = "SELECT DISTINCT season_number FROM questions ORDER BY season_number ASC"
+
+        if self._backend == "sqlite":
+            with self._connect_sqlite() as conn:
+                cur = conn.execute(query)
+                rows = cur.fetchall()
+                return [int(row["season_number"]) for row in rows]
+
+        if psycopg2 is None:
+            raise RuntimeError("psycopg2 must be installed for PostgreSQL support.")
+
+        with self._postgres_connection() as conn:  # pragma: no cover - production
+            with conn.cursor() as cur:
+                cur.execute(query)
+                rows = cur.fetchall()
+        return [int(row["season_number"]) for row in rows]
 
 
 question_store = QuestionStore()

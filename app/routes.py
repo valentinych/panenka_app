@@ -1115,6 +1115,69 @@ def question_browser():
     )
 
 
+@bp.route("/questions/table")
+@login_required
+def question_table():
+    limit_value = request.args.get("limit", type=int)
+    if not limit_value or limit_value <= 0:
+        limit_value = 100
+    limit_value = max(10, min(limit_value, 500))
+
+    page_value = request.args.get("page", type=int)
+    if not page_value or page_value <= 0:
+        page_value = 1
+
+    season_value = request.args.get("season", type=int)
+    if season_value is not None and season_value <= 0:
+        season_value = None
+
+    offset = (page_value - 1) * limit_value
+    rows = question_store.list_questions(
+        limit=limit_value, offset=offset, season_number=season_value
+    )
+    stats = question_store.get_question_stats(season_number=season_value)
+    total_count = stats.get("total", 0) or 0
+
+    has_previous = page_value > 1
+    has_next = offset + len(rows) < total_count
+
+    base_params = {"limit": limit_value}
+    if season_value:
+        base_params["season"] = season_value
+
+    previous_url = None
+    next_url = None
+    if has_previous:
+        prev_params = dict(base_params)
+        prev_params["page"] = page_value - 1
+        previous_url = url_for("main.question_table", **prev_params)
+    if has_next:
+        next_params = dict(base_params)
+        next_params["page"] = page_value + 1
+        next_url = url_for("main.question_table", **next_params)
+
+    seasons = question_store.list_seasons()
+    display_from = offset + 1 if rows else 0
+    display_to = offset + len(rows)
+
+    return render_template(
+        "question_table.html",
+        rows=rows,
+        stats=stats,
+        seasons=seasons,
+        limit_value=limit_value,
+        page_value=page_value,
+        season_value=season_value,
+        total_count=total_count,
+        has_previous=has_previous,
+        has_next=has_next,
+        previous_url=previous_url,
+        next_url=next_url,
+        display_from=display_from,
+        display_to=display_to,
+    )
+
+
 @bp.route("/logout")
 def logout():
     session.clear()
