@@ -92,6 +92,8 @@ def _expire_stale_players(lobby, now):
         lobby["buzz_order"] = [
             player_id for player_id in lobby["buzz_order"] if player_id not in removed_ids
         ]
+        if lobby.get("active_player_id") in removed_ids:
+            lobby["active_player_id"] = None
         lobby["updated_at"] = now
         return True
 
@@ -129,6 +131,8 @@ def _remove_player_from_lobby(code, player_id):
         lobby["buzz_order"] = [
             existing for existing in lobby["buzz_order"] if existing != player_id
         ]
+        if lobby.get("active_player_id") == player_id:
+            lobby["active_player_id"] = None
         lobby["updated_at"] = time.time()
         lobby_store.save_lobby(lobby)
 
@@ -472,6 +476,8 @@ def buzzer_create():
         "locked": False,
         "players": {},
         "buzz_order": [],
+        "question_value": 0,
+        "active_player_id": None,
     }
 
     lobby_store.save_lobby(lobby)
@@ -518,6 +524,7 @@ def buzzer_join():
         "joined_at": now,
         "last_seen": now,
         "buzzed_at": None,
+        "score": 0,
     }
     lobby["updated_at"] = now
 
@@ -617,6 +624,9 @@ def buzzer_state(code):
     if save_needed:
         lobby_store.save_lobby(lobby)
 
+    question_value = int(lobby.get("question_value", 0) or 0)
+    active_player_id = lobby.get("active_player_id")
+
     players = []
     for player_id, player in sorted(
         lobby["players"].items(), key=lambda item: item[1]["joined_at"]
@@ -626,13 +636,17 @@ def buzzer_state(code):
             if player_id in lobby["buzz_order"]
             else None
         )
+        score = int(player.get("score", 0) or 0)
+        is_active = player_id == active_player_id
         players.append(
             {
                 "id": player_id,
                 "name": player["name"],
                 "buzzed": position is not None,
                 "position": position,
+                "score": score,
                 "is_self": role == "player" and player_id == session_id,
+                "is_active": is_active,
             }
         )
 
@@ -646,8 +660,33 @@ def buzzer_state(code):
                 "id": player_id,
                 "name": player["name"],
                 "position": index + 1,
+                "is_active": player_id == active_player_id,
             }
         )
+
+    scoreboard_entries = []
+    for player_id, player in sorted(
+        lobby["players"].items(),
+        key=lambda item: (-int(item[1].get("score", 0) or 0), item[1]["joined_at"]),
+    ):
+        scoreboard_entries.append(
+            {
+                "id": player_id,
+                "name": player["name"],
+                "score": int(player.get("score", 0) or 0),
+                "is_active": player_id == active_player_id,
+            }
+        )
+
+    active_player = None
+    if active_player_id:
+        active_player = lobby["players"].get(active_player_id)
+        if active_player:
+            active_player = {
+                "id": active_player_id,
+                "name": active_player["name"],
+                "score": int(active_player.get("score", 0) or 0),
+            }
 
     response = {
         "code": code,
@@ -656,6 +695,9 @@ def buzzer_state(code):
         "players": players,
         "buzz_queue": buzz_queue,
         "buzz_open": not lobby["locked"],
+        "question_value": question_value,
+        "scoreboard": scoreboard_entries,
+        "active_player": active_player,
     }
 
     if role == "player":
@@ -668,6 +710,7 @@ def buzzer_state(code):
             "name": session.get("buzzer_name"),
             "position": position,
             "can_buzz": not lobby["locked"] and position is None,
+            "score": int(lobby["players"].get(session_id, {}).get("score", 0) or 0),
         }
     else:
         response["you"] = {"role": "host", "name": session.get("buzzer_name")}
@@ -707,6 +750,118 @@ def buzzer_buzz(code):
     return jsonify({"status": "ok", "position": len(lobby["buzz_order"])})
 
 
+@bp.route("/buzzer/api/lobbies/<code>/value", methods=["POST"])
+@login_required
+def buzzer_set_value(code):
+    code = code.upper()
+    lobby = _get_lobby_or_404(code)
+
+    if session.get("buzzer_role") != "host" or session.get("buzzer_id") != lobby["host_id"]:
+        return jsonify({"error": "forbidden"}), 403
+
+    payload = request.get_json(silent=True) or {}
+    raw_value = payload.get("value")
+    try:
+        value = int(raw_value)
+    except (TypeError, ValueError):
+        return jsonify({"error": "invalid-value"}), 400
+
+    allowed_values = {10, 20, 30, 40, 50}
+    if value not in allowed_values:
+        return jsonify({"error": "invalid-value"}), 400
+
+    lobby["question_value"] = value
+    lobby["updated_at"] = time.time()
+    lobby_store.save_lobby(lobby)
+
+    return jsonify({"status": "ok", "question_value": value})
+
+
+@bp.route("/buzzer/api/lobbies/<code>/confirm", methods=["POST"])
+@login_required
+def buzzer_confirm(code):
+    code = code.upper()
+    lobby = _get_lobby_or_404(code)
+
+    if session.get("buzzer_role") != "host" or session.get("buzzer_id") != lobby["host_id"]:
+        return jsonify({"error": "forbidden"}), 403
+
+    payload = request.get_json(silent=True) or {}
+    player_id = payload.get("player_id")
+
+    if not player_id or player_id not in lobby["players"]:
+        return jsonify({"error": "invalid-player"}), 400
+
+    if player_id not in lobby["buzz_order"]:
+        return jsonify({"error": "player-not-in-queue"}), 400
+
+    now = time.time()
+    lobby["active_player_id"] = player_id
+    lobby["locked"] = True
+    player = lobby["players"][player_id]
+    player["last_seen"] = now
+    lobby["updated_at"] = now
+    lobby_store.save_lobby(lobby)
+
+    return jsonify(
+        {
+            "status": "ok",
+            "active_player": {
+                "id": player_id,
+                "name": player["name"],
+                "score": int(player.get("score", 0) or 0),
+            },
+        }
+    )
+
+
+@bp.route("/buzzer/api/lobbies/<code>/resolve", methods=["POST"])
+@login_required
+def buzzer_resolve(code):
+    code = code.upper()
+    lobby = _get_lobby_or_404(code)
+
+    if session.get("buzzer_role") != "host" or session.get("buzzer_id") != lobby["host_id"]:
+        return jsonify({"error": "forbidden"}), 403
+
+    active_player_id = lobby.get("active_player_id")
+    if not active_player_id or active_player_id not in lobby["players"]:
+        return jsonify({"error": "no-active-player"}), 400
+
+    payload = request.get_json(silent=True) or {}
+    action = (payload.get("action") or "").lower()
+    if action not in {"plus", "minus", "skip"}:
+        return jsonify({"error": "invalid-action"}), 400
+
+    player = lobby["players"][active_player_id]
+    current_score = int(player.get("score", 0) or 0)
+    question_value = int(lobby.get("question_value", 0) or 0)
+
+    if action == "plus":
+        current_score += question_value
+    elif action == "minus":
+        current_score -= question_value
+
+    player["score"] = current_score
+    now = time.time()
+    player["last_seen"] = now
+    lobby["active_player_id"] = None
+    lobby["buzz_order"].clear()
+    lobby["locked"] = False
+    for participant in lobby["players"].values():
+        participant["buzzed_at"] = None
+    lobby["updated_at"] = now
+    lobby_store.save_lobby(lobby)
+
+    return jsonify(
+        {
+            "status": "ok",
+            "action": action,
+            "score": current_score,
+        }
+    )
+
+
 @bp.route("/buzzer/api/lobbies/<code>/reset", methods=["POST"])
 @login_required
 def buzzer_reset(code):
@@ -718,6 +873,7 @@ def buzzer_reset(code):
 
     lobby["buzz_order"].clear()
     lobby["locked"] = False
+    lobby["active_player_id"] = None
     now = time.time()
     for player in lobby["players"].values():
         player["buzzed_at"] = None
