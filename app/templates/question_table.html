@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}База вопросов · Panenka Live{% endblock %}
+{% block layout_modifier %} layout--full{% endblock %}
+{% block content %}
+<section class="question-table-page">
+  <header class="question-table-page__header">
+    <div>
+      <h2 class="card-title">База вопросов</h2>
+  {% if stats.total %}
+        <p class="card-description">
+          Всего записей: <strong>{{ stats.total }}</strong>
+          {% if season_value %}
+            (сезон {{ season_value }})
+          {% endif %}
+          {% if stats.last_imported_at %}
+            · Последний импорт: {{ stats.last_imported_at }} UTC
+          {% else %}
+            · Время последнего импорта пока не определено.
+          {% endif %}
+        </p>
+  {% else %}
+        <p class="card-description">
+          Данные пока не импортированы. Запустите загрузку вопросов из Google Sheets, чтобы увидеть таблицу.
+        </p>
+  {% endif %}
+    </div>
+    {% if stats.total %}
+      <p class="question-table-page__hint">
+        Совет: используйте фильтры и навигацию, чтобы быстро переходить между сезонами.
+      </p>
+    {% endif %}
+  </header>
+
+  <form class="table-filters" method="get">
+    <label class="table-filters__field">
+      <span class="table-filters__label">Сезон</span>
+      <select name="season" class="table-filters__control">
+        <option value="" {% if not season_value %}selected{% endif %}>Все сезоны</option>
+        {% for season in seasons %}
+          <option value="{{ season }}" {% if season_value == season %}selected{% endif %}>Сезон {{ season }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="table-filters__field">
+      <span class="table-filters__label">Кол-во строк</span>
+      <input
+        class="table-filters__control"
+        type="number"
+        name="limit"
+        min="10"
+        max="500"
+        step="10"
+        value="{{ limit_value }}"
+      >
+    </label>
+    <button class="btn-primary table-filters__submit" type="submit">Обновить</button>
+  </form>
+
+  {% if rows %}
+    <div class="table-summary">
+      Показываются строки {{ display_from }}–{{ display_to }} из {{ total_count }}.
+      {% if has_next %}
+        Для остальных строк используйте кнопки навигации.
+      {% endif %}
+    </div>
+    <div class="question-table-page__table">
+      <div class="table-wrapper table-wrapper--scrollable">
+        <table class="question-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Сезон</th>
+            <th>#</th>
+            <th>Дата / редактор</th>
+            <th>Тема</th>
+            <th>Цена</th>
+            <th>Автор</th>
+            <th>Вопрос</th>
+            <th>Ответ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td>{{ row.id }}</td>
+              <td>{{ row.season_number }}</td>
+              <td>{{ row.row_number }}</td>
+              <td>
+                {% if row.played_at %}
+                  {{ row.played_at }}
+                {% elif row.played_at_raw %}
+                  {{ row.played_at_raw }}
+                {% else %}
+                  —
+                {% endif %}
+                {% if row.editor %}<br><span class="table-muted">{{ row.editor }}</span>{% endif %}
+              </td>
+              <td>{{ row.topic or "—" }}</td>
+              <td>{% if row.question_value is not none %}{{ row.question_value }}{% else %}—{% endif %}</td>
+              <td>{{ row.author or "—" }}</td>
+              <td class="question-table__text">{{ row.question_text or "—" }}</td>
+              <td class="question-table__text">{{ row.answer_text or "—" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <nav class="table-pagination">
+      <span class="table-pagination__status">
+        Страница {{ page_value }}
+      </span>
+      <div class="table-pagination__controls">
+        {% if has_previous %}
+          <a class="btn-tertiary" href="{{ previous_url }}">Назад</a>
+        {% else %}
+          <span class="btn-tertiary btn-tertiary--disabled">Назад</span>
+        {% endif %}
+        {% if has_next %}
+          <a class="btn-tertiary" href="{{ next_url }}">Вперёд</a>
+        {% else %}
+          <span class="btn-tertiary btn-tertiary--disabled">Вперёд</span>
+        {% endif %}
+      </div>
+    </nav>
+  {% else %}
+    <p class="helper-text">
+      Мы не нашли ни одной записи, удовлетворяющей условиям фильтра. Попробуйте выбрать другой сезон или изменить лимит.
+    </p>
+  {% endif %}
+</section>
+{% endblock %}
