@@ -325,12 +325,23 @@ input:focus {
 .buzz-queue li span,
 .buzzer-roster li span {
   font-weight: 600;
+}
+
+.buzz-queue li span {
+  color: var(--error);
+}
+
+.buzzer-roster li span {
   color: var(--accent);
 }
 
+.buzzer-roster li.is-buzzed span {
+  color: var(--error);
+}
+
 .buzzer-roster li.is-buzzed {
-  border-color: rgba(255, 183, 3, 0.55);
-  box-shadow: 0 0 12px rgba(255, 183, 3, 0.25);
+  border-color: rgba(255, 107, 107, 0.75);
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.35);
 }
 
 .buzzer-roster li.is-self {
@@ -357,8 +368,8 @@ input:focus {
 }
 
 .buzzer-button[data-state='queued'] {
-  background: #0a4c25;
-  box-shadow: 0 18px 32px rgba(10, 76, 37, 0.4);
+  background: var(--error);
+  box-shadow: 0 18px 32px rgba(255, 107, 107, 0.4);
 }
 
 .buzzer-button[data-state='locked'] {
