@@ -41,7 +41,10 @@ DEFAULT_FALLBACK_USERS = [
 LOBBY_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 LOBBY_CODE_LENGTH = 4
 LOBBY_EXPIRATION_SECONDS = 60 * 60
-PLAYER_EXPIRATION_SECONDS = 45
+# Players might briefly pause polling when their browser tab is hidden.
+# Give them a generous window before considering the session stale so they
+# are not unexpectedly kicked out of a lobby.
+PLAYER_EXPIRATION_SECONDS = 180
 
 
 LOBBIES = {}
