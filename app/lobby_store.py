@@ -56,7 +56,9 @@ class LobbyStore:
                         updated_at REAL NOT NULL,
                         host_seen REAL NOT NULL,
                         locked INTEGER NOT NULL,
-                        buzz_order TEXT NOT NULL
+                        buzz_order TEXT NOT NULL,
+                        question_value INTEGER NOT NULL DEFAULT 0,
+                        active_player_id TEXT
                     )
                     """
                 )
@@ -69,10 +71,29 @@ class LobbyStore:
                         joined_at REAL NOT NULL,
                         last_seen REAL NOT NULL,
                         buzzed_at REAL,
+                        score INTEGER NOT NULL DEFAULT 0,
                         FOREIGN KEY(lobby_code) REFERENCES lobbies(code) ON DELETE CASCADE
                     )
                     """
                 )
+                try:
+                    conn.execute(
+                        "ALTER TABLE players ADD COLUMN score INTEGER NOT NULL DEFAULT 0"
+                    )
+                except sqlite3.OperationalError:
+                    pass
+                try:
+                    conn.execute(
+                        "ALTER TABLE lobbies ADD COLUMN question_value INTEGER NOT NULL DEFAULT 0"
+                    )
+                except sqlite3.OperationalError:
+                    pass
+                try:
+                    conn.execute(
+                        "ALTER TABLE lobbies ADD COLUMN active_player_id TEXT"
+                    )
+                except sqlite3.OperationalError:
+                    pass
             self._initialized = True
 
     def clear_all(self) -> None:
@@ -99,6 +120,8 @@ class LobbyStore:
             "locked": bool(row["locked"]),
             "players": {},
             "buzz_order": json.loads(row["buzz_order"] or "[]"),
+            "question_value": row["question_value"] if row["question_value"] is not None else 0,
+            "active_player_id": row["active_player_id"],
         }
 
     def get_lobby(self, code: str) -> Optional[Dict]:
@@ -122,6 +145,7 @@ class LobbyStore:
                 "joined_at": player["joined_at"],
                 "last_seen": player["last_seen"],
                 "buzzed_at": player["buzzed_at"],
+                "score": player["score"] if player["score"] is not None else 0,
             }
 
         return lobby
@@ -144,8 +168,10 @@ class LobbyStore:
                     updated_at,
                     host_seen,
                     locked,
-                    buzz_order
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    buzz_order,
+                    question_value,
+                    active_player_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(code) DO UPDATE SET
                     host_id = excluded.host_id,
                     host_name = excluded.host_name,
@@ -154,7 +180,9 @@ class LobbyStore:
                     updated_at = excluded.updated_at,
                     host_seen = excluded.host_seen,
                     locked = excluded.locked,
-                    buzz_order = excluded.buzz_order
+                    buzz_order = excluded.buzz_order,
+                    question_value = excluded.question_value,
+                    active_player_id = excluded.active_player_id
                 """,
                 (
                     lobby["code"],
@@ -166,6 +194,8 @@ class LobbyStore:
                     lobby["host_seen"],
                     1 if lobby.get("locked") else 0,
                     json.dumps(buzz_order),
+                    int(lobby.get("question_value", 0) or 0),
+                    lobby.get("active_player_id"),
                 ),
             )
             conn.execute("DELETE FROM players WHERE lobby_code = ?", (lobby["code"],))
@@ -178,8 +208,9 @@ class LobbyStore:
                         name,
                         joined_at,
                         last_seen,
-                        buzzed_at
-                    ) VALUES (?, ?, ?, ?, ?, ?)
+                        buzzed_at,
+                        score
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         player["id"],
@@ -188,6 +219,7 @@ class LobbyStore:
                         player["joined_at"],
                         player["last_seen"],
                         player.get("buzzed_at"),
+                        int(player.get("score", 0) or 0),
                     ),
                 )
 
