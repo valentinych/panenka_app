@@ -1091,6 +1091,20 @@ def question_browser():
         limit_value = 50
     limit_value = min(limit_value, 100)
 
+    season_filter = request.args.get("season", type=int)
+    if season_filter is not None and season_filter <= 0:
+        season_filter = None
+
+    value_filter = request.args.get("value", type=int)
+    if value_filter is not None and value_filter <= 0:
+        value_filter = None
+
+    author_filter_raw = request.args.get("author", "")
+    author_filter = author_filter_raw.strip() or None
+
+    editor_filter_raw = request.args.get("editor", "")
+    editor_filter = editor_filter_raw.strip() or None
+
     ai_enabled = _get_sanitized_env("OPENAI_API_KEY") is not None
     use_ai = request.args.get("ai") == "1"
 
@@ -1111,8 +1125,20 @@ def question_browser():
 
     combined_keywords = list(dict.fromkeys(manual_keywords + ai_keywords))
 
-    results = question_store.search_questions(combined_keywords, limit=limit_value)
+    results = question_store.search_questions(
+        combined_keywords,
+        limit=limit_value,
+        season_number=season_filter,
+        question_value=value_filter,
+        author=author_filter,
+        editor=editor_filter,
+    )
     result_count = len(results)
+
+    seasons = question_store.list_seasons()
+    values = question_store.list_question_values()
+    authors = question_store.list_authors()
+    editors = question_store.list_editors()
 
     return render_template(
         "question_browser.html",
@@ -1126,6 +1152,14 @@ def question_browser():
         use_ai=use_ai,
         limit_value=limit_value,
         result_count=result_count,
+        season_filter=season_filter,
+        value_filter=value_filter,
+        author_filter=author_filter,
+        editor_filter=editor_filter,
+        seasons=seasons,
+        values=values,
+        authors=authors,
+        editors=editors,
     )
 
 
