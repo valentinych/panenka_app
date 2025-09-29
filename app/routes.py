@@ -3,6 +3,7 @@ import os
 import re
 import secrets
 import time
+from dataclasses import dataclass, field
 from functools import wraps
 from pathlib import Path
 from urllib.parse import urlparse
@@ -44,6 +45,203 @@ DEFAULT_FALLBACK_USERS = [
         "name": "Integration Test Player",
     }
 ]
+
+_LETTER_TRANSLATION = str.maketrans(
+    {
+        "ё": "е",
+        "Ё": "Е",
+        "і": "и",
+        "І": "И",
+        "ї": "и",
+        "Ї": "И",
+        "є": "е",
+        "Є": "Е",
+        "ґ": "г",
+        "Ґ": "Г",
+    }
+)
+_PLACEHOLDER_PATTERN = re.compile(r"^игрок\s*\d*$", flags=re.IGNORECASE)
+_TOKEN_SPLIT_RE = re.compile(r"[\s\u00A0\-]+", flags=re.UNICODE)
+
+
+def _normalize_letters(value: str) -> str:
+    return value.translate(_LETTER_TRANSLATION)
+
+
+def _sanitize_player_name(name: str) -> str:
+    name = (name or "").strip()
+    if not name:
+        return ""
+    return re.sub(r"\s+", " ", name)
+
+
+def _tokenize_player_name(name: str) -> list[str]:
+    return [token for token in _TOKEN_SPLIT_RE.split(name) if token]
+
+
+def _extract_surname(normalized_name: str) -> str:
+    tokens = _tokenize_player_name(normalized_name)
+    return tokens[-1] if tokens else ""
+
+
+def _is_placeholder_name(name: str) -> bool:
+    if not name:
+        return False
+    normalized = re.sub(r"\s+", " ", _normalize_letters(name.lower()))
+    return bool(_PLACEHOLDER_PATTERN.fullmatch(normalized))
+
+
+def _is_single_char_variation(left: str, right: str) -> bool:
+    if left == right:
+        return True
+    len_left = len(left)
+    len_right = len(right)
+    if abs(len_left - len_right) > 1:
+        return False
+    if len_left == len_right:
+        diff = sum(1 for lch, rch in zip(left, right) if lch != rch)
+        return diff == 1
+    if len_left < len_right:
+        shorter, longer = left, right
+    else:
+        shorter, longer = right, left
+    index_short = 0
+    index_long = 0
+    mismatch_found = False
+    while index_short < len(shorter) and index_long < len(longer):
+        if shorter[index_short] == longer[index_long]:
+            index_short += 1
+            index_long += 1
+            continue
+        if mismatch_found:
+            return False
+        mismatch_found = True
+        index_long += 1
+    return True
+
+
+@dataclass
+class _PlayerEntry:
+    display: str
+    surname: str
+    token_count: int
+    variants: set[str] = field(default_factory=set)
+    normalized_variants: set[str] = field(default_factory=set)
+
+
+class PlayerNameNormalizer:
+    def __init__(self) -> None:
+        self._entries: list[_PlayerEntry] = []
+        self._variant_map: dict[str, str] = {}
+        self._normalized_map: dict[str, str] = {}
+
+    def build(self, names: list[str]) -> None:
+        self._entries.clear()
+        for name in names:
+            sanitized = _sanitize_player_name(name)
+            if not sanitized or _is_placeholder_name(sanitized):
+                continue
+            self._register_name(sanitized)
+        self._rebuild_mappings()
+
+    def canonicalize(self, name: str) -> str | None:
+        sanitized = _sanitize_player_name(name)
+        if not sanitized or _is_placeholder_name(sanitized):
+            return None
+        mapped = self._variant_map.get(sanitized)
+        if mapped:
+            return mapped
+        normalized = _normalize_letters(sanitized.lower())
+        mapped = self._normalized_map.get(normalized)
+        if mapped:
+            return mapped
+        surname = _extract_surname(normalized)
+        if not surname:
+            return sanitized
+        tokens = _tokenize_player_name(sanitized)
+        token_count = len(tokens)
+        for entry in self._entries:
+            if surname != entry.surname:
+                continue
+            if token_count == 1 or entry.token_count == 1:
+                return entry.display
+            for variant_normalized in entry.normalized_variants:
+                if _is_single_char_variation(normalized, variant_normalized):
+                    return entry.display
+        return sanitized
+
+    @staticmethod
+    def is_placeholder(name: str) -> bool:
+        return _is_placeholder_name(name)
+
+    def _register_name(self, name: str) -> _PlayerEntry:
+        normalized = _normalize_letters(name.lower())
+        surname = _extract_surname(normalized)
+        tokens = _tokenize_player_name(name)
+        token_count = len(tokens)
+
+        for entry in self._entries:
+            if normalized in entry.normalized_variants:
+                return self._merge_entry(entry, name, normalized, surname, token_count)
+
+        if token_count == 1 and surname:
+            for entry in self._entries:
+                if entry.surname == surname:
+                    return self._merge_entry(entry, name, normalized, surname, token_count)
+
+        for entry in self._entries:
+            if surname and entry.surname == surname and entry.token_count == 1:
+                return self._merge_entry(entry, name, normalized, surname, token_count)
+
+        if surname:
+            for entry in self._entries:
+                if entry.surname != surname:
+                    continue
+                for variant_normalized in entry.normalized_variants:
+                    if _is_single_char_variation(normalized, variant_normalized):
+                        return self._merge_entry(
+                            entry, name, normalized, surname, token_count
+                        )
+
+        entry = _PlayerEntry(
+            display=name,
+            surname=surname,
+            token_count=token_count,
+            variants={name},
+            normalized_variants={normalized},
+        )
+        self._entries.append(entry)
+        return entry
+
+    def _merge_entry(
+        self,
+        entry: _PlayerEntry,
+        name: str,
+        normalized: str,
+        surname: str,
+        token_count: int,
+    ) -> _PlayerEntry:
+        entry.variants.add(name)
+        entry.normalized_variants.add(normalized)
+        if not entry.surname and surname:
+            entry.surname = surname
+        if token_count > entry.token_count or (
+            token_count == entry.token_count and len(name) > len(entry.display)
+        ):
+            entry.display = name
+            entry.token_count = token_count
+        return entry
+
+    def _rebuild_mappings(self) -> None:
+        self._variant_map = {}
+        self._normalized_map = {}
+        for entry in self._entries:
+            canonical = entry.display
+            for variant in entry.variants:
+                self._variant_map[variant] = canonical
+            for normalized in entry.normalized_variants:
+                self._normalized_map[normalized] = canonical
+
 
 LOBBY_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 LOBBY_CODE_LENGTH = 4
@@ -1102,43 +1300,74 @@ def historical_results():
     selected_player_raw = request.args.get("player", "").strip()
 
     season_number = raw_data.get("season_number")
-    fights = []
-    player_names = set()
+    raw_fights: list[dict] = []
+    all_raw_names: list[str] = []
 
     for tour in raw_data.get("tours", []):
         tour_number = tour.get("tour_number")
         for fight in tour.get("fights", []):
-            players = []
-            includes_selected = False
-
+            fight_players = []
             for player in fight.get("players", []):
-                name = (player.get("name") or "").strip()
+                name = _sanitize_player_name(player.get("name"))
                 total = player.get("total", 0) or 0
-                if name:
-                    player_names.add(name)
-                if selected_player_raw and name == selected_player_raw:
-                    includes_selected = True
-                players.append({"name": name, "total": total})
-
-            if not players:
-                continue
-
-            players.sort(key=lambda entry: entry["total"], reverse=True)
-
-            if selected_player_raw and not includes_selected:
-                continue
-
-            fights.append(
+                if not name or PlayerNameNormalizer.is_placeholder(name):
+                    continue
+                fight_players.append({"name": name, "total": total})
+                all_raw_names.append(name)
+            raw_fights.append(
                 {
                     "tour_number": tour_number,
                     "fight_code": fight.get("code"),
                     "letter": fight.get("letter"),
-                    "players": players,
+                    "players": fight_players,
                 }
             )
 
+    normalizer = PlayerNameNormalizer()
+    normalizer.build(all_raw_names)
+
+    selected_player_canonical = (
+        normalizer.canonicalize(selected_player_raw) if selected_player_raw else None
+    )
+    selected_player = selected_player_canonical or selected_player_raw
+
+    fights = []
+    player_names = set()
+
+    for fight in raw_fights:
+        normalized_players = []
+        includes_selected = False
+        for player in fight["players"]:
+            canonical_name = normalizer.canonicalize(player["name"])
+            if not canonical_name:
+                continue
+            total = player.get("total", 0) or 0
+            normalized_players.append({"name": canonical_name, "total": total})
+            player_names.add(canonical_name)
+            if selected_player_canonical and canonical_name == selected_player_canonical:
+                includes_selected = True
+
+        if not normalized_players:
+            continue
+
+        normalized_players.sort(key=lambda entry: entry["total"], reverse=True)
+
+        if selected_player_canonical and not includes_selected:
+            continue
+
+        fights.append(
+            {
+                "tour_number": fight.get("tour_number"),
+                "fight_code": fight.get("fight_code"),
+                "letter": fight.get("letter"),
+                "players": normalized_players,
+            }
+        )
+
     all_players = sorted(player_names, key=lambda value: value.lower())
-    selected_player = selected_player_raw
+    selected_player_found = (
+        bool(selected_player_canonical) and selected_player_canonical in player_names
+    )
 
     return render_template(
         "historical_results.html",
@@ -1146,7 +1375,7 @@ def historical_results():
         fights=fights,
         all_players=all_players,
         selected_player=selected_player,
-        selected_player_found=selected_player_raw in player_names,
+        selected_player_found=selected_player_found,
         player_count=len(all_players),
     )
 
