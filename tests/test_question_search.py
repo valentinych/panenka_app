@@ -1,21 +1,36 @@
 from app.question_store import QuestionStore
 
 
-def _sample_question(text: str, *, season: int = 1, row_number: int = 1) -> tuple:
+from typing import Optional
+
+
+def _sample_question(
+    text: str,
+    *,
+    season: int = 1,
+    row_number: int = 1,
+    value: int = 10,
+    author: Optional[str] = None,
+    editor: Optional[str] = None,
+    topic: Optional[str] = None,
+    taken_count: Optional[int] = None,
+    not_taken_count: Optional[int] = None,
+    comment: Optional[str] = None,
+) -> tuple:
     return (
         season,  # season_number
         row_number,  # row_number
         None,  # played_at_raw
         None,  # played_at
-        None,  # editor
-        None,  # topic
-        10,  # question_value
-        None,  # author
+        editor,  # editor
+        topic,  # topic
+        value,  # question_value
+        author,  # author
         text,  # question_text
         "Лидс Юнайтед",  # answer_text
-        None,  # taken_count
-        None,  # not_taken_count
-        None,  # comment
+        taken_count,  # taken_count
+        not_taken_count,  # not_taken_count
+        comment,  # comment
     )
 
 
@@ -74,3 +89,49 @@ def test_list_questions_and_stats(tmp_path):
 
     seasons = store.list_seasons()
     assert seasons == [1]
+
+
+def test_search_applies_structured_filters(tmp_path):
+    db_path = tmp_path / "filters.sqlite3"
+    store = QuestionStore(str(db_path))
+    store.replace_all(
+        [
+            _sample_question(
+                "Вопрос без фильтра",
+                season=1,
+                row_number=1,
+                value=50,
+                author="Автор А",
+                editor="Редактор А",
+            ),
+            _sample_question(
+                "Фильтрация по параметрам",
+                season=2,
+                row_number=2,
+                value=100,
+                author="Автор Б",
+                editor="Редактор Б",
+                taken_count=3,
+                not_taken_count=1,
+                comment="Комментарий",
+            ),
+        ]
+    )
+
+    results = store.search_questions(
+        limit=10,
+        season_number=2,
+        question_value=100,
+        author="Автор Б",
+        editor="Редактор Б",
+    )
+
+    assert len(results) == 1
+    row = results[0]
+    assert row["season_number"] == 2
+    assert row["question_value"] == 100
+    assert row["author"] == "Автор Б"
+    assert row["editor"] == "Редактор Б"
+    assert row["taken_count"] == 3
+    assert row["not_taken_count"] == 1
+    assert row["comment"] == "Комментарий"
