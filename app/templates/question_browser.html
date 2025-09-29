@@ -44,7 +44,7 @@
       <button type="submit" class="btn-primary">Search</button>
     </div>
     <div class="question-search__filters">
-      <label class="field">
+      <label class="field field--compact">
         <span class="field-label">Сезон</span>
         <select name="season">
           <option value="" {% if not season_filter %}selected{% endif %}>Все сезоны</option>
@@ -53,7 +53,7 @@
           {% endfor %}
         </select>
       </label>
-      <label class="field">
+      <label class="field field--compact">
         <span class="field-label">Номинал</span>
         <select name="value">
           <option value="" {% if not value_filter %}selected{% endif %}>Все номиналы</option>
@@ -62,7 +62,7 @@
           {% endfor %}
         </select>
       </label>
-      <label class="field">
+      <label class="field field--compact">
         <span class="field-label">Автор</span>
         <select name="author">
           <option value="" {% if not author_filter %}selected{% endif %}>Все авторы</option>
@@ -71,7 +71,7 @@
           {% endfor %}
         </select>
       </label>
-      <label class="field">
+      <label class="field field--compact">
         <span class="field-label">Редактор</span>
         <select name="editor">
           <option value="" {% if not editor_filter %}selected{% endif %}>Все редакторы</option>
@@ -80,6 +80,66 @@
           {% endfor %}
         </select>
       </label>
+    </div>
+    <div class="question-search__range-filters">
+      <div class="range-filter">
+        <span class="field-label">Взято</span>
+        <div class="dual-range" data-range-group="taken">
+          <input
+            type="range"
+            name="taken_min"
+            min="0"
+            max="{{ taken_max_bound }}"
+            value="{{ taken_min }}"
+            step="1"
+            data-role="min"
+          >
+          <input
+            type="range"
+            name="taken_max"
+            min="0"
+            max="{{ taken_max_bound }}"
+            value="{{ taken_max }}"
+            step="1"
+            data-role="max"
+          >
+          <div class="dual-range__track" aria-hidden="true"></div>
+        </div>
+        <div class="range-filter__values">
+          <span data-role="display-min">{{ taken_min }}</span>
+          <span class="range-filter__separator">—</span>
+          <span data-role="display-max">{{ taken_max }}</span>
+        </div>
+      </div>
+      <div class="range-filter">
+        <span class="field-label">Не взято</span>
+        <div class="dual-range" data-range-group="not-taken">
+          <input
+            type="range"
+            name="not_taken_min"
+            min="0"
+            max="{{ not_taken_max_bound }}"
+            value="{{ not_taken_min }}"
+            step="1"
+            data-role="min"
+          >
+          <input
+            type="range"
+            name="not_taken_max"
+            min="0"
+            max="{{ not_taken_max_bound }}"
+            value="{{ not_taken_max }}"
+            step="1"
+            data-role="max"
+          >
+          <div class="dual-range__track" aria-hidden="true"></div>
+        </div>
+        <div class="range-filter__values">
+          <span data-role="display-min">{{ not_taken_min }}</span>
+          <span class="range-filter__separator">—</span>
+          <span data-role="display-max">{{ not_taken_max }}</span>
+        </div>
+      </div>
     </div>
     {% if not ai_enabled %}
       <p class="helper-text">Set the <code>OPENAI_API_KEY</code> environment variable to unlock AI-powered search.</p>
@@ -137,8 +197,14 @@
               </td>
               <td>
                 {% if row.taken_count is not none or row.not_taken_count is not none %}
-                  <span class="table-muted">Взято:</span> {{ row.taken_count if row.taken_count is not none else "—" }}<br>
-                  <span class="table-muted">Не взято:</span> {{ row.not_taken_count if row.not_taken_count is not none else "—" }}
+                  <div class="taken-indicators">
+                    {% if row.taken_count is not none %}
+                      <span class="taken-indicator taken-indicator--positive">{{ row.taken_count }}</span>
+                    {% endif %}
+                    {% if row.not_taken_count is not none %}
+                      <span class="taken-indicator taken-indicator--negative">{{ row.not_taken_count }}</span>
+                    {% endif %}
+                  </div>
                 {% else %}
                   —
                 {% endif %}
@@ -153,4 +219,75 @@
     <p class="helper-text">No questions match this request yet. Try different keywords or broaden the search.</p>
   {% endif %}
 </section>
+{% endblock %}
+
+{% block extra_scripts %}
+  {{ super() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const groups = document.querySelectorAll('.dual-range');
+      groups.forEach(function (group) {
+        const minInput = group.querySelector('input[data-role="min"]');
+        const maxInput = group.querySelector('input[data-role="max"]');
+        const track = group.querySelector('.dual-range__track');
+        const container = group.parentElement;
+        const displayMin = container.querySelector('[data-role="display-min"]');
+        const displayMax = container.querySelector('[data-role="display-max"]');
+
+        if (!minInput || !maxInput || !track || !displayMin || !displayMax) {
+          return;
+        }
+
+        const update = function (changed) {
+          let minValue = parseInt(minInput.value || '0', 10);
+          let maxValue = parseInt(maxInput.value || '0', 10);
+
+          if (Number.isNaN(minValue)) {
+            minValue = 0;
+          }
+          if (Number.isNaN(maxValue)) {
+            maxValue = 0;
+          }
+
+          if (minValue > maxValue) {
+            if (changed === minInput) {
+              maxValue = minValue;
+              maxInput.value = String(maxValue);
+            } else {
+              minValue = maxValue;
+              minInput.value = String(minValue);
+            }
+          }
+
+          displayMin.textContent = String(minValue);
+          displayMax.textContent = String(maxValue);
+
+          const maxRange = Math.max(
+            Number(minInput.max) || 0,
+            Number(maxInput.max) || 0
+          );
+
+          const progressStart = maxRange > 0 ? (minValue / maxRange) * 100 : 0;
+          const progressEnd = maxRange > 0 ? (maxValue / maxRange) * 100 : 0;
+          const groupColor = getComputedStyle(group).getPropertyValue('--range-active').trim();
+          const accentColor = getComputedStyle(document.documentElement)
+            .getPropertyValue('--accent')
+            .trim() || '#ffb703';
+          const activeColor = groupColor || accentColor;
+          const trackColor = 'rgba(255, 255, 255, 0.18)';
+
+          track.style.background = `linear-gradient(to right, ${trackColor} ${progressStart}%, ${activeColor} ${progressStart}%, ${activeColor} ${progressEnd}%, ${trackColor} ${progressEnd}%)`;
+        };
+
+        minInput.addEventListener('input', function () {
+          update(minInput);
+        });
+        maxInput.addEventListener('input', function () {
+          update(maxInput);
+        });
+
+        update();
+      });
+    });
+  </script>
 {% endblock %}

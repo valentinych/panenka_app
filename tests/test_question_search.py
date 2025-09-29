@@ -135,3 +135,47 @@ def test_search_applies_structured_filters(tmp_path):
     assert row["taken_count"] == 3
     assert row["not_taken_count"] == 1
     assert row["comment"] == "Комментарий"
+
+
+def test_range_filters_and_bounds(tmp_path):
+    db_path = tmp_path / "ranges.sqlite3"
+    store = QuestionStore(str(db_path))
+    store.replace_all(
+        [
+            _sample_question("Базовый вопрос", row_number=1),
+            _sample_question(
+                "Высокий показатель взятий",
+                row_number=2,
+                taken_count=5,
+                not_taken_count=1,
+            ),
+            _sample_question(
+                "Высокий показатель невзятий",
+                row_number=3,
+                taken_count=2,
+                not_taken_count=4,
+            ),
+            _sample_question(
+                "Только взяли",
+                row_number=4,
+                taken_count=6,
+                not_taken_count=0,
+            ),
+        ]
+    )
+
+    taken_max, not_taken_max = store.get_taken_not_taken_bounds()
+    assert taken_max == 6
+    assert not_taken_max == 4
+
+    results = store.search_questions(limit=10, taken_min=2, taken_max=5)
+    assert {row["row_number"] for row in results} == {2, 3}
+
+    results = store.search_questions(limit=10, not_taken_min=1, not_taken_max=4)
+    assert {row["row_number"] for row in results} == {2, 3}
+
+    results = store.search_questions(limit=10, taken_min=3, taken_max=5, not_taken_max=1)
+    assert {row["row_number"] for row in results} == {2}
+
+    results = store.search_questions(limit=10, taken_max=0, not_taken_max=0)
+    assert {row["row_number"] for row in results} == {1}
