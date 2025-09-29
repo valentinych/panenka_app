@@ -67,6 +67,16 @@ body {
   letter-spacing: -0.04em;
 }
 
+.brand a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand a:hover,
+.brand a:focus-visible {
+  text-decoration: underline;
+}
+
 .subtitle {
   margin: 0.5rem 0 0;
   font-weight: 300;
