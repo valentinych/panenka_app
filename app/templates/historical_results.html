@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}История боёв · Panenka Live{% endblock %}
+{% block layout_modifier %} layout--full{% endblock %}
+{% block content %}
+<section class="card historical-card">
+  <header class="historical-header">
+    <div class="historical-intro">
+      <h2 class="card-title">История боёв</h2>
+      <p class="card-description">
+        {% if season_number %}
+          Сезон {{ season_number }}. Выберите игрока, чтобы увидеть его результаты в боях.
+        {% else %}
+          Выберите игрока, чтобы увидеть его результаты в боях.
+        {% endif %}
+      </p>
+    </div>
+    <form class="historical-filter" method="get">
+      <label class="field-label" for="player">Игрок</label>
+      <div class="historical-filter__controls">
+        <select id="player" name="player" onchange="this.form.submit()">
+          <option value="">Все игроки</option>
+          {% for player_name in all_players %}
+            <option value="{{ player_name }}" {% if player_name == selected_player %}selected{% endif %}>{{ player_name }}</option>
+          {% endfor %}
+        </select>
+        {% if selected_player %}
+          <a class="historical-reset" href="{{ url_for('main.historical_results') }}">Сбросить</a>
+        {% endif %}
+      </div>
+    </form>
+  </header>
+  <p class="historical-hint">
+    {% if selected_player and selected_player_found %}
+      Показаны бои с участием игрока {{ selected_player }}.
+    {% elif selected_player and not selected_player_found %}
+      Игрок «{{ selected_player }}» не найден в исторических данных.
+    {% else %}
+      Используйте фильтр, чтобы подсветить конкретного участника и посмотреть его результаты.
+    {% endif %}
+  </p>
+  {% if fights %}
+    <div class="historical-fight-list">
+      {% for fight in fights %}
+        <article class="historical-fight">
+          <header class="historical-fight__header">
+            <h3 class="historical-fight__title">Тур {{ fight.tour_number }}, бой {{ fight.letter or fight.fight_code }}</h3>
+            <p class="historical-fight__code">{{ fight.fight_code }}</p>
+          </header>
+          <table class="historical-table">
+            <thead>
+              <tr>
+                <th scope="col">Место</th>
+                <th scope="col">Игрок</th>
+                <th scope="col">Итог</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for player in fight.players %}
+                <tr class="{% if selected_player_found and player.name == selected_player %}historical-player--highlight{% endif %}">
+                  <td>{{ loop.index }}</td>
+                  <td>{{ player.name or '—' }}</td>
+                  <td>{{ player.total }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="historical-empty">
+      {% if selected_player and selected_player_found %}
+        Для выбранного игрока пока нет боёв.
+      {% elif selected_player and not selected_player_found %}
+        Измените фильтр, чтобы увидеть доступные результаты.
+      {% else %}
+        Исторические данные о боях появятся здесь.
+      {% endif %}
+    </p>
+  {% endif %}
+</section>
+{% endblock %}
