@@ -77,11 +77,10 @@ class QuestionStore:
         self._init_lock = threading.Lock()
         if enable_sample_data is None:
             flag = os.getenv("PANENKA_ENABLE_SAMPLE_DATA")
-            enable_sample_data = (
-                flag.lower() in {"1", "true", "yes", "on"}
-                if flag
-                else False
-            )
+            if flag is None:
+                enable_sample_data = True
+            else:
+                enable_sample_data = flag.lower() in {"1", "true", "yes", "on"}
         self._enable_sample_data = enable_sample_data
 
     @staticmethod
