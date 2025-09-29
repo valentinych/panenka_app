@@ -82,6 +82,33 @@ class QuestionStore:
             else:
                 enable_sample_data = flag.lower() in {"1", "true", "yes", "on"}
         self._enable_sample_data = enable_sample_data
+        auto_import_flag = os.getenv("PANENKA_AUTO_IMPORT")
+        if enable_sample_data is False:
+            self._auto_import_enabled = False
+        elif auto_import_flag is None:
+            self._auto_import_enabled = True
+        else:
+            self._auto_import_enabled = auto_import_flag.lower() in {
+                "1",
+                "true",
+                "yes",
+                "on",
+            }
+        self._auto_import_attempted = False
+        self._auto_import_lock = threading.Lock()
+        self._auto_import_last_attempt = 0.0
+        retry_env = os.getenv("PANENKA_AUTO_IMPORT_RETRY_SECONDS")
+        try:
+            retry_value = int(retry_env) if retry_env is not None else 300
+        except (TypeError, ValueError):
+            retry_value = 300
+        self._auto_import_retry_seconds = max(0, retry_value)
+        threshold_env = os.getenv("PANENKA_AUTO_IMPORT_MIN_ROWS")
+        try:
+            threshold_value = int(threshold_env) if threshold_env is not None else 10
+        except (TypeError, ValueError):
+            threshold_value = 10
+        self._auto_import_min_rows = max(1, threshold_value)
 
     @staticmethod
     def _normalize_postgres_url(url: str) -> str:
@@ -325,6 +352,67 @@ class QuestionStore:
         )
         logger.info("Seeded %d sample question(s) into Postgres store", len(rows))
 
+    def _count_questions(self) -> int:
+        query = "SELECT COUNT(*) AS total FROM questions"
+        if self._backend == "sqlite":
+            with self._connect_sqlite() as conn:
+                cur = conn.execute(query)
+                (total,) = cur.fetchone()
+                return int(total or 0)
+
+        if psycopg2 is None:  # pragma: no cover - defensive guard
+            raise RuntimeError("psycopg2 must be installed for PostgreSQL support.")
+
+        with self._postgres_connection() as conn:  # pragma: no cover - exercised in production
+            with conn.cursor() as cur:
+                cur.execute(query)
+                row = cur.fetchone() or {}
+        if isinstance(row, dict):
+            return int(row.get("total", 0) or 0)
+        return int(row[0] if row else 0)
+
+    def _maybe_auto_import(self) -> None:
+        if not self._auto_import_enabled:
+            return
+        if self._auto_import_attempted:
+            return
+        if self._auto_import_last_attempt and (
+            time.time() - self._auto_import_last_attempt
+        ) < self._auto_import_retry_seconds:
+            return
+
+        with self._auto_import_lock:
+            if self._auto_import_attempted:
+                return
+            if self._auto_import_last_attempt and (
+                time.time() - self._auto_import_last_attempt
+            ) < self._auto_import_retry_seconds:
+                return
+            self._auto_import_last_attempt = time.time()
+
+            try:
+                total = self._count_questions()
+            except Exception:  # pragma: no cover - defensive logging
+                logger.exception("Failed to count stored questions before auto-import.")
+                return
+
+            if total >= self._auto_import_min_rows:
+                self._auto_import_attempted = True
+                return
+
+            try:
+                from .question_importer import import_questions
+
+                logger.info(
+                    "Automatic question import triggered because only %d question(s) are stored",
+                    total,
+                )
+                import_questions()
+            except Exception:
+                logger.exception("Automatic question import failed.")
+            else:
+                self._auto_import_attempted = True
+
     def replace_all(self, records: Iterable[QuestionRecord]) -> int:
         """Replace all stored questions with the provided records."""
 
@@ -390,6 +478,7 @@ class QuestionStore:
                         ],
                         page_size=200,
                     )
+        self._auto_import_attempted = True
         return len(payloads)
 
 
@@ -402,6 +491,7 @@ class QuestionStore:
         """Return question rows filtered by the provided keywords."""
 
         self._initialize()
+        self._maybe_auto_import()
 
         normalized: List[str] = []
         seen = set()
@@ -501,6 +591,7 @@ class QuestionStore:
         """Return ordered question rows for table views."""
 
         self._initialize()
+        self._maybe_auto_import()
 
         limit = max(1, min(limit, 500))
         offset = max(0, offset)
@@ -553,6 +644,7 @@ class QuestionStore:
         """Return aggregate counts and timestamps for stored questions."""
 
         self._initialize()
+        self._maybe_auto_import()
 
         placeholder = "?" if self._backend == "sqlite" else "%s"
         sql = [
@@ -604,6 +696,7 @@ class QuestionStore:
         """Return available season numbers in ascending order."""
 
         self._initialize()
+        self._maybe_auto_import()
 
         query = "SELECT DISTINCT season_number FROM questions ORDER BY season_number ASC"
 
