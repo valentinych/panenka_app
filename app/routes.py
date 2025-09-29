@@ -1082,6 +1082,75 @@ def dashboard():
     )
 
 
+def _load_historical_results():
+    data_path = Path(current_app.root_path) / "static" / "data" / "season01_tour_results.json"
+    try:
+        with data_path.open(encoding="utf-8") as resource:
+            return json.load(resource)
+    except FileNotFoundError:
+        current_app.logger.warning("Historical data file not found: %s", data_path)
+    except json.JSONDecodeError as exc:
+        current_app.logger.error("Failed to parse historical data file %s: %s", data_path, exc)
+
+    return {"season_number": None, "tours": []}
+
+
+@bp.route("/historical-results")
+@login_required
+def historical_results():
+    raw_data = _load_historical_results()
+    selected_player_raw = request.args.get("player", "").strip()
+
+    season_number = raw_data.get("season_number")
+    fights = []
+    player_names = set()
+
+    for tour in raw_data.get("tours", []):
+        tour_number = tour.get("tour_number")
+        for fight in tour.get("fights", []):
+            players = []
+            includes_selected = False
+
+            for player in fight.get("players", []):
+                name = (player.get("name") or "").strip()
+                total = player.get("total", 0) or 0
+                if name:
+                    player_names.add(name)
+                if selected_player_raw and name == selected_player_raw:
+                    includes_selected = True
+                players.append({"name": name, "total": total})
+
+            if not players:
+                continue
+
+            players.sort(key=lambda entry: entry["total"], reverse=True)
+
+            if selected_player_raw and not includes_selected:
+                continue
+
+            fights.append(
+                {
+                    "tour_number": tour_number,
+                    "fight_code": fight.get("code"),
+                    "letter": fight.get("letter"),
+                    "players": players,
+                }
+            )
+
+    all_players = sorted(player_names, key=lambda value: value.lower())
+    selected_player = selected_player_raw
+
+    return render_template(
+        "historical_results.html",
+        season_number=season_number,
+        fights=fights,
+        all_players=all_players,
+        selected_player=selected_player,
+        selected_player_found=selected_player_raw in player_names,
+        player_count=len(all_players),
+    )
+
+
 @bp.route("/questions")
 @login_required
 def question_browser():

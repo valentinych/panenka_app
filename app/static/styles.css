@@ -991,6 +991,128 @@ select:focus {
   color: #f5f6ff;
 }
 
+.historical-card {
+  gap: 1.5rem;
+}
+
+.historical-header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+
+.historical-intro {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 32rem;
+}
+
+.historical-filter {
+  display: grid;
+  gap: 0.5rem;
+  min-width: min(320px, 100%);
+}
+
+.historical-filter__controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.historical-filter select {
+  min-width: 220px;
+}
+
+.historical-reset {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.historical-reset:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.historical-hint {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.historical-fight-list {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.historical-fight {
+  background: rgba(12, 21, 45, 0.85);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 1.25rem 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.historical-fight__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.historical-fight__title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.historical-fight__code {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.historical-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.historical-table th,
+.historical-table td {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+}
+
+.historical-table thead tr {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.historical-table tbody tr {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.historical-table tbody tr:first-child {
+  border-top: none;
+}
+
+.historical-player--highlight {
+  background: rgba(255, 107, 107, 0.12);
+}
+
+.historical-player--highlight td {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.historical-empty {
+  margin: 0;
+  color: var(--text-muted);
+}
+
 @media (max-width: 600px) {
   .card {
     padding: 1.75rem;
