@@ -43,6 +43,44 @@
       </label>
       <button type="submit" class="btn-primary">Search</button>
     </div>
+    <div class="question-search__filters">
+      <label class="field">
+        <span class="field-label">Сезон</span>
+        <select name="season">
+          <option value="" {% if not season_filter %}selected{% endif %}>Все сезоны</option>
+          {% for season in seasons %}
+            <option value="{{ season }}" {% if season_filter == season %}selected{% endif %}>Сезон {{ season }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="field">
+        <span class="field-label">Номинал</span>
+        <select name="value">
+          <option value="" {% if not value_filter %}selected{% endif %}>Все номиналы</option>
+          {% for value in values %}
+            <option value="{{ value }}" {% if value_filter == value %}selected{% endif %}>{{ value }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="field">
+        <span class="field-label">Автор</span>
+        <select name="author">
+          <option value="" {% if not author_filter %}selected{% endif %}>Все авторы</option>
+          {% for author in authors %}
+            <option value="{{ author }}" {% if author_filter == author %}selected{% endif %}>{{ author }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="field">
+        <span class="field-label">Редактор</span>
+        <select name="editor">
+          <option value="" {% if not editor_filter %}selected{% endif %}>Все редакторы</option>
+          {% for editor in editors %}
+            <option value="{{ editor }}" {% if editor_filter == editor %}selected{% endif %}>{{ editor }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
     {% if not ai_enabled %}
       <p class="helper-text">Set the <code>OPENAI_API_KEY</code> environment variable to unlock AI-powered search.</p>
     {% endif %}
@@ -68,6 +106,8 @@
             <th scope="col">Author</th>
             <th scope="col">Editor</th>
             <th scope="col">Played</th>
+            <th scope="col">Взято / Не взято</th>
+            <th scope="col">Комментарии</th>
           </tr>
         </thead>
         <tbody>
@@ -95,6 +135,15 @@
                   —
                 {% endif %}
               </td>
+              <td>
+                {% if row.taken_count is not none or row.not_taken_count is not none %}
+                  <span class="table-muted">Взято:</span> {{ row.taken_count if row.taken_count is not none else "—" }}<br>
+                  <span class="table-muted">Не взято:</span> {{ row.not_taken_count if row.not_taken_count is not none else "—" }}
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td class="question-table__text">{{ row.comment | default("—") | replace('\n', '<br>') | safe }}</td>
             </tr>
           {% endfor %}
         </tbody>

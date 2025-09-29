@@ -151,7 +151,24 @@ input[type="password"] {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+select {
+  padding: 0.75rem 1rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(12, 20, 43, 0.9);
+  color: inherit;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
 input:focus {
+  outline: none;
+  border-color: var(--border-glow);
+  box-shadow: 0 0 0 3px rgba(111, 123, 247, 0.35);
+}
+
+select:focus {
   outline: none;
   border-color: var(--border-glow);
   box-shadow: 0 0 0 3px rgba(111, 123, 247, 0.35);
@@ -277,6 +294,12 @@ input:focus {
   flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
+}
+
+.question-search__filters {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
 .checkbox {

@@ -487,6 +487,10 @@ class QuestionStore:
         keywords: Optional[Sequence[str]] = None,
         *,
         limit: int = 50,
+        season_number: Optional[int] = None,
+        question_value: Optional[int] = None,
+        author: Optional[str] = None,
+        editor: Optional[str] = None,
     ) -> List[Dict[str, object]]:
         """Return question rows filtered by the provided keywords."""
 
@@ -505,7 +509,7 @@ class QuestionStore:
         limit = max(1, min(limit, 200))
         placeholder = "?" if self._backend == "sqlite" else "%s"
         keyword_clauses: List[str] = []
-        params: List[object] = []
+        keyword_params: List[object] = []
         search_fields = [
             "question_text",
             "answer_text",
@@ -537,12 +541,34 @@ class QuestionStore:
                     keyword_conditions.append(
                         f"COALESCE({field}, '') LIKE {placeholder}"
                     )
-                    params.append(pattern)
+                    keyword_params.append(pattern)
 
             if keyword_conditions:
                 keyword_clauses.append("(" + " OR ".join(keyword_conditions) + ")")
 
         limit_placeholder = "?" if self._backend == "sqlite" else "%s"
+        filter_clauses: List[str] = []
+        filter_params: List[object] = []
+        normalized_author = author.strip() if author else None
+        normalized_editor = editor.strip() if editor else None
+
+        if season_number is not None:
+            filter_clauses.append(f"season_number = {placeholder}")
+            filter_params.append(season_number)
+        if question_value is not None:
+            filter_clauses.append(f"question_value = {placeholder}")
+            filter_params.append(question_value)
+        if normalized_author:
+            filter_clauses.append(
+                f"LOWER(COALESCE(author, '')) = LOWER({placeholder})"
+            )
+            filter_params.append(normalized_author)
+        if normalized_editor:
+            filter_clauses.append(
+                f"LOWER(COALESCE(editor, '')) = LOWER({placeholder})"
+            )
+            filter_params.append(normalized_editor)
+
         sql = [
             "SELECT",
             "    id,",
@@ -555,15 +581,24 @@ class QuestionStore:
             "    question_text,",
             "    answer_text,",
             "    played_at_raw,",
-            "    played_at",
+            "    played_at,",
+            "    comment,",
+            "    taken_count,",
+            "    not_taken_count",
             "FROM questions",
         ]
+        combined_clauses: List[str] = []
+        if filter_clauses:
+            combined_clauses.extend(filter_clauses)
         if keyword_clauses:
-            sql.append("WHERE " + " OR ".join(keyword_clauses))
+            combined_clauses.append("(" + " OR ".join(keyword_clauses) + ")")
+        if combined_clauses:
+            sql.append("WHERE " + " AND ".join(combined_clauses))
         sql.append("ORDER BY imported_at DESC")
         sql.append(f"LIMIT {limit_placeholder}")
 
         query = "\n".join(sql)
+        params = filter_params + keyword_params
         params_with_limit = params + [limit]
 
         if self._backend == "sqlite":
@@ -714,6 +749,90 @@ class QuestionStore:
                 cur.execute(query)
                 rows = cur.fetchall()
         return [int(row["season_number"]) for row in rows]
+
+    def list_question_values(self) -> List[int]:
+        """Return available question values sorted ascending."""
+
+        self._initialize()
+        self._maybe_auto_import()
+
+        query = (
+            "SELECT DISTINCT question_value FROM questions "
+            "WHERE question_value IS NOT NULL ORDER BY question_value ASC"
+        )
+
+        if self._backend == "sqlite":
+            with self._connect_sqlite() as conn:
+                cur = conn.execute(query)
+                rows = cur.fetchall()
+                return [int(row["question_value"]) for row in rows]
+
+        if psycopg2 is None:
+            raise RuntimeError("psycopg2 must be installed for PostgreSQL support.")
+
+        with self._postgres_connection() as conn:  # pragma: no cover - production
+            with conn.cursor() as cur:
+                cur.execute(query)
+                rows = cur.fetchall()
+        return [int(row["question_value"]) for row in rows]
+
+    def list_authors(self) -> List[str]:
+        """Return distinct author names sorted alphabetically."""
+
+        self._initialize()
+        self._maybe_auto_import()
+
+        if self._backend == "sqlite":
+            query = (
+                "SELECT DISTINCT author FROM questions "
+                "WHERE author IS NOT NULL AND TRIM(author) != '' ORDER BY author COLLATE NOCASE"
+            )
+            with self._connect_sqlite() as conn:
+                cur = conn.execute(query)
+                rows = cur.fetchall()
+                return [str(row["author"]) for row in rows]
+
+        if psycopg2 is None:
+            raise RuntimeError("psycopg2 must be installed for PostgreSQL support.")
+
+        query = (
+            "SELECT DISTINCT author FROM questions "
+            "WHERE author IS NOT NULL AND TRIM(author) != '' ORDER BY author ASC"
+        )
+        with self._postgres_connection() as conn:  # pragma: no cover - production
+            with conn.cursor() as cur:
+                cur.execute(query)
+                rows = cur.fetchall()
+        return [str(row["author"]) for row in rows]
+
+    def list_editors(self) -> List[str]:
+        """Return distinct editor names sorted alphabetically."""
+
+        self._initialize()
+        self._maybe_auto_import()
+
+        if self._backend == "sqlite":
+            query = (
+                "SELECT DISTINCT editor FROM questions "
+                "WHERE editor IS NOT NULL AND TRIM(editor) != '' ORDER BY editor COLLATE NOCASE"
+            )
+            with self._connect_sqlite() as conn:
+                cur = conn.execute(query)
+                rows = cur.fetchall()
+                return [str(row["editor"]) for row in rows]
+
+        if psycopg2 is None:
+            raise RuntimeError("psycopg2 must be installed for PostgreSQL support.")
+
+        query = (
+            "SELECT DISTINCT editor FROM questions "
+            "WHERE editor IS NOT NULL AND TRIM(editor) != '' ORDER BY editor ASC"
+        )
+        with self._postgres_connection() as conn:  # pragma: no cover - production
+            with conn.cursor() as cur:
+                cur.execute(query)
+                rows = cur.fetchall()
+        return [str(row["editor"]) for row in rows]
 
 
 question_store = QuestionStore()
