@@ -61,7 +61,6 @@
         <thead>
           <tr>
             <th scope="col">Season</th>
-            <th scope="col">Row</th>
             <th scope="col">Topic</th>
             <th scope="col">Value</th>
             <th scope="col">Question</th>
@@ -75,7 +74,6 @@
           {% for row in results %}
             <tr>
               <td>{{ row.season_number }}</td>
-              <td>{{ row.row_number }}</td>
               <td>{{ row.topic or "—" }}</td>
               <td>
                 {% if row.question_value %}
