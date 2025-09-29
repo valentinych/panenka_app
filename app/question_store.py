@@ -491,6 +491,10 @@ class QuestionStore:
         question_value: Optional[int] = None,
         author: Optional[str] = None,
         editor: Optional[str] = None,
+        taken_min: Optional[int] = None,
+        taken_max: Optional[int] = None,
+        not_taken_min: Optional[int] = None,
+        not_taken_max: Optional[int] = None,
     ) -> List[Dict[str, object]]:
         """Return question rows filtered by the provided keywords."""
 
@@ -568,6 +572,26 @@ class QuestionStore:
                 f"LOWER(COALESCE(editor, '')) = LOWER({placeholder})"
             )
             filter_params.append(normalized_editor)
+        if taken_min is not None:
+            filter_clauses.append(
+                f"COALESCE(taken_count, 0) >= {placeholder}"
+            )
+            filter_params.append(max(0, taken_min))
+        if taken_max is not None:
+            filter_clauses.append(
+                f"COALESCE(taken_count, 0) <= {placeholder}"
+            )
+            filter_params.append(max(0, taken_max))
+        if not_taken_min is not None:
+            filter_clauses.append(
+                f"COALESCE(not_taken_count, 0) >= {placeholder}"
+            )
+            filter_params.append(max(0, not_taken_min))
+        if not_taken_max is not None:
+            filter_clauses.append(
+                f"COALESCE(not_taken_count, 0) <= {placeholder}"
+            )
+            filter_params.append(max(0, not_taken_max))
 
         sql = [
             "SELECT",
@@ -672,6 +696,43 @@ class QuestionStore:
                 cur.execute(query, params)
                 rows = cur.fetchall()
         return [dict(row) for row in rows]
+
+    def get_taken_not_taken_bounds(self) -> Tuple[int, int]:
+        """Return the maximum taken and not-taken counts in the dataset."""
+
+        self._initialize()
+        self._maybe_auto_import()
+
+        sql = (
+            "SELECT"
+            "    MAX(COALESCE(taken_count, 0)) AS max_taken,"
+            "    MAX(COALESCE(not_taken_count, 0)) AS max_not_taken"
+            " FROM questions"
+        )
+
+        if self._backend == "sqlite":
+            with self._connect_sqlite() as conn:
+                cur = conn.execute(sql)
+                row = cur.fetchone()
+        else:  # pragma: no cover - production
+            if psycopg2 is None:
+                raise RuntimeError("psycopg2 must be installed for PostgreSQL support.")
+            with self._postgres_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(sql)
+                    row = cur.fetchone()
+
+        if not row:
+            return (0, 0)
+
+        if isinstance(row, dict):
+            taken_max = row.get("max_taken") or 0
+            not_taken_max = row.get("max_not_taken") or 0
+        else:
+            taken_max = row[0] or 0
+            not_taken_max = row[1] or 0
+
+        return (int(taken_max), int(not_taken_max))
 
     def get_question_stats(
         self, season_number: Optional[int] = None

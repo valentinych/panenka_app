@@ -10,6 +10,7 @@
   --accent: #ffb703;
   --accent-hover: #f4a261;
   --error: #ff6b6b;
+  --success: #4ade80;
 }
 
 * {
@@ -299,7 +300,120 @@ select:focus {
 .question-search__filters {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.field--compact {
+  min-width: 0;
+}
+
+.field--compact select,
+.field--compact input,
+.field--compact .field-label {
+  font-size: 0.95rem;
+}
+
+.field--compact select {
+  padding: 0.65rem 0.75rem;
+}
+
+.question-search__range-filters {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.range-filter {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.dual-range {
+  position: relative;
+  height: 2.25rem;
+  --range-active: var(--accent);
+}
+
+.dual-range[data-range-group="taken"] {
+  --range-active: var(--success);
+}
+
+.dual-range[data-range-group="not-taken"] {
+  --range-active: var(--error);
+}
+
+.dual-range input[type="range"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  background: none;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 100%;
+}
+
+.dual-range input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.dual-range input[type="range"]::-moz-range-thumb {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.dual-range input[type="range"]::-webkit-slider-runnable-track {
+  height: 100%;
+}
+
+.dual-range input[type="range"]::-moz-range-track {
+  height: 100%;
+  background: transparent;
+}
+
+.dual-range input[data-role="min"] {
+  z-index: 2;
+}
+
+.dual-range input[data-role="max"] {
+  z-index: 3;
+}
+
+.dual-range__track {
+  position: absolute;
+  inset: calc(50% - 0.175rem) 0;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+}
+
+.range-filter__values {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.range-filter__separator {
+  opacity: 0.6;
 }
 
 .checkbox {
@@ -338,6 +452,35 @@ select:focus {
   outline: none;
   border-color: var(--border-glow);
   box-shadow: 0 0 0 3px rgba(111, 123, 247, 0.35);
+}
+
+.taken-indicators {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.taken-indicator {
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0 0.5rem;
+  box-shadow: 0 0.2rem 0.6rem rgba(12, 20, 43, 0.35);
+}
+
+.taken-indicator--positive {
+  background: var(--success);
+  color: #052e16;
+}
+
+.taken-indicator--negative {
+  background: var(--error);
+  color: #450a0a;
 }
 
 .table-wrapper {
