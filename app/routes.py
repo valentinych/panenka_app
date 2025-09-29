@@ -1125,6 +1125,29 @@ def question_browser():
 
     combined_keywords = list(dict.fromkeys(manual_keywords + ai_keywords))
 
+    taken_bounds = question_store.get_taken_not_taken_bounds()
+    taken_max_bound, not_taken_max_bound = taken_bounds
+
+    taken_min = request.args.get("taken_min", type=int)
+    if taken_min is None or taken_min < 0:
+        taken_min = 0
+
+    taken_max = request.args.get("taken_max", type=int)
+    if taken_max is None:
+        taken_max = taken_max_bound
+    else:
+        taken_max = max(taken_min, min(taken_max, taken_max_bound))
+
+    not_taken_min = request.args.get("not_taken_min", type=int)
+    if not_taken_min is None or not_taken_min < 0:
+        not_taken_min = 0
+
+    not_taken_max = request.args.get("not_taken_max", type=int)
+    if not_taken_max is None:
+        not_taken_max = not_taken_max_bound
+    else:
+        not_taken_max = max(not_taken_min, min(not_taken_max, not_taken_max_bound))
+
     results = question_store.search_questions(
         combined_keywords,
         limit=limit_value,
@@ -1132,6 +1155,10 @@ def question_browser():
         question_value=value_filter,
         author=author_filter,
         editor=editor_filter,
+        taken_min=taken_min,
+        taken_max=taken_max,
+        not_taken_min=not_taken_min,
+        not_taken_max=not_taken_max,
     )
     result_count = len(results)
 
@@ -1160,6 +1187,12 @@ def question_browser():
         values=values,
         authors=authors,
         editors=editors,
+        taken_min=taken_min,
+        taken_max=taken_max,
+        not_taken_min=not_taken_min,
+        not_taken_max=not_taken_max,
+        taken_max_bound=taken_max_bound,
+        not_taken_max_bound=not_taken_max_bound,
     )
 
 
