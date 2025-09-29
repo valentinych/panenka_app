@@ -1029,8 +1029,11 @@ def buzzer_leave(code):
     return jsonify({"status": "ok"})
 
 
-@bp.route("/", methods=["GET", "POST"])
+@bp.route("/login", methods=["GET", "POST"])
 def login():
+    if session.get("user_id") and request.method == "GET":
+        return redirect(url_for("main.dashboard"))
+
     error = None
     if request.method == "POST":
         login_code = request.form.get("login", "").strip()
@@ -1056,6 +1059,17 @@ def login():
         flash(error, "error")
 
     return render_template("login.html")
+
+
+@bp.route("/", methods=["GET", "POST"])
+def root():
+    if request.method == "POST":
+        return login()
+
+    if session.get("user_id"):
+        return redirect(url_for("main.dashboard"))
+
+    return redirect(url_for("main.login"))
 
 
 @bp.route("/dashboard")
@@ -1179,6 +1193,7 @@ def question_table():
 
 
 @bp.route("/logout")
+@login_required
 def logout():
     session.clear()
     return redirect(url_for("main.login"))

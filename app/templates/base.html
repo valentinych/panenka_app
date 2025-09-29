@@ -13,7 +13,7 @@
     <div class="background"></div>
     <main class="layout{% block layout_modifier %}{% endblock %}">
       <header class="masthead">
-        <h1 class="brand">Panenka Live</h1>
+        <h1 class="brand"><a href="{{ url_for('main.dashboard') }}">Panenka Live</a></h1>
         <p class="subtitle">Interactive buzzer platform for quick-fire trivia.</p>
       </header>
       {% with messages = get_flashed_messages(with_categories=true) %}
