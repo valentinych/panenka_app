@@ -32,22 +32,22 @@ def test_search_matches_any_keyword(tmp_path):
     assert any("радебе" in row["question_text"].lower() for row in results)
 
 
-def test_sample_questions_seeded(tmp_path):
+def test_sample_questions_seeded_by_default(tmp_path):
     db_path = tmp_path / "seeded.sqlite3"
-    store = QuestionStore(str(db_path), enable_sample_data=True)
+    store = QuestionStore(str(db_path))
 
     results = store.search_questions(limit=5)
 
-    assert results, "Expected bundled sample questions to be available when enabled"
+    assert results, "Expected bundled sample questions to be available by default"
     combined_text = " ".join(
         row["question_text"].lower() for row in results if row["question_text"]
     )
-    assert "радебе" in combined_text
+    assert "паненка" in combined_text
 
 
-def test_sample_questions_disabled_by_default(tmp_path):
+def test_sample_questions_can_be_disabled(tmp_path):
     db_path = tmp_path / "empty.sqlite3"
-    store = QuestionStore(str(db_path))
+    store = QuestionStore(str(db_path), enable_sample_data=False)
 
     results = store.search_questions(limit=5)
 
