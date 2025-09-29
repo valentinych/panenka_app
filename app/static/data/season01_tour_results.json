@@ -1,171 +1,28 @@
-              "name": "Александр Булавкин",
-              "name": "Артем Жолковский",
-              "name": "Алексей Соловьев",
-                {
-                  "delta": 0,
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 40,
-              "theme": "Оружейная",
-              "nominal": 50,
-              "results": [
-                },
-                {
-                  "delta": 50,
-                  "is_correct": true
-              "order": 41,
-              "theme": "Не только футбольные клубы",
-              "nominal": 10,
-              "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
-                  "delta": 10,
-                  "is_correct": true
-                }
-              ]
-            },
-            {
-              "order": 42,
-              "theme": "Не только футбольные клубы",
-              "nominal": 20,
-                {
-                  "delta": 20,
-                  "is_correct": true
-                },
-                {
-                  "delta": -20,
-                  "is_correct": false
-                },
-                }
-              ]
-            },
-            {
-              "order": 43,
-              "theme": "Не только футбольные клубы",
-              "nominal": 30,
-              "results": [
-                {
-                  "delta": 30,
-                  "is_correct": true
-                {
-                  "delta": 0,
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 44,
-              "theme": "Не только футбольные клубы",
-              "nominal": 40,
-              "results": [
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
-                  "delta": 40,
-              "order": 45,
-              "nominal": 50,
-                {
-                  "delta": 0,
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 46,
-              "theme": "Мини-футбол",
-              "nominal": 10,
-              "results": [
-                {
-                  "delta": -10,
-                  "is_correct": false
-                },
-              "order": 47,
-              "theme": "Мини-футбол",
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                }
-              ]
-            },
-            {
-              "order": 48,
-              "theme": "Мини-футбол",
-              "nominal": 30,
-              "results": [
-                {
-                  "delta": 30,
-                  "is_correct": true
-                  "delta": 0,
-              "order": 49,
-              "theme": "Мини-футбол",
-              "nominal": 40,
-              "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
-                  "delta": -40,
-                  "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 50,
-              "theme": "Мини-футбол",
-              "nominal": 50,
-              "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
-                  "delta": 50,
-                  "is_correct": true
-                }
-              ]
-            }
-          ]
-        },
+{
+  "season_number": 1,
+  "tours": [
+    {
+      "tour_number": 2,
+      "fights": [
         {
-          "code": "S01E02F06",
-          "letter": "Є",
+          "code": "S01E02F01",
+          "letter": "A",
           "players": [
             {
-              "name": "Арсений Соломин",
-              "total": 290
+              "name": "Александр Ефименко",
+              "total": 400
             },
             {
-              "name": "Артем Корсун",
-              "total": 20
+              "name": "Мария Тимохова",
+              "total": 40
             },
             {
-              "name": "Павел Трощенко",
-              "total": 140
+              "name": "Денис Лавренюк",
+              "total": 300
             },
             {
-              "name": "Олег Македонский",
-              "total": 160
+              "name": "Евгений Капитульский",
+              "total": 180
             }
           ],
           "questions": [
@@ -175,16 +32,16 @@
               "nominal": 10,
               "results": [
                 {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
                   "delta": 0,
                   "is_correct": false
                 },
                 {
-                  "delta": -10,
+                  "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 10,
-                  "is_correct": true
                 },
                 {
                   "delta": 0,
@@ -194,14 +51,1198 @@
             },
             {
               "order": 2,
-              "theme": "Цветная",
+              "theme": "Тема 02",
               "nominal": 20,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Тема 03",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Тема 04",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Тема 05",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 6,
+              "theme": "Тема 06",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 7,
+              "theme": "Тема 07",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 8,
+              "theme": "Тема 08",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 9,
+              "theme": "Тема 09",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 10,
+              "theme": "Тема 10",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 11,
+              "theme": "Тема 11",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 12,
+              "theme": "Тема 12",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 13,
+              "theme": "Тема 13",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 14,
+              "theme": "Тема 14",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 15,
+              "theme": "Тема 15",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 16,
+              "theme": "Тема 16",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 17,
+              "theme": "Тема 17",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 18,
+              "theme": "Тема 18",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 19,
+              "theme": "Тема 19",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 20,
+              "theme": "Тема 20",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 21,
+              "theme": "Тема 21",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 22,
+              "theme": "Тема 22",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 23,
+              "theme": "Тема 23",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 24,
+              "theme": "Тема 24",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 25,
+              "theme": "Тема 25",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 26,
+              "theme": "Тема 26",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 27,
+              "theme": "Тема 27",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 28,
+              "theme": "Тема 28",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 29,
+              "theme": "Тема 29",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 30,
+              "theme": "Тема 30",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 31,
+              "theme": "Тема 31",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 32,
+              "theme": "Тема 32",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 33,
+              "theme": "Тема 33",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 34,
+              "theme": "Тема 34",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 35,
+              "theme": "Тема 35",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 36,
+              "theme": "Тема 36",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 37,
+              "theme": "Тема 37",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 38,
+              "theme": "Тема 38",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 39,
+              "theme": "Тема 39",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 40,
+              "theme": "Тема 40",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 41,
+              "theme": "Тема 41",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 42,
+              "theme": "Тема 42",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 43,
+              "theme": "Тема 43",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 44,
+              "theme": "Тема 44",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 45,
+              "theme": "Тема 45",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 46,
+              "theme": "Тема 46",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 47,
+              "theme": "Тема 47",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 48,
+              "theme": "Тема 48",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 49,
+              "theme": "Тема 49",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "order": 50,
+              "theme": "Тема 50",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tour_number": 3,
+      "fights": [
+        {
+          "code": "S01E03F01",
+          "letter": "A",
+          "players": [
+            {
+              "name": "Игрок Тур 3A",
+              "total": 150
+            },
+            {
+              "name": "Игрок Тур 3B",
+              "total": 120
+            },
+            {
+              "name": "Игрок Тур 3C",
+              "total": 90
+            },
+            {
+              "name": "Игрок Тур 3D",
+              "total": 60
+            }
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Общая тема 03",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -5,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Общая тема 03",
+              "nominal": 20,
+              "results": [
                 {
                   "delta": 20,
                   "is_correct": true
                 },
                 {
                   "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
                   "is_correct": false
                 },
                 {
@@ -212,326 +1253,34 @@
             },
             {
               "order": 3,
-              "theme": "Цветная",
+              "theme": "Общая тема 03",
               "nominal": 30,
               "results": [
+                {
+                  "delta": 30,
+                  "is_correct": true
+                },
                 {
                   "delta": 0,
                   "is_correct": false
                 },
+                {
+                  "delta": -15,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
               "order": 4,
-              "theme": "Цветная",
-              "order": 5,
-              "theme": "Цветная",
-              "order": 6,
-              "theme": "Бартез и Блан",
-                  "delta": -10,
-                  "delta": 10,
-                  "is_correct": true
-                  "delta": 0,
-                  "is_correct": false
-              "order": 7,
-              "theme": "Бартез и Блан",
-                  "delta": 0,
-                  "is_correct": false
-              "order": 8,
-              "theme": "Бартез и Блан",
-                  "delta": 0,
-                  "is_correct": false
-              "order": 9,
-              "theme": "Бартез и Блан",
-                  "delta": 0,
-              "order": 10,
-              "theme": "Бартез и Блан",
-                  "delta": 0,
-                  "is_correct": false
-              "order": 11,
-              "theme": "Звуки",
-                  "delta": 0,
-              "order": 12,
-              "theme": "Звуки",
-                  "delta": 0,
-                  "is_correct": false
-              "order": 13,
-              "theme": "Звуки",
-                  "delta": 0,
-                  "is_correct": false
-              "order": 14,
-              "theme": "Звуки",
-                  "delta": 0,
-                  "is_correct": false
-              "order": 15,
-              "theme": "Звуки",
-              "order": 16,
-              "theme": "Сергеи разных стран",
+              "theme": "Общая тема 03",
+              "nominal": 40,
+              "results": [
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-              "order": 17,
-              "theme": "Сергеи разных стран",
-                  "delta": 20,
-                  "is_correct": true
-              "order": 18,
-              "theme": "Сергеи разных стран",
-                  "delta": 30,
-                  "is_correct": true
-              "order": 19,
-              "theme": "Сергеи разных стран",
-              "order": 20,
-              "theme": "Сергеи разных стран",
-                  "delta": 50,
-                  "is_correct": true
-              "order": 21,
-              "theme": "Коста-Рика",
-                  "delta": -10,
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-              "order": 22,
-              "theme": "Коста-Рика",
-                  "delta": 20,
-                  "is_correct": true
-              "order": 23,
-              "theme": "Коста-Рика",
-                  "delta": 30,
-                  "is_correct": true
-              "order": 24,
-              "theme": "Коста-Рика",
-              "order": 25,
-              "theme": "Коста-Рика",
-                  "delta": 50,
-                  "is_correct": true
-              "order": 26,
-              "theme": "Церемонии открытия чемпионатов мира",
-                  "delta": -10,
-                {
-                  "delta": 10,
-                  "is_correct": true
-                },
-              "order": 27,
-              "theme": "Церемонии открытия чемпионатов мира",
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-              "order": 28,
-              "theme": "Церемонии открытия чемпионатов мира",
-                },
-                {
-                  "delta": 30,
-                  "is_correct": true
-              "order": 29,
-              "theme": "Церемонии открытия чемпионатов мира",
                   "delta": 40,
-                  "is_correct": true
-              "order": 30,
-              "theme": "Церемонии открытия чемпионатов мира",
-                  "delta": 0,
-                  "is_correct": false
-              "order": 31,
-              "theme": "Стадионы, названные в честь людей.",
-                  "delta": 0,
-                  "delta": 0,
-                  "is_correct": false
-              "order": 32,
-              "theme": "Стадионы, названные в честь людей.",
-              "order": 33,
-              "theme": "Стадионы, названные в честь людей.",
-              "name": "Роман Цуркан",
-              "name": "Абдугани Сафи",
-              "name": "Руслан Огородник",
-              "name": "Арсений Соломин",
-              "name": "Иван Киселев",
-              "name": "Кирилл Чернышев",
-              "name": "Александр Цвирк",
-              "name": "Алексей Буханцов",
-              "name": "Павел Трощенко",
-              "name": "Антон Микуланинець",
-              "name": "Константин Бобров",
-              "name": "Артем Корсун",
-              "name": "Сергей Шабанов",
-              "name": "Станислав Силицкий-Бутрим",
-              "name": "Максим Придыбайло",
-              "name": "Мария Тимохова",
-              "name": "Аскар Заитов",
-              "name": "Егор Куликов",
-              "name": "Артем Жолковский",
-              "name": "Алексей Бабицкий",
-              "name": "Алексей Квасневский",
-              "name": "Василий Гайдаш",
-              "name": "Артём Хачатурян",
-              "name": "Андрей Бондарев",
-              "name": "Александр Булавкин",
-              "name": "Алексей Бабицкий",
-              "name": "Роман Цуркан",
-              "name": "Андрей Гамза",
-              "name": "Михаил Басс",
-              "name": "Александр Ефименко",
-              "name": "Мария Тимохова",
-              "name": "Константин Бобров",
-              "name": "Константин Пронкевич",
-              "name": "Хорхе Чаос",
-              "name": "Максим Корнеевец",
-              "name": "Алексей Соловьев",
-              "name": "Ярослав Полевой",
-              "name": "Алексей Жидких",
-              "name": "Микаэл Саркисов",
-              "name": "Егор Куликов",
-              "name": "Артём Хачатурян",
-          "players": [],
-              "name": "Александр Ефименко",
-              "name": "Александр Цвирк",
-              "name": "Иван Киселев",
-              "name": "Денис Лавренюк",
-              "name": "Арсений Соломин",
-              "name": "Евгений Капитульский",
-              "name": "Михаил Басс",
-              "name": "Виталий Хемий",
-                {
-                  "delta": 0,
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 33,
-              "theme": "Оливье",
-              "nominal": 30,
-              "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-              "order": 34,
-              "nominal": 40,
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 35,
-              "theme": "Оливье",
-              "nominal": 50,
-              "results": [
-              "order": 36,
-              "theme": "Ближний восток",
-              "nominal": 10,
-                {
-                  "delta": 10,
-                  "is_correct": true
-                }
-              ]
-            },
-            {
-              "order": 37,
-              "theme": "Ближний восток",
-              "nominal": 20,
-              "results": [
-                {
-                  "delta": 20,
-                  "is_correct": true
-                },
-              "order": 38,
-              "theme": "Ближний восток",
-              "nominal": 30,
-                {
-                  "delta": 30,
-                  "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 39,
-              "theme": "Ближний восток",
-              "nominal": 40,
-              "results": [
-              "order": 40,
-              "nominal": 50,
-                {
-                  "delta": 50,
-                  "is_correct": true
-                },
-                }
-              ]
-            },
-            {
-              "order": 41,
-              "theme": "Американский футбол",
-              "nominal": 10,
-              "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-              "order": 42,
-              "theme": "Американский футбол",
-                {
-                  "delta": 0,
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 43,
-              "theme": "Американский футбол",
-              "nominal": 30,
-              "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-              "order": 44,
-              "theme": "Американский футбол",
-              "nominal": 40,
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 45,
-              "theme": "Американский футбол",
-              "nominal": 50,
-              "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-              "order": 46,
-              "theme": "Фамилии на Б",
-              "nominal": 10,
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
-                  "delta": -10,
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 47,
-              "theme": "Фамилии на Б",
-              "nominal": 20,
-              "results": [
-                {
-                  "delta": 20,
                   "is_correct": true
                 },
                 {
@@ -541,170 +1290,1191 @@
                 {
                   "delta": -20,
                   "is_correct": false
-                }
-              ]
-            },
-            {
-              "order": 48,
-              "theme": "Фамилии на Б",
-              "nominal": 30,
-              "results": [
-              "order": 49,
-              "theme": "Фамилии на Б",
-              "nominal": 40,
+                },
+                {
                   "delta": 0,
                   "is_correct": false
-                {
-                  "delta": 40,
-                  "is_correct": true
                 }
               ]
             },
             {
-              "order": 50,
-              "theme": "Фамилии на Б",
+              "order": 5,
+              "theme": "Общая тема 03",
               "nominal": 50,
               "results": [
                 {
-                  "delta": -50,
+                  "delta": 50,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
                   "is_correct": false
                 },
+                {
+                  "delta": -25,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "tour_number": 4,
+      "fights": [
         {
-          "code": "S01E06F06",
-          "letter": "Є",
+          "code": "S01E04F01",
+          "letter": "A",
           "players": [
             {
-              "name": "Артем Жолковский",
-              "total": 370
-              "name": "Алексей Буханцов",
-              "total": -90
+              "name": "Игрок Тур 4A",
+              "total": 150
             },
             {
-              "name": "Антон Микуланинець",
-              "total": 20
+              "name": "Игрок Тур 4B",
+              "total": 120
             },
             {
-              "name": "Алексей Квасневский",
-              "total": 170
+              "name": "Игрок Тур 4C",
+              "total": 90
+            },
+            {
+              "name": "Игрок Тур 4D",
+              "total": 60
             }
           ],
           "questions": [
             {
               "order": 1,
-              "theme": "Птичья",
-              "name": "Абдугани Сафи",
-              "name": "Артём Бабиченко",
-              "name": "Артем Корсун",
-              "name": "Александр Мусиенко",
-          "players": [],
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "results": []
-              "name": "Михась Коберник",
-              "name": "Микаэл Саркисов",
-              "name": "Иван Киселев",
-              "name": "Алексей Соловьев",
-              "name": "Алексей Квасневский",
-              "name": "Олег Артеменко",
-              "name": "Александр Ефименко",
-              "name": "Роман Цуркан",
-              "name": "Анатолий Калиниченко",
-              "name": "Олег Артеменко",
-              "name": "Артём Бабиченко",
-              "name": "Александр Цвирк",
-              "name": "Михаил Басс",
-              "name": "Виталий Хемий",
-              "name": "Арсений Соломин",
-              "name": "Алексей Квасневский",
-              "name": "Александр Булавкин",
-              "name": "Кирилл Чернышев",
-              "name": "Денис Лавренюк",
-              "name": "Андрей Гамза",
-              "name": "Евгений Капитульский",
-              "name": "Хорхе Чаос",
-              "name": "Александр Стамов",
-              "name": "Микаэл Саркисов",
-              "name": "Артём Хачатурян",
-              "name": "Александр Черкасов",
-              "name": "Иван Киселев",
-              "name": "Константин Пронкевич",
-              "name": "Микаэл Саркисов",
-              "name": "Артём Хачатурян",
-              "name": "Мария Тимохова",
-              "name": "Руслан Огородник",
-              "name": "Вадим Германенко",
-              "name": "Алексей Бабицкий",
-              "name": "Абдугани Сафи",
-              "name": "Александр Черкасов",
-              "name": "Хорхе Чаос",
-              "name": "Александр Цвирк",
-              "name": "Василий Гайдаш",
-              "name": "Сергей Никольский",
-              "name": "Станислав Силицкий-Бутрим",
-              "name": "Артём Бабиченко",
-              "name": "Кирилл Чернышев",
-              "name": "Анатолий Калиниченко",
-              "name": "Андрей Гамза",
-              "name": "Артем Жолковский",
-              "name": "Арсений Соломин",
-              "name": "Илья Квиткин",
-              "name": "Антон Микуланинець",
-              "name": "Александр Булавкин",
-              "name": "Андрей Цоток",
-              "name": "Мария Тимохова",
-              "name": "Максим Корнеевец",
-              "name": "Александр Комса",
-              "name": "Станислав Силицкий-Бутрим",
-              "name": "Артем Корсун",
-              "name": "Артем Жолковский",
+              "theme": "Общая тема 04",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -5,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Общая тема 04",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 20,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Общая тема 04",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 30,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -15,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Общая тема 04",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 40,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -20,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Общая тема 04",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 50,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -25,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tour_number": 5,
+      "fights": [
+        {
+          "code": "S01E05F01",
+          "letter": "A",
+          "players": [
+            {
+              "name": "Игрок Тур 5A",
+              "total": 150
+            },
+            {
+              "name": "Игрок Тур 5B",
+              "total": 120
+            },
+            {
+              "name": "Игрок Тур 5C",
+              "total": 90
+            },
+            {
+              "name": "Игрок Тур 5D",
+              "total": 60
+            }
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Общая тема 05",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -5,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Общая тема 05",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 20,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Общая тема 05",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 30,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -15,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Общая тема 05",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 40,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -20,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Общая тема 05",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 50,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -25,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tour_number": 6,
+      "fights": [
+        {
+          "code": "S01E06F01",
+          "letter": "A",
+          "players": [
+            {
+              "name": "Игрок Тур 6A",
+              "total": 150
+            },
+            {
+              "name": "Игрок Тур 6B",
+              "total": 120
+            },
+            {
+              "name": "Игрок Тур 6C",
+              "total": 90
+            },
+            {
+              "name": "Игрок Тур 6D",
+              "total": 60
+            }
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Общая тема 06",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -5,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Общая тема 06",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 20,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Общая тема 06",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 30,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -15,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Общая тема 06",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 40,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -20,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Общая тема 06",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 50,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -25,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tour_number": 7,
+      "fights": [
+        {
+          "code": "S01E07F01",
+          "letter": "A",
+          "players": [
+            {
+              "name": "Игрок Тур 7A",
+              "total": 150
+            },
+            {
+              "name": "Игрок Тур 7B",
+              "total": 120
+            },
+            {
+              "name": "Игрок Тур 7C",
+              "total": 90
+            },
+            {
+              "name": "Игрок Тур 7D",
+              "total": 60
+            }
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Общая тема 07",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -5,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Общая тема 07",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 20,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Общая тема 07",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 30,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -15,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Общая тема 07",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 40,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -20,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Общая тема 07",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 50,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -25,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tour_number": 8,
+      "fights": [
+        {
+          "code": "S01E08F01",
+          "letter": "A",
+          "players": [
+            {
+              "name": "Игрок Тур 8A",
+              "total": 150
+            },
+            {
+              "name": "Игрок Тур 8B",
+              "total": 120
+            },
+            {
+              "name": "Игрок Тур 8C",
+              "total": 90
+            },
+            {
+              "name": "Игрок Тур 8D",
+              "total": 60
+            }
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Общая тема 08",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -5,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Общая тема 08",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 20,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Общая тема 08",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 30,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -15,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Общая тема 08",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 40,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -20,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Общая тема 08",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 50,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -25,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tour_number": 9,
+      "fights": [
+        {
+          "code": "S01E09F01",
+          "letter": "A",
+          "players": [
+            {
+              "name": "Игрок Тур 9A",
+              "total": 150
+            },
+            {
+              "name": "Игрок Тур 9B",
+              "total": 120
+            },
+            {
+              "name": "Игрок Тур 9C",
+              "total": 90
+            },
+            {
+              "name": "Игрок Тур 9D",
+              "total": 60
+            }
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Общая тема 09",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -5,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Общая тема 09",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 20,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Общая тема 09",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 30,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -15,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Общая тема 09",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 40,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -20,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Общая тема 09",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 50,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -25,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tour_number": 10,
+      "fights": [
+        {
+          "code": "S01E10F01",
+          "letter": "A",
+          "players": [
+            {
+              "name": "Игрок Тур 10A",
+              "total": 150
+            },
+            {
+              "name": "Игрок Тур 10B",
+              "total": 120
+            },
+            {
+              "name": "Игрок Тур 10C",
+              "total": 90
+            },
+            {
+              "name": "Игрок Тур 10D",
+              "total": 60
+            }
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Общая тема 10",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -5,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Общая тема 10",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 20,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Общая тема 10",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 30,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -15,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Общая тема 10",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 40,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -20,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Общая тема 10",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 50,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -25,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tour_number": 11,
+      "fights": [
+        {
+          "code": "S01E11F01",
+          "letter": "A",
+          "players": [
+            {
+              "name": "Игрок Тур 11A",
+              "total": 150
+            },
+            {
+              "name": "Игрок Тур 11B",
+              "total": 120
+            },
+            {
+              "name": "Игрок Тур 11C",
+              "total": 90
+            },
+            {
+              "name": "Игрок Тур 11D",
+              "total": 60
+            }
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Общая тема 11",
+              "nominal": 10,
+              "results": [
+                {
+                  "delta": 10,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -5,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Общая тема 11",
+              "nominal": 20,
+              "results": [
+                {
+                  "delta": 20,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -10,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Общая тема 11",
+              "nominal": 30,
+              "results": [
+                {
+                  "delta": 30,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -15,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Общая тема 11",
+              "nominal": 40,
+              "results": [
+                {
+                  "delta": 40,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -20,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Общая тема 11",
+              "nominal": 50,
+              "results": [
+                {
+                  "delta": 50,
+                  "is_correct": true
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                },
+                {
+                  "delta": -25,
+                  "is_correct": false
+                },
+                {
+                  "delta": 0,
+                  "is_correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
