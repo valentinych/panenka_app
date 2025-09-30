@@ -43,7 +43,7 @@ DEFAULT_FALLBACK_USERS = [
     {
         "login": "888",
         "password": "6969",
-        "name": "Integration Test Player",
+        "name": "Тестовый игрок",
     }
 ]
 
@@ -80,6 +80,8 @@ _MANUAL_NAME_OVERRIDES = {
     "максим к.": "Максим Корнеевец",
     "станислав с-б.": "Станислав Силицкий-Бутрим",
     "хорхе": "Хорхе Чаос",
+    "михась": "Михась Коберник",
+    "шабанов": "Сергей Шабанов",
 }
 _MANUAL_OVERRIDE_TARGETS = set(_MANUAL_NAME_OVERRIDES.values())
 
