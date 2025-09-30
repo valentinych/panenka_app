@@ -1,0 +1,205 @@
+[
+  {
+    "index": 1,
+    "name": "Sheet12",
+    "gid": "1722898810",
+    "filename": "01_sheet12.csv",
+    "rows": 20
+  },
+  {
+    "index": 2,
+    "name": "Sheet17",
+    "gid": "154335496",
+    "filename": "02_sheet17.csv",
+    "rows": 139
+  },
+  {
+    "index": 3,
+    "name": "All Clashes",
+    "gid": "1000793414",
+    "filename": "03_all_clashes.csv",
+    "rows": 72
+  },
+  {
+    "index": 4,
+    "name": "ALL ANSWERS",
+    "gid": "319432120",
+    "filename": "04_all_answers.csv",
+    "rows": 184
+  },
+  {
+    "index": 5,
+    "name": "plusstat",
+    "gid": "452083829",
+    "filename": "05_plusstat.csv",
+    "rows": 867
+  },
+  {
+    "index": 6,
+    "name": "AllSeason2",
+    "gid": "1558886381",
+    "filename": "06_allseason2.csv",
+    "rows": 887
+  },
+  {
+    "index": 7,
+    "name": "Sheet15",
+    "gid": "704422836",
+    "filename": "07_sheet15.csv",
+    "rows": 67
+  },
+  {
+    "index": 8,
+    "name": "Sheet16",
+    "gid": "1408720361",
+    "filename": "08_sheet16.csv",
+    "rows": 34
+  },
+  {
+    "index": 9,
+    "name": "Градиентное",
+    "gid": "449325805",
+    "filename": "09_gradientnoe.csv",
+    "rows": 53
+  },
+  {
+    "index": 10,
+    "name": "AVSQ",
+    "gid": "2002691578",
+    "filename": "10_avsq.csv",
+    "rows": 651
+  },
+  {
+    "index": 11,
+    "name": "Clashes",
+    "gid": "30717354",
+    "filename": "11_clashes.csv",
+    "rows": 20
+  },
+  {
+    "index": 12,
+    "name": "Tour1",
+    "gid": "761458335",
+    "filename": "12_tour1.csv",
+    "rows": 80
+  },
+  {
+    "index": 13,
+    "name": "Tour2",
+    "gid": "691410210",
+    "filename": "13_tour2.csv",
+    "rows": 80
+  },
+  {
+    "index": 14,
+    "name": "Tour3",
+    "gid": "734605540",
+    "filename": "14_tour3.csv",
+    "rows": 80
+  },
+  {
+    "index": 15,
+    "name": "Tour4",
+    "gid": "1618926142",
+    "filename": "15_tour4.csv",
+    "rows": 80
+  },
+  {
+    "index": 16,
+    "name": "Tour5",
+    "gid": "1677277061",
+    "filename": "16_tour5.csv",
+    "rows": 80
+  },
+  {
+    "index": 17,
+    "name": "Tour6",
+    "gid": "631999382",
+    "filename": "17_tour6.csv",
+    "rows": 80
+  },
+  {
+    "index": 18,
+    "name": "Tour7",
+    "gid": "563516201",
+    "filename": "18_tour7.csv",
+    "rows": 80
+  },
+  {
+    "index": 19,
+    "name": "Tour8",
+    "gid": "1593108422",
+    "filename": "19_tour8.csv",
+    "rows": 80
+  },
+  {
+    "index": 20,
+    "name": "Tour9",
+    "gid": "1002745210",
+    "filename": "20_tour9.csv",
+    "rows": 80
+  },
+  {
+    "index": 21,
+    "name": "Tour10",
+    "gid": "1495556147",
+    "filename": "21_tour10.csv",
+    "rows": 80
+  },
+  {
+    "index": 22,
+    "name": "Tour11",
+    "gid": "1270170723",
+    "filename": "22_tour11.csv",
+    "rows": 80
+  },
+  {
+    "index": 23,
+    "name": "Tour12",
+    "gid": "2068036157",
+    "filename": "23_tour12.csv",
+    "rows": 80
+  },
+  {
+    "index": 24,
+    "name": "Tour13",
+    "gid": "642424812",
+    "filename": "24_tour13.csv",
+    "rows": 80
+  },
+  {
+    "index": 25,
+    "name": "Tour14",
+    "gid": "256388272",
+    "filename": "25_tour14.csv",
+    "rows": 93
+  },
+  {
+    "index": 26,
+    "name": "Треш",
+    "gid": "187778100",
+    "filename": "26_tresh.csv",
+    "rows": 92
+  },
+  {
+    "index": 27,
+    "name": "Sheet2",
+    "gid": "1644567170",
+    "filename": "27_sheet2.csv",
+    "rows": 27
+  },
+  {
+    "index": 28,
+    "name": "AnTour1",
+    "gid": "0",
+    "filename": "28_antour1.csv",
+    "rows": 80
+  },
+  {
+    "index": 29,
+    "name": "Sheet3",
+    "gid": "1258271725",
+    "filename": "29_sheet3.csv",
+    "rows": 68
+  }
+]
