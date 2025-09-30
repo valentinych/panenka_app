@@ -28,7 +28,7 @@ class AuthJsonLoginTestCase(unittest.TestCase):
             {
                 "login": LOGIN_CODE,
                 "password": PASSWORD_CODE,
-                "name": "Integration Test Player",
+                "name": "Тестовый игрок",
             }
         ]
     }
@@ -99,7 +99,7 @@ class AuthJsonLoginTestCase(unittest.TestCase):
                 {
                     "login": 123,
                     "password": 4567,
-                    "name": "Numeric Player",
+                    "name": "Числовой игрок",
                 }
             ]
         }
@@ -112,7 +112,7 @@ class AuthJsonLoginTestCase(unittest.TestCase):
 
         self.assertIn("123", credentials)
         self.assertEqual(credentials["123"]["password"], "4567")
-        self.assertEqual(credentials["123"]["name"], "Numeric Player")
+        self.assertEqual(credentials["123"]["name"], "Числовой игрок")
 
 
 if __name__ == "__main__":  # pragma: no cover - allows running file directly
