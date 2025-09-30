@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import time
 from dataclasses import dataclass
+import re
 from pathlib import Path
 from typing import Optional, Sequence
 
@@ -49,12 +50,15 @@ class Season2Importer:
         manifest_path: Path,
         season_number: int = 2,
         source: str = "season02_csv_snapshot",
+        roster_path: Optional[Path] = None,
     ) -> None:
         self._store = store
         self._data_root = Path(data_root)
         self._manifest_path = Path(manifest_path)
         self._season_number = season_number
         self._source = source
+        self._configured_roster_path = Path(roster_path) if roster_path else None
+        self._roster_lookup: dict[tuple[int, int], list[str]] = {}
 
     # Public API -----------------------------------------------------
 
@@ -71,6 +75,8 @@ class Season2Importer:
             selected_tours = available_tours
         else:
             selected_tours = sorted({int(tour) for tour in tours})
+
+        self._roster_lookup = self._load_roster_mapping()
 
         summary = Season2ImportSummary()
         summary.tours_attempted = len(selected_tours)
@@ -254,9 +260,17 @@ class Season2Importer:
         fight: Season2Fight,
     ) -> list[int]:
         participant_ids: list[int] = []
+        roster = self._roster_lookup.get((tour_number, fight.ordinal))
+        seen_normalized: set[str] = set()
         for seat_index, total in enumerate(fight.player_totals):
-            display_name = f"Seat {seat_index + 1}"
-            normalized_name = self._normalize_placeholder_name(tour_number, fight.ordinal, seat_index)
+            display_name = self._resolve_display_name(roster, seat_index)
+            normalized_name = self._compute_normalized_name(
+                display_name,
+                tour_number,
+                fight.ordinal,
+                seat_index,
+                seen_normalized,
+            )
             cursor = conn.execute(
                 (
                     "INSERT INTO fight_participants (fight_id, display_name, normalized_name, seat_index, total_score) "
@@ -316,6 +330,148 @@ class Season2Importer:
 
     def _normalize_placeholder_name(self, tour_number: int, fight_ordinal: int, seat_index: int) -> str:
         return f"s{self._season_number:02d}e{tour_number:02d}f{fight_ordinal:02d}_seat{seat_index + 1}"
+
+    def _load_roster_mapping(self) -> dict[tuple[int, int], list[str]]:
+        path = self._configured_roster_path
+        if path is None:
+            for candidate in (
+                self._data_root / "rosters.json",
+                self._data_root.parent / "rosters.json",
+            ):
+                if candidate.exists():
+                    path = candidate
+                    break
+        if path is None or not path.exists():
+            return {}
+
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            return {}
+
+        mapping: dict[tuple[int, int], list[str]] = {}
+
+        def _add_entry(tour: int, fight: int, roster: Sequence[str]) -> None:
+            sanitized = [self._sanitize_display_name(name) for name in roster]
+            sanitized = [name for name in sanitized if name]
+            if sanitized:
+                mapping[(tour, fight)] = sanitized
+
+        def _parse_fight_code(value: str) -> tuple[int, int] | None:
+            code = value.strip().lower()
+            if not code:
+                return None
+            match = re.match(r"s?\d{0,2}e?(?P<tour>\d{1,2})f?(?P<fight>\d{1,2})", code)
+            if match:
+                return int(match.group("tour")), int(match.group("fight"))
+            match = re.match(r"(?P<tour>\d{1,2})[x_:/-](?P<fight>\d{1,2})", code)
+            if match:
+                return int(match.group("tour")), int(match.group("fight"))
+            return None
+
+        def _coerce_roster(value) -> list[str]:
+            if isinstance(value, list):
+                return [str(item) for item in value]
+            if isinstance(value, dict):
+                players = value.get("players") or value.get("roster") or []
+                if isinstance(players, list):
+                    return [str(item) for item in players]
+            if isinstance(value, str):
+                return [part.strip() for part in value.split(",") if part.strip()]
+            return []
+
+        if isinstance(data, dict):
+            for key, value in data.items():
+                parsed = None
+                try:
+                    tour = int(key)
+                except (TypeError, ValueError):
+                    parsed = _parse_fight_code(str(key))
+                if parsed:
+                    roster = _coerce_roster(value)
+                    if roster:
+                        _add_entry(parsed[0], parsed[1], roster)
+                    continue
+                if not isinstance(value, dict):
+                    continue
+                try:
+                    tour = int(key)
+                except (TypeError, ValueError):
+                    continue
+                for inner_key, roster_value in value.items():
+                    parsed = _parse_fight_code(str(inner_key))
+                    if parsed:
+                        roster = _coerce_roster(roster_value)
+                        if roster:
+                            _add_entry(parsed[0], parsed[1], roster)
+                        continue
+                    try:
+                        fight = int(inner_key)
+                    except (TypeError, ValueError):
+                        continue
+                    roster = _coerce_roster(roster_value)
+                    if roster:
+                        _add_entry(tour, fight, roster)
+        elif isinstance(data, list):
+            for entry in data:
+                if not isinstance(entry, dict):
+                    continue
+                roster = _coerce_roster(entry.get("players") or entry.get("roster"))
+                if not roster:
+                    continue
+                fight_code = entry.get("fight")
+                parsed = _parse_fight_code(str(fight_code)) if fight_code else None
+                if parsed:
+                    _add_entry(parsed[0], parsed[1], roster)
+                    continue
+                try:
+                    tour = int(entry["tour"])
+                    fight = int(entry["fight"])
+                except (KeyError, TypeError, ValueError):
+                    continue
+                _add_entry(tour, fight, roster)
+
+        return mapping
+
+    def _resolve_display_name(self, roster: Optional[Sequence[str]], seat_index: int) -> str:
+        if roster is not None and seat_index < len(roster):
+            display = self._sanitize_display_name(roster[seat_index])
+            if display:
+                return display
+        return f"Seat {seat_index + 1}"
+
+    def _sanitize_display_name(self, value: str | None) -> str:
+        value = (value or "").strip()
+        if not value:
+            return ""
+        return re.sub(r"\s+", " ", value)
+
+    def _compute_normalized_name(
+        self,
+        display_name: str,
+        tour_number: int,
+        fight_ordinal: int,
+        seat_index: int,
+        seen: set[str],
+    ) -> str:
+        sanitized = self._sanitize_display_name(display_name)
+        normalized_base: str
+        if not sanitized:
+            normalized_base = self._normalize_placeholder_name(tour_number, fight_ordinal, seat_index)
+        else:
+            lowered = sanitized.lower()
+            if lowered.startswith("seat ") or lowered.startswith("неизвест"):
+                normalized_base = self._normalize_placeholder_name(tour_number, fight_ordinal, seat_index)
+            else:
+                normalized_base = lowered
+
+        normalized = normalized_base
+        suffix = 2
+        while normalized in seen:
+            normalized = f"{normalized_base}#{suffix}"
+            suffix += 1
+        seen.add(normalized)
+        return normalized
 
 
 __all__ = ["Season2Importer", "Season2ImportSummary"]

@@ -9,12 +9,18 @@ from app.season2 import Season2Importer, Season2ResultsStore
 
 DATA_ROOT = Path("data/raw/season02/csv")
 MANIFEST_PATH = Path("data/raw/season02/manifest.json")
+ROSTER_PATH = Path("tests/season2/fixtures/season02_rosters.json")
 
 
 def _import_tour(tmp_path: Path, tour_number: int = 1):
     db_path = tmp_path / "season2.sqlite3"
     store = Season2ResultsStore(db_path=str(db_path))
-    importer = Season2Importer(store=store, data_root=DATA_ROOT, manifest_path=MANIFEST_PATH)
+    importer = Season2Importer(
+        store=store,
+        data_root=DATA_ROOT,
+        manifest_path=MANIFEST_PATH,
+        roster_path=ROSTER_PATH,
+    )
     summary = importer.import_season(tours=[tour_number])
     return db_path, summary
 
@@ -60,12 +66,51 @@ def test_importer_loads_fights_into_results_store(tmp_path: Path) -> None:
         conn.close()
 
 
+def test_importer_applies_roster_display_names(tmp_path: Path) -> None:
+    db_path, _ = _import_tour(tmp_path, tour_number=1)
+
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    try:
+        participants = conn.execute(
+            """
+            SELECT display_name, normalized_name
+            FROM fight_participants
+            WHERE fight_id = (
+                SELECT id FROM fights WHERE fight_code = ?
+            )
+            ORDER BY seat_index
+            """,
+            ("S02E01F03",),
+        ).fetchall()
+
+        assert [row["display_name"] for row in participants] == [
+            "Михаил Басс",
+            "Александр Стамов",
+            "Арсений Соломин",
+            "Константин Пронкевич",
+        ]
+        assert [row["normalized_name"] for row in participants] == [
+            "михаил басс",
+            "александр стамов",
+            "арсений соломин",
+            "константин пронкевич",
+        ]
+    finally:
+        conn.close()
+
+
 def test_import_is_idempotent(tmp_path: Path) -> None:
     db_path, summary_first = _import_tour(tmp_path, tour_number=1)
     assert summary_first.fights_imported == 14
 
     store = Season2ResultsStore(db_path=str(db_path))
-    importer = Season2Importer(store=store, data_root=DATA_ROOT, manifest_path=MANIFEST_PATH)
+    importer = Season2Importer(
+        store=store,
+        data_root=DATA_ROOT,
+        manifest_path=MANIFEST_PATH,
+        roster_path=ROSTER_PATH,
+    )
     summary_second = importer.import_season(tours=[1])
     assert summary_second.fights_imported == 14
 
