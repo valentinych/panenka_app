@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Optional, Sequence
 
 from .results_store import Season2ResultsStore
+from .roster_parser import parse_clashes_rosters
 from .tour_sheet_parser import Season2Fight, Season2TourSheet
 
 
@@ -341,14 +342,28 @@ class Season2Importer:
                 if candidate.exists():
                     path = candidate
                     break
-        if path is None or not path.exists():
-            return {}
+        if path is not None and path.exists():
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                data = None
+            if data:
+                return self._build_roster_mapping_from_payload(data)
 
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            return {}
+        clashes_candidates = (
+            self._data_root / "11_clashes.csv",
+            self._data_root / "clashes.csv",
+            self._data_root.parent / "11_clashes.csv",
+        )
+        for candidate in clashes_candidates:
+            if candidate.exists():
+                rosters = parse_clashes_rosters(candidate)
+                if rosters:
+                    return rosters
 
+        return {}
+
+    def _build_roster_mapping_from_payload(self, data) -> dict[tuple[int, int], list[str]]:
         mapping: dict[tuple[int, int], list[str]] = {}
 
         def _add_entry(tour: int, fight: int, roster: Sequence[str]) -> None:
