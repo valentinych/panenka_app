@@ -3,6 +3,7 @@ import os
 import re
 import secrets
 import time
+from collections import Counter
 from dataclasses import dataclass, field
 from functools import wraps
 from pathlib import Path
@@ -61,7 +62,26 @@ _LETTER_TRANSLATION = str.maketrans(
     }
 )
 _PLACEHOLDER_PATTERN = re.compile(r"^игрок\s*\d*$", flags=re.IGNORECASE)
-_TOKEN_SPLIT_RE = re.compile(r"[\s\u00A0\-]+", flags=re.UNICODE)
+_TOKEN_SPLIT_RE = re.compile(r"[\s\u00A0]+", flags=re.UNICODE)
+
+_PLACEHOLDER_NORMALIZED_VALUES = {
+    "",
+    "пусто",
+    ".",
+    "-",
+    "--",
+    "---",
+}
+
+_MANUAL_NAME_OVERRIDES = {
+    "александр к.": "Александр Комса",
+    "мария т.": "Мария Тимохова",
+    "мария т": "Мария Тимохова",
+    "максим к.": "Максим Корнеевец",
+    "станислав с-б.": "Станислав Силицкий-Бутрим",
+    "хорхе": "Хорхе Чаос",
+}
+_MANUAL_OVERRIDE_TARGETS = set(_MANUAL_NAME_OVERRIDES.values())
 
 
 def _normalize_letters(value: str) -> str:
@@ -87,7 +107,13 @@ def _extract_surname(normalized_name: str) -> str:
 def _is_placeholder_name(name: str) -> bool:
     if not name:
         return False
-    normalized = re.sub(r"\s+", " ", _normalize_letters(name.lower()))
+    normalized = re.sub(r"\s+", " ", _normalize_letters(name.lower())).strip()
+    simple = normalized.replace("—", "-").replace("–", "-")
+    collapsed = re.sub(r"[.\-]+", "", simple)
+    if not collapsed:
+        return True
+    if normalized in _PLACEHOLDER_NORMALIZED_VALUES or collapsed in _PLACEHOLDER_NORMALIZED_VALUES:
+        return True
     return bool(_PLACEHOLDER_PATTERN.fullmatch(normalized))
 
 
@@ -124,9 +150,12 @@ def _is_single_char_variation(left: str, right: str) -> bool:
 class _PlayerEntry:
     display: str
     surname: str
+    first_name: str
     token_count: int
     variants: set[str] = field(default_factory=set)
     normalized_variants: set[str] = field(default_factory=set)
+    variant_counts: Counter[str] = field(default_factory=Counter)
+    surname_initials: str = ""
 
 
 class PlayerNameNormalizer:
@@ -134,113 +163,308 @@ class PlayerNameNormalizer:
         self._entries: list[_PlayerEntry] = []
         self._variant_map: dict[str, str] = {}
         self._normalized_map: dict[str, str] = {}
+        self._signature_map: dict[tuple[str, ...], _PlayerEntry] = {}
+        self._raw_first_token_counts: Counter[str] = Counter()
+        self._raw_last_token_counts: Counter[str] = Counter()
+        self._first_name_index: dict[str, list[_PlayerEntry]] = {}
+        self._surname_index: dict[str, list[_PlayerEntry]] = {}
+        self._unique_first_names: dict[str, _PlayerEntry] = {}
+        self._unique_surnames: dict[str, _PlayerEntry] = {}
 
     def build(self, names: list[str]) -> None:
         self._entries.clear()
+        self._variant_map = {}
+        self._normalized_map = {}
+        self._signature_map = {}
+        self._raw_first_token_counts.clear()
+        self._raw_last_token_counts.clear()
+        self._first_name_index = {}
+        self._surname_index = {}
+        self._unique_first_names = {}
+        self._unique_surnames = {}
+
         for name in names:
             sanitized = _sanitize_player_name(name)
             if not sanitized or _is_placeholder_name(sanitized):
                 continue
-            self._register_name(sanitized)
+            tokens = _tokenize_player_name(sanitized)
+            normalized_tokens = [_normalize_letters(token.lower()) for token in tokens]
+            if len(normalized_tokens) >= 2:
+                self._raw_first_token_counts[normalized_tokens[0]] += 1
+                self._raw_last_token_counts[normalized_tokens[-1]] += 1
+            self._register_name(sanitized, tokens, normalized_tokens)
         self._rebuild_mappings()
 
     def canonicalize(self, name: str) -> str | None:
         sanitized = _sanitize_player_name(name)
         if not sanitized or _is_placeholder_name(sanitized):
             return None
+        normalized_value = _normalize_letters(sanitized.lower())
+        override = _MANUAL_NAME_OVERRIDES.get(normalized_value)
+        if override:
+            return override
         mapped = self._variant_map.get(sanitized)
         if mapped:
             return mapped
-        normalized = _normalize_letters(sanitized.lower())
-        mapped = self._normalized_map.get(normalized)
+        mapped = self._normalized_map.get(normalized_value)
         if mapped:
             return mapped
-        surname = _extract_surname(normalized)
-        if not surname:
-            return sanitized
         tokens = _tokenize_player_name(sanitized)
+        normalized_tokens = [_normalize_letters(token.lower()) for token in tokens]
         token_count = len(tokens)
-        for entry in self._entries:
-            if surname != entry.surname:
-                continue
-            if token_count == 1 or entry.token_count == 1:
+        if token_count == 0:
+            return None
+        signature = tuple(sorted(normalized_tokens))
+        entry = self._signature_map.get(signature)
+        if entry:
+            return entry.display
+
+        if token_count == 1:
+            token = normalized_tokens[0]
+            entry = self._unique_first_names.get(token)
+            if entry:
                 return entry.display
-            for variant_normalized in entry.normalized_variants:
-                if _is_single_char_variation(normalized, variant_normalized):
-                    return entry.display
+            entry = self._unique_surnames.get(token)
+            if entry:
+                return entry.display
+            for candidate in self._entries:
+                if candidate.first_name == token or candidate.surname == token:
+                    return candidate.display
+            return sanitized
+
+        initials = _extract_initials(tokens[-1])
+        if initials:
+            first_norm = normalized_tokens[0]
+            matches = [
+                entry
+                for entry in self._entries
+                if entry.first_name == first_norm and entry.surname_initials == initials
+            ]
+            if len(matches) == 1:
+                return matches[0].display
+            if matches:
+                return max(
+                    matches,
+                    key=lambda candidate: sum(candidate.variant_counts.values()),
+                ).display
+
+        last_norm = normalized_tokens[-1]
+        candidates = [entry for entry in self._entries if entry.surname == last_norm]
+        if len(candidates) == 1:
+            return candidates[0].display
+        if candidates:
+            for candidate in candidates:
+                for variant_normalized in candidate.normalized_variants:
+                    if _is_single_char_variation(normalized_value, variant_normalized):
+                        return candidate.display
         return sanitized
 
     @staticmethod
     def is_placeholder(name: str) -> bool:
         return _is_placeholder_name(name)
 
-    def _register_name(self, name: str) -> _PlayerEntry:
-        normalized = _normalize_letters(name.lower())
-        surname = _extract_surname(normalized)
-        tokens = _tokenize_player_name(name)
+    def _register_name(
+        self,
+        name: str,
+        tokens: list[str],
+        normalized_tokens: list[str],
+    ) -> _PlayerEntry:
         token_count = len(tokens)
+        normalized_value = _normalize_letters(name.lower())
+        normalized_variants = _collect_normalized_variants(name, tokens)
+        signature = tuple(sorted(normalized_tokens))
 
         for entry in self._entries:
-            if normalized in entry.normalized_variants:
-                return self._merge_entry(entry, name, normalized, surname, token_count)
+            if entry.normalized_variants.intersection(normalized_variants):
+                return self._merge_entry(
+                    entry, name, tokens, normalized_tokens, normalized_variants, signature
+                )
 
-        if token_count == 1 and surname:
+        if signature:
+            entry = self._signature_map.get(signature)
+            if entry:
+                return self._merge_entry(
+                    entry, name, tokens, normalized_tokens, normalized_variants, signature
+                )
+
+        if token_count >= 2:
+            initials = _extract_initials(tokens[-1])
+            if initials:
+                first_norm = normalized_tokens[0]
+                for entry in self._entries:
+                    if entry.first_name == first_norm and entry.surname_initials == initials:
+                        return self._merge_entry(
+                            entry,
+                            name,
+                            tokens,
+                            normalized_tokens,
+                            normalized_variants,
+                            signature,
+                        )
+
+        if token_count == 1 and normalized_tokens:
+            candidate_token = normalized_tokens[0]
             for entry in self._entries:
-                if entry.surname == surname:
-                    return self._merge_entry(entry, name, normalized, surname, token_count)
+                if entry.surname == candidate_token or entry.first_name == candidate_token:
+                    return self._merge_entry(
+                        entry,
+                        name,
+                        tokens,
+                        normalized_tokens,
+                        normalized_variants,
+                        signature,
+                    )
 
-        for entry in self._entries:
-            if surname and entry.surname == surname and entry.token_count == 1:
-                return self._merge_entry(entry, name, normalized, surname, token_count)
-
+        surname = normalized_tokens[-1] if normalized_tokens else ""
         if surname:
             for entry in self._entries:
                 if entry.surname != surname:
                     continue
                 for variant_normalized in entry.normalized_variants:
-                    if _is_single_char_variation(normalized, variant_normalized):
+                    if _is_single_char_variation(normalized_value, variant_normalized):
                         return self._merge_entry(
-                            entry, name, normalized, surname, token_count
+                            entry,
+                            name,
+                            tokens,
+                            normalized_tokens,
+                            normalized_variants,
+                            signature,
                         )
 
         entry = _PlayerEntry(
             display=name,
             surname=surname,
+            first_name=normalized_tokens[0] if normalized_tokens else "",
             token_count=token_count,
-            variants={name},
-            normalized_variants={normalized},
         )
+        entry.variants.add(name)
+        entry.normalized_variants.update(normalized_variants)
+        entry.variant_counts[name] += 1
+        entry.surname_initials = _extract_initials(tokens[-1]) if tokens else ""
         self._entries.append(entry)
+        if signature:
+            self._signature_map[signature] = entry
+        self._update_entry_display(entry)
         return entry
 
     def _merge_entry(
         self,
         entry: _PlayerEntry,
         name: str,
-        normalized: str,
-        surname: str,
-        token_count: int,
+        tokens: list[str],
+        normalized_tokens: list[str],
+        normalized_variants: set[str],
+        signature: tuple[str, ...],
     ) -> _PlayerEntry:
         entry.variants.add(name)
-        entry.normalized_variants.add(normalized)
-        if not entry.surname and surname:
-            entry.surname = surname
-        if token_count > entry.token_count or (
-            token_count == entry.token_count and len(name) > len(entry.display)
-        ):
-            entry.display = name
-            entry.token_count = token_count
+        entry.normalized_variants.update(normalized_variants)
+        entry.variant_counts[name] += 1
+        if signature:
+            self._signature_map[signature] = entry
+        entry.surname_initials = _extract_initials(tokens[-1]) if tokens else entry.surname_initials
+        self._update_entry_display(entry)
         return entry
 
     def _rebuild_mappings(self) -> None:
         self._variant_map = {}
         self._normalized_map = {}
+        self._signature_map = {}
+        self._first_name_index = {}
+        self._surname_index = {}
         for entry in self._entries:
             canonical = entry.display
+            tokens = _tokenize_player_name(canonical)
+            normalized_tokens = [_normalize_letters(token.lower()) for token in tokens]
+            if normalized_tokens:
+                self._signature_map[tuple(sorted(normalized_tokens))] = entry
+            if normalized_tokens:
+                entry.first_name = normalized_tokens[0]
+                entry.surname = normalized_tokens[-1]
+                entry.surname_initials = _extract_initials(tokens[-1]) if tokens else ""
+                self._first_name_index.setdefault(entry.first_name, []).append(entry)
+                self._surname_index.setdefault(entry.surname, []).append(entry)
             for variant in entry.variants:
                 self._variant_map[variant] = canonical
-            for normalized in entry.normalized_variants:
-                self._normalized_map[normalized] = canonical
+                normalized_variant = _normalize_letters(variant.lower())
+                self._normalized_map[normalized_variant] = canonical
+                variant_tokens = _tokenize_player_name(variant)
+                normalized_variant_tokens = [
+                    _normalize_letters(token.lower()) for token in variant_tokens
+                ]
+                if normalized_variant_tokens:
+                    self._signature_map[
+                        tuple(sorted(normalized_variant_tokens))
+                    ] = entry
+
+        self._unique_first_names = {
+            key: entries[0]
+            for key, entries in self._first_name_index.items()
+            if len(entries) == 1
+        }
+        self._unique_surnames = {
+            key: entries[0]
+            for key, entries in self._surname_index.items()
+            if len(entries) == 1
+        }
+
+    def _update_entry_display(self, entry: _PlayerEntry) -> None:
+        if not entry.variant_counts:
+            return
+
+        def _variant_score(variant: str) -> tuple[int, int, int, int, int]:
+            tokens = _tokenize_player_name(variant)
+            normalized_tokens = [_normalize_letters(token.lower()) for token in tokens]
+            token_count = len(tokens)
+            first_norm = normalized_tokens[0] if normalized_tokens else ""
+            last_norm = normalized_tokens[-1] if normalized_tokens else ""
+            first_first = self._raw_first_token_counts.get(first_norm, 0)
+            first_last = self._raw_last_token_counts.get(first_norm, 0)
+            last_last = self._raw_last_token_counts.get(last_norm, 0)
+            last_first = self._raw_first_token_counts.get(last_norm, 0)
+            order_score = 0
+            if token_count >= 2:
+                first_likely_first = first_first >= first_last
+                last_likely_last = last_last >= last_first
+                order_score = int(first_likely_first and last_likely_last)
+            manual_score = 1 if variant in _MANUAL_OVERRIDE_TARGETS else 0
+            return (
+                entry.variant_counts[variant],
+                manual_score,
+                order_score,
+                token_count,
+                len(variant),
+            )
+
+        best_variant = max(entry.variant_counts, key=_variant_score)
+        entry.display = best_variant
+        tokens = _tokenize_player_name(best_variant)
+        normalized_tokens = [_normalize_letters(token.lower()) for token in tokens]
+        entry.token_count = len(tokens)
+        entry.first_name = normalized_tokens[0] if normalized_tokens else ""
+        entry.surname = normalized_tokens[-1] if normalized_tokens else ""
+        entry.surname_initials = _extract_initials(tokens[-1]) if tokens else ""
+
+
+def _collect_normalized_variants(name: str, tokens: list[str]) -> set[str]:
+    normalized = _normalize_letters(name.lower())
+    variants = {normalized}
+    if len(tokens) >= 2:
+        reversed_name = " ".join(reversed(tokens))
+        variants.add(_normalize_letters(reversed_name.lower()))
+    return variants
+
+
+def _extract_initials(token: str) -> str:
+    if not token:
+        return ""
+    cleaned = re.sub(r"[^A-Za-zА-Яа-яЁё\-]+", "", token)
+    if not cleaned:
+        return ""
+    parts = re.split(r"[\-]+", cleaned)
+    initials = "".join(
+        _normalize_letters(part.lower())[0] if part else "" for part in parts if part
+    )
+    return initials
 
 
 LOBBY_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
