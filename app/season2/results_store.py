@@ -114,6 +114,7 @@ class Season2ResultsStore:
                 fight_number INTEGER NOT NULL,
                 ordinal INTEGER NOT NULL,
                 fight_code TEXT NOT NULL UNIQUE,
+                letter TEXT,
                 imported_at REAL NOT NULL,
                 source_path TEXT,
                 import_id INTEGER REFERENCES imports(id) ON DELETE SET NULL,
@@ -121,6 +122,7 @@ class Season2ResultsStore:
             )
             """
         )
+        self._ensure_column(conn, "fights", "letter", "TEXT")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS fight_participants (
@@ -189,6 +191,16 @@ class Season2ResultsStore:
                 ON question_results (question_id)
             """
         )
+
+    def _ensure_column(
+        self, conn: sqlite3.Connection, table: str, column: str, definition: str
+    ) -> None:
+        columns = {
+            row["name"]
+            for row in conn.execute(f"PRAGMA table_info({table})").fetchall()
+        }
+        if column not in columns:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
     def _seed_baseline_seasons(self, conn: sqlite3.Connection) -> None:
         for season_number in (1, 2):

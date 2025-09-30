@@ -7,20 +7,27 @@
     <div class="historical-intro">
       <h2 class="card-title">История боёв</h2>
       <p class="card-description">
-        {% if season_number %}
-          Сезон {{ season_number }}. Выберите игрока, чтобы увидеть его результаты в боях.
+        {% if selected_season %}
+          Показаны результаты сезона {{ selected_season }}. Выберите игрока, чтобы увидеть его бои.
         {% else %}
-          Выберите игрока, чтобы увидеть его результаты в боях.
+          Выберите сезон и игрока, чтобы посмотреть результаты боёв.
         {% endif %}
       </p>
     </div>
     <form class="historical-filter" method="get">
-      <label class="field-label" for="player">Игрок</label>
       <div class="historical-filter__controls">
+        <label class="field-label" for="season">Сезон</label>
+        <select id="season" name="season" onchange="this.form.submit()">
+          <option value="">Все сезоны</option>
+          {% for season in available_seasons %}
+            <option value="{{ season }}" {% if season == selected_season %}selected{% endif %}>Сезон {{ season }}</option>
+          {% endfor %}
+        </select>
+        <label class="field-label" for="player">Игрок</label>
         <select id="player" name="player" onchange="this.form.submit()">
           <option value="">Все игроки</option>
           {% for player_name in all_players %}
-            <option value="{{ player_name }}" {% if player_name == selected_player %}selected{% endif %}>{{ player_name }}</option>
+            <option value="{{ player_name }}" {% if player_name == selected_player_canonical %}selected{% endif %}>{{ player_name }}</option>
           {% endfor %}
         </select>
         {% if selected_player %}
@@ -43,7 +50,9 @@
       {% for fight in fights %}
         <article class="historical-fight">
           <header class="historical-fight__header">
-            <h3 class="historical-fight__title">Тур {{ fight.tour_number }}, бой {{ fight.letter or fight.fight_code }}</h3>
+            <h3 class="historical-fight__title">
+              Сезон {{ fight.season_number }}, тур {{ fight.tour_number }}, бой {{ fight.letter or "%02d"|format(fight.ordinal) }}
+            </h3>
             <p class="historical-fight__code">{{ fight.fight_code }}</p>
           </header>
           <table class="historical-table">
@@ -56,7 +65,7 @@
             </thead>
             <tbody>
               {% for player in fight.players %}
-                <tr class="{% if selected_player_found and player.name == selected_player %}historical-player--highlight{% endif %}">
+                <tr class="{% if selected_player_found and player.canonical_name == selected_player_canonical %}historical-player--highlight{% endif %}">
                   <td>{{ loop.index }}</td>
                   <td>{{ player.name or '—' }}</td>
                   <td>{{ player.total }}</td>

@@ -1017,8 +1017,14 @@ select:focus {
 
 .historical-filter__controls {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
+}
+
+.historical-filter__controls label {
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .historical-filter select {

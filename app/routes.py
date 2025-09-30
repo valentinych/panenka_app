@@ -25,6 +25,7 @@ from flask import (
 
 import requests
 
+from .historical_results_loader import load_historical_dataset
 from .lobby_store import lobby_store
 from .question_store import question_store
 
@@ -1506,69 +1507,61 @@ def dashboard():
     )
 
 
-def _load_historical_results():
-    data_path = Path(current_app.root_path) / "static" / "data" / "season01_tour_results.json"
-    try:
-        with data_path.open(encoding="utf-8") as resource:
-            return json.load(resource)
-    except FileNotFoundError:
-        current_app.logger.warning("Historical data file not found: %s", data_path)
-    except json.JSONDecodeError as exc:
-        current_app.logger.error("Failed to parse historical data file %s: %s", data_path, exc)
+def _fetch_historical_records(selected_season: int | None):
+    dataset = load_historical_dataset()
+    fights_all: list[dict] = list(dataset["fights"])
+    available_seasons: list[int] = list(dataset["seasons"])
 
-    return {"season_number": None, "tours": []}
+    if selected_season and selected_season in available_seasons:
+        fights_filtered = [
+            fight for fight in fights_all if fight.get("season_number") == selected_season
+        ]
+    else:
+        fights_filtered = fights_all
+
+    player_names = [
+        participant.get("display", "")
+        for fight in fights_filtered
+        for participant in fight.get("participants", [])
+    ]
+
+    return fights_filtered, player_names, available_seasons
 
 
 @bp.route("/historical-results")
 @login_required
 def historical_results():
-    raw_data = _load_historical_results()
     selected_player_raw = request.args.get("player", "").strip()
+    selected_season = request.args.get("season", type=int)
 
-    season_number = raw_data.get("season_number")
-    raw_fights: list[dict] = []
-    all_raw_names: list[str] = []
-
-    for tour in raw_data.get("tours", []):
-        tour_number = tour.get("tour_number")
-        for fight in tour.get("fights", []):
-            fight_players = []
-            for player in fight.get("players", []):
-                name = _sanitize_player_name(player.get("name"))
-                total = player.get("total", 0) or 0
-                if not name or PlayerNameNormalizer.is_placeholder(name):
-                    continue
-                fight_players.append({"name": name, "total": total})
-                all_raw_names.append(name)
-            raw_fights.append(
-                {
-                    "tour_number": tour_number,
-                    "fight_code": fight.get("code"),
-                    "letter": fight.get("letter"),
-                    "players": fight_players,
-                }
-            )
+    fights_raw, raw_names, available_seasons = _fetch_historical_records(selected_season)
 
     normalizer = PlayerNameNormalizer()
-    normalizer.build(all_raw_names)
+    normalizer.build(raw_names)
 
     selected_player_canonical = (
         normalizer.canonicalize(selected_player_raw) if selected_player_raw else None
     )
-    selected_player = selected_player_canonical or selected_player_raw
+    selected_player_display = selected_player_canonical or selected_player_raw
 
-    fights = []
-    player_names = set()
+    fights: list[dict] = []
+    player_names: set[str] = set()
 
-    for fight in raw_fights:
+    for fight in fights_raw:
         normalized_players = []
         includes_selected = False
-        for player in fight["players"]:
-            canonical_name = normalizer.canonicalize(player["name"])
+        for participant in fight["participants"]:
+            canonical_name = normalizer.canonicalize(participant["display"])
             if not canonical_name:
                 continue
-            total = player.get("total", 0) or 0
-            normalized_players.append({"name": canonical_name, "total": total})
+            total = participant.get("total", 0) or 0
+            normalized_players.append(
+                {
+                    "name": participant["display"],
+                    "canonical_name": canonical_name,
+                    "total": total,
+                }
+            )
             player_names.add(canonical_name)
             if selected_player_canonical and canonical_name == selected_player_canonical:
                 includes_selected = True
@@ -1583,9 +1576,11 @@ def historical_results():
 
         fights.append(
             {
+                "season_number": fight.get("season_number"),
                 "tour_number": fight.get("tour_number"),
                 "fight_code": fight.get("fight_code"),
                 "letter": fight.get("letter"),
+                "ordinal": fight.get("ordinal"),
                 "players": normalized_players,
             }
         )
@@ -1597,12 +1592,14 @@ def historical_results():
 
     return render_template(
         "historical_results.html",
-        season_number=season_number,
         fights=fights,
         all_players=all_players,
-        selected_player=selected_player,
+        selected_player=selected_player_display,
         selected_player_found=selected_player_found,
         player_count=len(all_players),
+        available_seasons=available_seasons,
+        selected_season=selected_season if selected_season in available_seasons else None,
+        selected_player_canonical=selected_player_canonical,
     )
 
 

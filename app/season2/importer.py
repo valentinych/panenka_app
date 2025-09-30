@@ -215,14 +215,15 @@ class Season2Importer:
 
             cursor = conn.execute(
                 (
-                    "INSERT INTO fights (tour_id, fight_number, ordinal, fight_code, imported_at, source_path, import_id) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)"
+                    "INSERT INTO fights (tour_id, fight_number, ordinal, fight_code, letter, imported_at, source_path, import_id) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
                 ),
                 (
                     tour_id,
                     fight.ordinal,
                     fight.ordinal,
                     fight_code,
+                    None,
                     time.time(),
                     str(csv_path),
                     import_id,
