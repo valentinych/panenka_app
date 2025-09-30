@@ -1188,7 +1188,7 @@
               "total": -40
             },
             {
-              "name": "Алекс Булавкин",
+              "name": "Александр Булавкин",
               "total": 30
             },
             {
@@ -3536,7 +3536,7 @@
               "total": 410
             },
             {
-              "name": "Артём Жолковский",
+              "name": "Артем Жолковский",
               "total": 0
             },
             {
@@ -12318,15 +12318,15 @@
           "letter": "В",
           "players": [
             {
-              "name": "Цуркан",
+              "name": "Роман Цуркан",
               "total": 210
             },
             {
-              "name": "Абдугани",
+              "name": "Абдугани Сафи",
               "total": 150
             },
             {
-              "name": "Огородник",
+              "name": "Руслан Огородник",
               "total": 60
             }
           ],
@@ -13288,15 +13288,15 @@
           "letter": "Г",
           "players": [
             {
-              "name": "Соломин",
+              "name": "Арсений Соломин",
               "total": 160
             },
             {
-              "name": "Киселев",
+              "name": "Иван Киселев",
               "total": 210
             },
             {
-              "name": "Чернышев",
+              "name": "Кирилл Чернышев",
               "total": 100
             },
             {
@@ -15636,19 +15636,19 @@
           "letter": "Є",
           "players": [
             {
-              "name": "Цвирик",
+              "name": "Михась Цвирик",
               "total": 130
             },
             {
-              "name": "Буханцов",
+              "name": "Алексей Буханцов",
               "total": 20
             },
             {
-              "name": "Трощенко",
+              "name": "Павел Трощенко",
               "total": 200
             },
             {
-              "name": "Микуланинець",
+              "name": "Антон Микуланинець",
               "total": -60
             }
           ],
@@ -17788,7 +17788,7 @@
               "total": 70
             },
             {
-              "name": "Конастантин Бобров",
+              "name": "Константин Бобров",
               "total": 100
             }
           ],
@@ -18750,7 +18750,7 @@
           "letter": "Л",
           "players": [
             {
-              "name": "Корсун",
+              "name": "Артем Корсун",
               "total": 70
             },
             {
@@ -18758,11 +18758,11 @@
               "total": -50
             },
             {
-              "name": "Слицкий-Бутрим",
+              "name": "Станислав Силицкий-Бутрим",
               "total": -30
             },
             {
-              "name": "Придыбайло",
+              "name": "Максим Придыбайло",
               "total": 40
             }
           ],
@@ -19924,19 +19924,19 @@
           "letter": "К",
           "players": [
             {
-              "name": "Тимохова",
+              "name": "Мария Тимохова",
               "total": 120
             },
             {
-              "name": "Заитов",
+              "name": "Аскар Заитов",
               "total": 180
             },
             {
-              "name": "Куликов",
+              "name": "Егор Куликов",
               "total": 110
             },
             {
-              "name": "Жолковский",
+              "name": "Артем Жолковский",
               "total": 140
             }
           ],
@@ -21098,10 +21098,6 @@
           "letter": "I",
           "players": [
             {
-              "name": "Пусто",
-              "total": 0
-            },
-            {
               "name": "Олексій Бабицький",
               "total": 20
             },
@@ -21110,7 +21106,7 @@
               "total": 150
             },
             {
-              "name": "Василь Гайдаш",
+              "name": "Василий Гайдаш",
               "total": -70
             }
           ],
@@ -21120,10 +21116,6 @@
               "theme": "Евро U21",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 10,
                   "is_correct": true
@@ -21152,10 +21144,6 @@
                   "is_correct": false
                 },
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 20,
                   "is_correct": true
                 }
@@ -21166,10 +21154,6 @@
               "theme": "Евро U21",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21200,10 +21184,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21212,10 +21192,6 @@
               "theme": "Евро U21",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21240,10 +21216,6 @@
                   "is_correct": false
                 },
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 10,
                   "is_correct": true
                 },
@@ -21258,10 +21230,6 @@
               "theme": "Острая тема",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21292,10 +21260,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21304,10 +21268,6 @@
               "theme": "Острая тема",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21338,10 +21298,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21350,10 +21306,6 @@
               "theme": "Динозавры",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21373,10 +21325,6 @@
               "theme": "Динозавры",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 20,
                   "is_correct": true
@@ -21407,10 +21355,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21419,10 +21363,6 @@
               "theme": "Динозавры",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21453,10 +21393,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21476,10 +21412,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21488,10 +21420,6 @@
               "theme": "Хоббит, или Туда и обратно",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21522,10 +21450,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21534,10 +21458,6 @@
               "theme": "Хоббит, или Туда и обратно",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21568,10 +21488,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21580,10 +21496,6 @@
               "theme": "Кузнец из Большого Вуттона",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21603,10 +21515,6 @@
               "theme": "Кузнец из Большого Вуттона",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21637,10 +21545,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21649,10 +21553,6 @@
               "theme": "Кузнец из Большого Вуттона",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21683,10 +21583,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21695,10 +21591,6 @@
               "theme": "Ангельская тема",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21729,10 +21621,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21741,10 +21629,6 @@
               "theme": "Ангельская тема",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21775,10 +21659,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21787,10 +21667,6 @@
               "theme": "Ангельская тема",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21821,10 +21697,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21844,10 +21716,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21856,10 +21724,6 @@
               "theme": "Promotion/Relegation",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21890,10 +21754,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21902,10 +21762,6 @@
               "theme": "Promotion/Relegation",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21936,10 +21792,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21948,10 +21800,6 @@
               "theme": "Писатели",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -21982,10 +21830,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -21994,10 +21838,6 @@
               "theme": "Писатели",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -22028,10 +21868,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -22040,10 +21876,6 @@
               "theme": "The Beatles",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -22074,10 +21906,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -22086,10 +21914,6 @@
               "theme": "The Beatles",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -22120,10 +21944,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -22143,10 +21963,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -22155,10 +21971,6 @@
               "theme": "Ты с какого района",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": -10,
                   "is_correct": false
@@ -22189,10 +22001,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -22201,10 +22009,6 @@
               "theme": "Ты с какого района",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -22229,10 +22033,6 @@
                   "is_correct": false
                 },
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": -40,
                   "is_correct": false
                 },
@@ -22247,10 +22047,6 @@
               "theme": "Ты с какого района",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -34405,10 +34201,6 @@
             {
               "name": "Станислав Силицкий-Бутрим",
               "total": 100
-            },
-            {
-              "name": ".",
-              "total": 0
             }
           ],
           "questions": [
@@ -34428,10 +34220,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34440,10 +34228,6 @@
               "theme": "2000",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -34474,10 +34258,6 @@
                 {
                   "delta": 30,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34497,10 +34277,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34509,10 +34285,6 @@
               "theme": "2000",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -34543,10 +34315,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34566,10 +34334,6 @@
                 {
                   "delta": -20,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34578,10 +34342,6 @@
               "theme": "ВСЕ, ВЕЗДЕ И СРАЗУ",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -34612,10 +34372,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34635,10 +34391,6 @@
                 {
                   "delta": 50,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34650,10 +34402,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -34681,10 +34429,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34693,10 +34437,6 @@
               "theme": "ФУТБОЛ МАЛАЙЗИИ",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -34727,10 +34467,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34739,10 +34475,6 @@
               "theme": "ФУТБОЛ МАЛАЙЗИИ",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -34773,10 +34505,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34792,10 +34520,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -34819,10 +34543,6 @@
                 {
                   "delta": 30,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34831,10 +34551,6 @@
               "theme": "ФУТБОЛ И ЛИТЕРАТУРА",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -34865,10 +34581,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34877,10 +34589,6 @@
               "theme": "-ГОД-",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -34911,10 +34619,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34923,10 +34627,6 @@
               "theme": "-ГОД-",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -34957,10 +34657,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -34969,10 +34665,6 @@
               "theme": "-ГОД-",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -35003,10 +34695,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35015,10 +34703,6 @@
               "theme": "КРАСНО-ЧЕРНЫЕ",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -35049,10 +34733,6 @@
                 {
                   "delta": -30,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35061,10 +34741,6 @@
               "theme": "КРАСНО-ЧЕРНЫЕ",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -35095,10 +34771,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35118,10 +34790,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35130,10 +34798,6 @@
               "theme": "SIMPLY RED",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -35164,10 +34828,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35176,10 +34836,6 @@
               "theme": "SIMPLY RED",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -35210,10 +34866,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35233,10 +34885,6 @@
                 {
                   "delta": -10,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35252,10 +34900,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -35279,10 +34923,6 @@
                 {
                   "delta": 30,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35302,10 +34942,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35314,10 +34950,6 @@
               "theme": "ГОВОРЯЩИЕ ФАМИЛИИ",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -35348,10 +34980,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35360,10 +34988,6 @@
               "theme": "КРОЛИКИ И ЗАЙЦЫ",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -35394,10 +35018,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35417,10 +35037,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35429,10 +35045,6 @@
               "theme": "КРОЛИКИ И ЗАЙЦЫ",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -35463,10 +35075,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35486,10 +35094,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35498,10 +35102,6 @@
               "theme": "-ТУТ-",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -35532,10 +35132,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -35544,10 +35140,6 @@
               "theme": "-ТУТ-",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -35594,19 +35186,19 @@
           "letter": "А",
           "players": [
             {
-              "name": "Цуркан",
+              "name": "Роман Цуркан",
               "total": 290
             },
             {
-              "name": "Гамза",
+              "name": "Андрей Гамза",
               "total": 270
             },
             {
-              "name": "Басс",
+              "name": "Михаил Басс",
               "total": 140
             },
             {
-              "name": "Ефименко",
+              "name": "Александр Ефименко",
               "total": 160
             }
           ],
@@ -42638,19 +42230,19 @@
           "letter": "Ж",
           "players": [
             {
-              "name": "Тимохова",
+              "name": "Мария Тимохова",
               "total": -70
             },
             {
-              "name": "Бобров",
+              "name": "Константин Бобров",
               "total": 200
             },
             {
-              "name": "Пронкевич",
+              "name": "Константин Пронкевич",
               "total": 70
             },
             {
-              "name": "Чаос",
+              "name": "Хорхе Чаос",
               "total": 190
             }
           ],
@@ -43812,19 +43404,19 @@
           "letter": "З",
           "players": [
             {
-              "name": "Корнеевец",
+              "name": "Максим Корнеевец",
               "total": 240
             },
             {
-              "name": "Соловьев",
+              "name": "Алексей Соловьев",
               "total": 40
             },
             {
-              "name": "Полевой",
+              "name": "Ярослав Полевой",
               "total": 80
             },
             {
-              "name": "Жидких",
+              "name": "Алексей Жидких",
               "total": 40
             }
           ],
@@ -46926,15 +46518,15 @@
           "letter": "К",
           "players": [
             {
-              "name": "Саркисов",
+              "name": "Микаэл Саркисов",
               "total": 50
             },
             {
-              "name": "Куликов",
+              "name": "Егор Куликов",
               "total": 100
             },
             {
-              "name": "Хачатурян",
+              "name": "Артем Хачатурян",
               "total": 120
             }
           ],
@@ -49101,19 +48693,19 @@
           "letter": "Б",
           "players": [
             {
-              "name": "Ефименко",
+              "name": "Александр Ефименко",
               "total": 370
             },
             {
-              "name": "Цвирк",
+              "name": "Александр Цвирк",
               "total": 270
             },
             {
-              "name": "Киселёв",
+              "name": "Иван Киселёв",
               "total": 100
             },
             {
-              "name": "Лавренюк",
+              "name": "Денис Лавренюк",
               "total": 220
             }
           ],
@@ -50275,19 +49867,19 @@
           "letter": "В",
           "players": [
             {
-              "name": "Соломин",
+              "name": "Арсений Соломин",
               "total": 50
             },
             {
-              "name": "Капитульский",
+              "name": "Евгений Капитульский",
               "total": 180
             },
             {
-              "name": "Басс",
+              "name": "Михаил Басс",
               "total": 40
             },
             {
-              "name": "Хемий",
+              "name": "Виталий Хемий",
               "total": 270
             }
           ],
@@ -55941,19 +55533,19 @@
           "letter": "З",
           "players": [
             {
-              "name": "Сафи",
+              "name": "Абдугани Сафи",
               "total": 280
             },
             {
-              "name": "Бабиченко",
+              "name": "Артём Бабиченко",
               "total": 0
             },
             {
-              "name": "Корсун",
+              "name": "Артем Корсун",
               "total": 80
             },
             {
-              "name": "Мусиенко",
+              "name": "Александр Мусиенко",
               "total": -60
             }
           ],
@@ -58301,7 +57893,7 @@
               "total": -20
             },
             {
-              "name": "Артём Хачатурян",
+              "name": "Артем Хачатурян",
               "total": 310
             }
           ],
@@ -59797,7 +59389,7 @@
               "total": 130
             },
             {
-              "name": "Михась",
+              "name": "Михась Цвирик",
               "total": -140
             },
             {
@@ -60788,7 +60380,7 @@
           "letter": "Б",
           "players": [
             {
-              "name": "Михаил Саркисов",
+              "name": "Микаэл Саркисов",
               "total": 0
             },
             {
@@ -70750,7 +70342,7 @@
               "total": 0
             },
             {
-              "name": "Артём Хачатурян",
+              "name": "Артем Хачатурян",
               "total": 0
             }
           ],
@@ -73677,19 +73269,19 @@
           "letter": "A",
           "players": [
             {
-              "name": "Ефименко",
+              "name": "Александр Ефименко",
               "total": 60
             },
             {
-              "name": "Цуркан",
+              "name": "Роман Цуркан",
               "total": 100
             },
             {
-              "name": "Калиниченко",
+              "name": "Анатолий Калиниченко",
               "total": 50
             },
             {
-              "name": "Артеменко",
+              "name": "Олег Артеменко",
               "total": 260
             }
           ],
@@ -79139,19 +78731,19 @@
           "letter": "F",
           "players": [
             {
-              "name": "Цвирк",
+              "name": "Александр Цвирк",
               "total": 90
             },
             {
-              "name": "Басс",
+              "name": "Михаил Басс",
               "total": 150
             },
             {
-              "name": "Хемий",
+              "name": "Виталий Хемий",
               "total": 110
             },
             {
-              "name": "Арсений",
+              "name": "Арсений Соломин",
               "total": 90
             }
           ],
@@ -80317,7 +79909,7 @@
               "total": 80
             },
             {
-              "name": "Алекс Булавкин",
+              "name": "Александр Булавкин",
               "total": 10
             },
             {
@@ -81487,19 +81079,19 @@
           "letter": "H",
           "players": [
             {
-              "name": "Чернышев",
+              "name": "Кирилл Чернышев",
               "total": 90
             },
             {
-              "name": "Лавренюк",
+              "name": "Денис Лавренюк",
               "total": 150
             },
             {
-              "name": "Гамза",
+              "name": "Андрей Гамза",
               "total": 210
             },
             {
-              "name": "Капитульский",
+              "name": "Евгений Капитульский",
               "total": 140
             }
           ],
@@ -82661,15 +82253,15 @@
           "letter": "I",
           "players": [
             {
-              "name": "Чаос",
+              "name": "Хорхе Чаос",
               "total": 170
             },
             {
-              "name": "Стамов",
+              "name": "Александр Стамов",
               "total": 180
             },
             {
-              "name": "Саркисов",
+              "name": "Микаэл Саркисов",
               "total": 0
             }
           ],
@@ -84813,7 +84405,7 @@
               "total": 220
             },
             {
-              "name": "Саша Черкасов",
+              "name": "Александр Черкасов",
               "total": 130
             },
             {
@@ -86978,19 +86570,19 @@
           "letter": "A",
           "players": [
             {
-              "name": "Киселёв",
+              "name": "Иван Киселёв",
               "total": 260
             },
             {
-              "name": "Пронкевич",
+              "name": "Константин Пронкевич",
               "total": 100
             },
             {
-              "name": "Саркисов",
+              "name": "Микаэл Саркисов",
               "total": 60
             },
             {
-              "name": "Хачатурян",
+              "name": "Артем Хачатурян",
               "total": 50
             }
           ],
@@ -88152,19 +87744,19 @@
           "letter": "B",
           "players": [
             {
-              "name": "Тимохова Мария",
+              "name": "Мария Тимохова",
               "total": 90
             },
             {
-              "name": "Огородник Руслан",
+              "name": "Руслан Огородник",
               "total": 10
             },
             {
-              "name": "Германенко Вадим",
+              "name": "Вадим Германенко",
               "total": 110
             },
             {
-              "name": "Бабицкий Алексей",
+              "name": "Алексей Бабицкий",
               "total": 10
             }
           ],
@@ -91470,19 +91062,19 @@
           "letter": "E",
           "players": [
             {
-              "name": "Абдугани",
+              "name": "Абдугани Сафи",
               "total": 130
             },
             {
-              "name": "Черкасов",
+              "name": "Александр Черкасов",
               "total": 370
             },
             {
-              "name": "Хорхе",
+              "name": "Хорхе Чаос",
               "total": 50
             },
             {
-              "name": "Цвирк",
+              "name": "Александр Цвирк",
               "total": 130
             }
           ],
@@ -92644,15 +92236,15 @@
           "letter": "F",
           "players": [
             {
-              "name": "Гайдаш",
+              "name": "Василий Гайдаш",
               "total": 30
             },
             {
-              "name": "Никольский",
+              "name": "Сергей Никольский",
               "total": 100
             },
             {
-              "name": "Силицкий-Бутрим",
+              "name": "Станислав Силицкий-Бутрим",
               "total": 160
             }
           ],
@@ -98118,7 +97710,7 @@
               "total": 260
             },
             {
-              "name": "Андрій Гамза",
+              "name": "Андрей Гамза",
               "total": 200
             }
           ],
@@ -99313,7 +98905,7 @@
               "total": 160
             },
             {
-              "name": "Артём Жолковский",
+              "name": "Артем Жолковский",
               "total": 110
             },
             {
@@ -100598,7 +100190,7 @@
           "letter": "B",
           "players": [
             {
-              "name": "Артём Хачатурян",
+              "name": "Артем Хачатурян",
               "total": 160
             },
             {
@@ -101897,10 +101489,6 @@
             {
               "name": "Руслан Огородник",
               "total": -10
-            },
-            {
-              "name": "--",
-              "total": 0
             }
           ],
           "questions": [
@@ -101916,10 +101504,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -101943,10 +101527,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -101966,10 +101546,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -101978,10 +101554,6 @@
               "theme": "На уровне сборных впервые",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102012,10 +101584,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102035,10 +101603,6 @@
                 {
                   "delta": -10,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102053,10 +101617,6 @@
                 },
                 {
                   "delta": -20,
-                  "is_correct": false
-                },
-                {
-                  "delta": 0,
                   "is_correct": false
                 },
                 {
@@ -102081,10 +101641,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102093,10 +101649,6 @@
               "theme": "Фарерский футбол",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102127,10 +101679,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102149,10 +101697,6 @@
                 },
                 {
                   "delta": -10,
-                  "is_correct": false
-                },
-                {
-                  "delta": 0,
                   "is_correct": false
                 }
               ]
@@ -102173,10 +101717,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102196,10 +101736,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102208,10 +101744,6 @@
               "theme": "Удвоенные согласные",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102242,10 +101774,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102265,10 +101793,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102277,10 +101801,6 @@
               "theme": "Гимны",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102311,10 +101831,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102323,10 +101839,6 @@
               "theme": "Гимны",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102357,10 +101869,6 @@
                 {
                   "delta": -50,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102380,10 +101888,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102392,10 +101896,6 @@
               "theme": "–ГОЛ–",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102426,10 +101926,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102449,10 +101945,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102461,10 +101953,6 @@
               "theme": "–ГОЛ–",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102495,10 +101983,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102518,10 +102002,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102541,10 +102021,6 @@
                 {
                   "delta": -30,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102553,10 +102029,6 @@
               "theme": "Уникальные бомбардирские рекорды и их детали",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102587,10 +102059,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102602,10 +102070,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -102633,10 +102097,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102656,10 +102116,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102668,10 +102124,6 @@
               "theme": "Итальянские «десятки» 90-х",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102702,10 +102154,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102725,10 +102173,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102739,10 +102183,6 @@
               "results": [
                 {
                   "delta": -20,
-                  "is_correct": false
-                },
-                {
-                  "delta": 0,
                   "is_correct": false
                 },
                 {
@@ -102771,10 +102211,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102783,10 +102219,6 @@
               "theme": "Жёлто-синяя",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102817,10 +102249,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102840,10 +102268,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102863,10 +102287,6 @@
                 {
                   "delta": -20,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102875,10 +102295,6 @@
               "theme": "Лондон и окрестности",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102909,10 +102325,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102921,10 +102333,6 @@
               "theme": "Лондон и окрестности",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -102955,10 +102363,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -102970,10 +102374,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -103001,10 +102401,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -103013,10 +102409,6 @@
               "theme": "–ПАС–",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -103047,10 +102439,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -103059,10 +102447,6 @@
               "theme": "-240",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -103093,10 +102477,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -103112,10 +102492,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -103139,10 +102515,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -103151,10 +102523,6 @@
               "theme": "-240",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -108340,11 +107708,11 @@
               "total": -60
             },
             {
-              "name": "Арсений",
+              "name": "Арсений Соломин",
               "total": 10
             },
             {
-              "name": "Ілля Квіткін",
+              "name": "Илья Квиткин",
               "total": 160
             }
           ],
@@ -109621,20 +108989,16 @@
           "letter": "I",
           "players": [
             {
-              "name": "Микуланинець",
+              "name": "Антон Микуланинець",
               "total": 170
             },
             {
-              "name": "Булавкин",
+              "name": "Александр Булавкин",
               "total": 50
             },
             {
-              "name": "Цоток",
+              "name": "Андрей Цоток",
               "total": -20
-            },
-            {
-              "name": "---",
-              "total": 0
             }
           ],
           "questions": [
@@ -109654,10 +109018,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -109677,10 +109037,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -109692,10 +109048,6 @@
                 {
                   "delta": 30,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -109723,10 +109075,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -109746,10 +109094,6 @@
                 {
                   "delta": 50,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -109769,10 +109113,6 @@
                 {
                   "delta": -10,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -109784,10 +109124,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -109815,10 +109151,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -109827,10 +109159,6 @@
               "theme": "Фарерский футбол",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -109861,10 +109189,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -109884,10 +109208,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -109896,10 +109216,6 @@
               "theme": "Удвоенные согласные",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -109930,10 +109246,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -109953,10 +109265,6 @@
                 {
                   "delta": -40,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -109965,10 +109273,6 @@
               "theme": "Удвоенные согласные",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -109999,10 +109303,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110022,10 +109322,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110034,10 +109330,6 @@
               "theme": "Гимны",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110068,10 +109360,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110080,10 +109368,6 @@
               "theme": "Гимны",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110114,10 +109398,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110137,10 +109417,6 @@
                 {
                   "delta": -20,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110149,10 +109425,6 @@
               "theme": "–ГОЛ–",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110183,10 +109455,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110195,10 +109463,6 @@
               "theme": "–ГОЛ–",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110229,10 +109493,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110244,10 +109504,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -110275,10 +109531,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110298,10 +109550,6 @@
                 {
                   "delta": -40,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110310,10 +109558,6 @@
               "theme": "Уникальные бомбардирские рекорды и их детали",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110344,10 +109588,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110359,10 +109599,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -110390,10 +109626,6 @@
                 {
                   "delta": 30,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110402,10 +109634,6 @@
               "theme": "Итальянские «десятки» 90-х",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110436,10 +109664,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110459,10 +109683,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110471,10 +109691,6 @@
               "theme": "Жёлто-синяя",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110505,10 +109721,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110517,10 +109729,6 @@
               "theme": "Жёлто-синяя",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110551,10 +109759,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110570,10 +109774,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -110597,10 +109797,6 @@
                 {
                   "delta": -20,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110620,10 +109816,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110632,10 +109824,6 @@
               "theme": "Лондон и окрестности",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110666,10 +109854,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110678,10 +109862,6 @@
               "theme": "–ПАС–",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110712,10 +109892,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110724,10 +109900,6 @@
               "theme": "–ПАС–",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110758,10 +109930,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110770,10 +109938,6 @@
               "theme": "–ПАС–",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -110804,10 +109968,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110827,10 +109987,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110842,10 +109998,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -110873,10 +110025,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -110896,10 +110044,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             }
@@ -110910,19 +110054,19 @@
           "letter": "J",
           "players": [
             {
-              "name": "Мария Т.",
+              "name": "Мария Тимохова",
               "total": 60
             },
             {
-              "name": "Максим К.",
+              "name": "Максим Корнеевец",
               "total": -70
             },
             {
-              "name": "Александр К.",
+              "name": "Александр Комса",
               "total": 50
             },
             {
-              "name": "Станислав С-Б.",
+              "name": "Станислав Силицкий-Бутрим",
               "total": 100
             }
           ],
@@ -112209,10 +111353,6 @@
             {
               "name": "Олег Артеменко",
               "total": 220
-            },
-            {
-              "name": "---",
-              "total": 0
             }
           ],
           "questions": [
@@ -112224,10 +111364,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -112255,10 +111391,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112278,10 +111410,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112290,10 +111418,6 @@
               "theme": "На уровне сборных впервые",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -112324,10 +111448,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112343,10 +111463,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -112370,10 +111486,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112393,10 +111505,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112405,10 +111513,6 @@
               "theme": "Фарерский футбол",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -112439,10 +111543,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112462,10 +111562,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112481,10 +111577,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -112508,10 +111600,6 @@
                 {
                   "delta": 30,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112531,10 +111619,6 @@
                 {
                   "delta": 40,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112543,10 +111627,6 @@
               "theme": "Удвоенные согласные",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -112577,10 +111657,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112589,10 +111665,6 @@
               "theme": "Гимны",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -112623,10 +111695,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112635,10 +111703,6 @@
               "theme": "Гимны",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -112669,10 +111733,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112688,10 +111748,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -112715,10 +111771,6 @@
                 {
                   "delta": -20,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112738,10 +111790,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112753,10 +111801,6 @@
                 {
                   "delta": 40,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -112784,10 +111828,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112807,10 +111847,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112822,10 +111858,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -112853,10 +111885,6 @@
                 {
                   "delta": 30,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112876,10 +111904,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112888,10 +111912,6 @@
               "theme": "Уникальные бомбардирские рекорды и их детали",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -112922,10 +111942,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112945,10 +111961,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112968,10 +111980,6 @@
                 {
                   "delta": 30,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -112980,10 +111988,6 @@
               "theme": "Итальянские «десятки» 90-х",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113014,10 +112018,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113037,10 +112037,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113056,10 +112052,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -113083,10 +112075,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113095,10 +112083,6 @@
               "theme": "Жёлто-синяя",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113129,10 +112113,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113152,10 +112132,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113167,10 +112143,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -113198,10 +112170,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113210,10 +112178,6 @@
               "theme": "Лондон и окрестности",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113244,10 +112208,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113259,10 +112219,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -113290,10 +112246,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113305,10 +112257,6 @@
                 {
                   "delta": 30,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -113336,10 +112284,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113348,10 +112292,6 @@
               "theme": "–ПАС–",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113382,10 +112322,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113397,10 +112333,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -113428,10 +112360,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113451,10 +112379,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113474,10 +112398,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             }
@@ -113498,10 +112418,6 @@
             {
               "name": "Сергей Никольский",
               "total": 10
-            },
-            {
-              "name": "---",
-              "total": 0
             }
           ],
           "questions": [
@@ -113513,10 +112429,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -113544,10 +112456,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113567,10 +112475,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113579,10 +112483,6 @@
               "theme": "На уровне сборных впервые",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113613,10 +112513,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113628,10 +112524,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -113659,10 +112551,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113682,10 +112570,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113694,10 +112578,6 @@
               "theme": "Фарерский футбол",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113728,10 +112608,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113740,10 +112616,6 @@
               "theme": "Удвоенные согласные",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113774,10 +112646,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113786,10 +112654,6 @@
               "theme": "Удвоенные согласные",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113820,10 +112684,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113832,10 +112692,6 @@
               "theme": "Удвоенные согласные",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113866,10 +112722,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113889,10 +112741,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113901,10 +112749,6 @@
               "theme": "Гимны",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113935,10 +112779,6 @@
                 {
                   "delta": 40,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113947,10 +112787,6 @@
               "theme": "Гимны",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -113981,10 +112817,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -113993,10 +112825,6 @@
               "theme": "–ГОЛ–",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -114027,10 +112855,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114039,10 +112863,6 @@
               "theme": "–ГОЛ–",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -114073,10 +112893,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114092,10 +112908,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -114119,10 +112931,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114131,10 +112939,6 @@
               "theme": "Уникальные бомбардирские рекорды и их детали",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -114165,10 +112969,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114177,10 +112977,6 @@
               "theme": "Уникальные бомбардирские рекорды и их детали",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -114211,10 +113007,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114234,10 +113026,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114246,10 +113034,6 @@
               "theme": "Итальянские «десятки» 90-х",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -114280,10 +113064,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114292,10 +113072,6 @@
               "theme": "Итальянские «десятки» 90-х",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -114326,10 +113102,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114341,10 +113113,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -114372,10 +113140,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114384,10 +113148,6 @@
               "theme": "Жёлто-синяя",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -114418,10 +113178,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114433,10 +113189,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -114464,10 +113216,6 @@
                 {
                   "delta": -20,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114486,10 +113234,6 @@
                 },
                 {
                   "delta": -30,
-                  "is_correct": false
-                },
-                {
-                  "delta": 0,
                   "is_correct": false
                 }
               ]
@@ -114510,10 +113254,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114522,10 +113262,6 @@
               "theme": "Лондон и окрестности",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -114556,10 +113292,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114571,10 +113303,6 @@
                 {
                   "delta": 20,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -114602,10 +113330,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114616,10 +113340,6 @@
               "results": [
                 {
                   "delta": -40,
-                  "is_correct": false
-                },
-                {
-                  "delta": 0,
                   "is_correct": false
                 },
                 {
@@ -114648,10 +113368,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114671,10 +113387,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114686,10 +113398,6 @@
                 {
                   "delta": 10,
                   "is_correct": true
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 },
                 {
                   "delta": 0,
@@ -114717,10 +113425,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114740,10 +113444,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -114752,10 +113452,6 @@
               "theme": "-240",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -114818,7 +113514,7 @@
               "total": 280
             },
             {
-              "name": "Артём Хачатурян",
+              "name": "Артем Хачатурян",
               "total": 90
             }
           ],
@@ -122540,10 +121236,6 @@
           "letter": "G",
           "players": [
             {
-              "name": "---",
-              "total": 0
-            },
-            {
               "name": "Евгений Капитульский",
               "total": 240
             },
@@ -122571,10 +121263,6 @@
                   "is_correct": false
                 },
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 10,
                   "is_correct": true
                 }
@@ -122585,10 +121273,6 @@
               "theme": "Пернатый футбол",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 20,
                   "is_correct": true
@@ -122609,10 +121293,6 @@
               "nominal": 30,
               "results": [
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 30,
                   "is_correct": true
                 },
@@ -122631,10 +121311,6 @@
               "theme": "Пернатый футбол",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -122665,10 +121341,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -122677,10 +121349,6 @@
               "theme": "Десятый десяток",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 10,
                   "is_correct": true
@@ -122709,10 +121377,6 @@
                   "is_correct": false
                 },
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 20,
                   "is_correct": true
                 }
@@ -122723,10 +121387,6 @@
               "theme": "Десятый десяток",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 30,
                   "is_correct": true
@@ -122746,10 +121406,6 @@
               "theme": "Десятый десяток",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -122780,10 +121436,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -122792,10 +121444,6 @@
               "theme": "Наказания",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -122824,10 +121472,6 @@
                   "is_correct": false
                 },
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 20,
                   "is_correct": true
                 }
@@ -122847,10 +121491,6 @@
                   "is_correct": false
                 },
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 30,
                   "is_correct": true
                 }
@@ -122861,10 +121501,6 @@
               "theme": "Наказания",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 40,
                   "is_correct": true
@@ -122895,10 +121531,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -122907,10 +121539,6 @@
               "theme": "Однофамильцы",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -122941,10 +121569,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -122953,10 +121577,6 @@
               "theme": "Однофамильцы",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -122976,10 +121596,6 @@
               "theme": "Однофамильцы",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123010,10 +121626,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123022,10 +121634,6 @@
               "theme": "Мокрая тема",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123046,10 +121654,6 @@
               "nominal": 20,
               "results": [
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 20,
                   "is_correct": true
                 },
@@ -123068,10 +121672,6 @@
               "theme": "Мокрая тема",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": -30,
                   "is_correct": false
@@ -123102,10 +121702,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123125,10 +121721,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123137,10 +121729,6 @@
               "theme": "Что-то первое",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 10,
                   "is_correct": true
@@ -123171,10 +121759,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123183,10 +121767,6 @@
               "theme": "Что-то первое",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123217,10 +121797,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123229,10 +121805,6 @@
               "theme": "Что-то первое",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123253,10 +121825,6 @@
               "nominal": 10,
               "results": [
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 10,
                   "is_correct": true
                 },
@@ -123276,10 +121844,6 @@
               "nominal": 20,
               "results": [
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 20,
                   "is_correct": true
                 },
@@ -123298,10 +121862,6 @@
               "theme": "Музыкальная тема",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123332,10 +121892,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123344,10 +121900,6 @@
               "theme": "Музыкальная тема",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123368,10 +121920,6 @@
               "nominal": 10,
               "results": [
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 10,
                   "is_correct": true
                 },
@@ -123391,10 +121939,6 @@
               "nominal": 20,
               "results": [
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 20,
                   "is_correct": true
                 },
@@ -123413,10 +121957,6 @@
               "theme": "Как Онопко",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123447,10 +121987,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123459,10 +121995,6 @@
               "theme": "Как Онопко",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123487,10 +122019,6 @@
                   "is_correct": false
                 },
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 10,
                   "is_correct": true
                 },
@@ -123505,10 +122033,6 @@
               "theme": "Одежда",
               "nominal": 20,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123539,10 +122063,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123551,10 +122071,6 @@
               "theme": "Одежда",
               "nominal": 40,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123575,10 +122091,6 @@
               "nominal": 50,
               "results": [
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 50,
                   "is_correct": true
                 },
@@ -123597,10 +122109,6 @@
               "theme": "К. Г.",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123631,10 +122139,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123643,10 +122147,6 @@
               "theme": "К. Г.",
               "nominal": 30,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123677,10 +122177,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123689,10 +122185,6 @@
               "theme": "К. Г.",
               "nominal": 50,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123723,10 +122215,6 @@
                 {
                   "delta": 0,
                   "is_correct": false
-                },
-                {
-                  "delta": 0,
-                  "is_correct": false
                 }
               ]
             },
@@ -123735,10 +122223,6 @@
               "theme": "-150",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -123763,10 +122247,6 @@
                   "is_correct": false
                 },
                 {
-                  "delta": 0,
-                  "is_correct": false
-                },
-                {
                   "delta": 10,
                   "is_correct": true
                 },
@@ -123781,10 +122261,6 @@
               "theme": "-150",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 10,
                   "is_correct": true
@@ -123804,10 +122280,6 @@
               "theme": "-150",
               "nominal": 10,
               "results": [
-                {
-                  "delta": 0,
-                  "is_correct": false
-                },
                 {
                   "delta": 0,
                   "is_correct": false
@@ -125130,7 +123602,7 @@
               "total": 430
             },
             {
-              "name": "Артём Корсун",
+              "name": "Артем Корсун",
               "total": -10
             }
           ],
@@ -130050,7 +128522,7 @@
           "letter": "M",
           "players": [
             {
-              "name": "Артём Жолковский",
+              "name": "Артем Жолковский",
               "total": 110
             },
             {
