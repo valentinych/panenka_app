@@ -81,6 +81,33 @@ exist.
 
 ## Deploying to Heroku
 
+### 🚀 One-command "magic" deploy
+
+Once the Heroku CLI is installed and authenticated (`heroku login`), you can deploy the current branch with a single command:
+
+```bash
+./magic_heroku_deploy.sh
+```
+
+The script will:
+
+- Verify that you are logged into the Heroku CLI and that a `heroku` remote exists (or configure it automatically when `HEROKU_APP_NAME` is set).
+- Commit pending changes with an interactive prompt for the message (or use `--message` / `--yes` for non-interactive runs).
+- Sync with `origin/<current branch>` before pushing.
+- Push the chosen branch to the Heroku remote and show dyno/release status when the deploy completes.
+
+Useful flags:
+
+```bash
+./magic_heroku_deploy.sh --app panenka-live-prototype      # deploy to a specific app
+./magic_heroku_deploy.sh --branch main                     # deploy from a specific local branch
+./magic_heroku_deploy.sh --remote-branch main              # override the remote branch (default: main)
+./magic_heroku_deploy.sh --message "Season 2 fixes" --yes  # auto-commit with a preset message
+./magic_heroku_deploy.sh --no-commit                       # fail fast if the working tree is dirty
+```
+
+### Manual deployment steps
+
 The project is configured for the [Heroku Python buildpack](https://devcenter.heroku.com/articles/getting-started-with-python). The steps below assume you already have the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) installed and are logged in.
 
 1. Create the application once (or reuse an existing one):
@@ -127,6 +154,38 @@ The project is configured for the [Heroku Python buildpack](https://devcenter.he
    ```
 
 These steps cover a full manual deployment from your local environment. Subsequent updates can be deployed with `git push heroku main` after committing changes.
+
+## Season 2 results data pipeline
+
+Season 2 tour outcomes live in a dedicated SQLite database managed by the Season 2 importer suite. To refresh or re-run the import:
+
+1. (Optional) Regenerate the raw CSV snapshots and manifest from Google Sheets:
+
+   ```bash
+   python scripts/season2/download_sheet_csvs.py --destination data/raw/season02
+   ```
+
+2. Ensure the results schema exists (usually only required when bootstrapping a new environment):
+
+   ```bash
+   python scripts/season2/bootstrap_results_schema.py
+   ```
+
+3. Import the Season 2 fights into the results database:
+
+   ```bash
+   python scripts/season2/import_results.py \
+       --data-root data/raw/season02/csv \
+       --manifest data/raw/season02/manifest.json
+   ```
+
+4. Run the verifier to confirm five questions per fight and reconciled totals before promoting the data further:
+
+   ```bash
+   python scripts/season2/verify_results.py --pretty
+   ```
+
+Command-line flags such as `--tours` and `--db-path` allow partial imports and alternative SQLite targets. Consult `docs/season2_import_runbook.md` for deeper operational context, Season 1 comparisons, and troubleshooting notes.
 
 ## Next steps
 
