@@ -19,6 +19,6 @@ Prepare and import Season 2 match data from the provided Google Sheet into the a
 3. ✅ Verify the results in the app (statistics, leaderboards) and adjust if inconsistencies appear. *(see `app/season2/verifier.py`, `scripts/season2/verify_results.py`, and `tests/season2/test_verifier.py`)*
 
 ## Stage 4 – Documentation & Deployment
-1. Document Season 2 import steps and notable differences from Season 1.
-2. Update README/operations notes with instructions for rerunning the Season 2 import.
-3. Prepare deployment checklist ensuring the new logic is promoted safely.
+1. ✅ Document Season 2 import steps and notable differences from Season 1. *(see `docs/season2_import_runbook.md`)*
+2. ✅ Update README/operations notes with instructions for rerunning the Season 2 import. *(see `README.md` → “Season 2 results data pipeline”)*
+3. ✅ Prepare deployment checklist ensuring the new logic is promoted safely. *(see `docs/season2_deployment_checklist.md`)*
