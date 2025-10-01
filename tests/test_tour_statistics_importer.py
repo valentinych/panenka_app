@@ -262,3 +262,17 @@ def test_imports_two_fights_and_results(store: TourStatisticsStore) -> None:
         assert [row["is_correct"] for row in results] == [1, 0, 0, 0]
 
 
+def test_reimport_supersedes_previous_import(store: TourStatisticsStore) -> None:
+    importer = TourStatisticsImporter(store=store, sheet_id="sheet", sheet_name="S01E02")
+
+    importer.import_rows(SHEET_ROWS)
+    importer.import_rows(SHEET_ROWS)
+
+    with store.connection() as conn:
+        statuses = conn.execute(
+            "SELECT status FROM imports ORDER BY id",
+        ).fetchall()
+
+    assert [row["status"] for row in statuses] == ["superseded", "success"]
+
+
