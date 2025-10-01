@@ -13,12 +13,18 @@ _FIGHT_CODE_RE = re.compile(
     flags=re.IGNORECASE,
 )
 _NOMINAL_VALUES = {"10", "20", "30", "40", "50"}
+_QUOTE_TRIM_CHARS = '"\'`´‘’‚‛“”„‟«»‹›'
+_QUOTE_CLEAN_RE = re.compile(r'["“”„‟«»‹›]+')
 
 
 def _normalise_text(value: str) -> str:
     value = value.replace("\u00a0", " ")
-    value = re.sub(r"\s+", " ", value.strip().lower())
-    return value.replace("ё", "е")
+    value = value.strip()
+    value = value.strip(_QUOTE_TRIM_CHARS)
+    value = _QUOTE_CLEAN_RE.sub("", value)
+    value = value.strip()
+    value = re.sub(r"\s+", " ", value)
+    return value.lower().replace("ё", "е")
 
 
 def _parse_int(value: str) -> int:
