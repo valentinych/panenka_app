@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Таблица Google Sheets · Panenka Live{% endblock %}
+{% block layout_modifier %} layout--full{% endblock %}
+{% block content %}
+<section class="card sheet-card">
+  <div class="sheet-card__header">
+    <div>
+      <h2 class="card-title">Таблица Google Sheets</h2>
+      <p class="card-description">
+        На этой странице отображается актуальный список игроков и рейтингов из Google Sheets.
+        Вы можете открыть документ в новой вкладке по
+        <a class="link" href="{{ sheet_direct_url }}" target="_blank" rel="noopener">прямой ссылке</a>.
+      </p>
+    </div>
+    {% if sheet_data.total_rows %}
+      <p class="sheet-card__meta">Всего записей: {{ sheet_data.total_rows }}</p>
+    {% endif %}
+  </div>
+
+  {% if load_error %}
+    <p class="sheet-card__error">{{ load_error }}</p>
+  {% elif sheet_data.rows %}
+    <div class="sheet-card__table-wrapper">
+      <table class="sheet-table">
+        <thead>
+          <tr>
+            {% for column in sheet_data.columns %}
+              <th scope="col">{{ column }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in sheet_data.rows %}
+            <tr>
+              {% for cell in row %}
+                <td data-title="{{ sheet_data.columns[loop.index0] }}">{{ cell }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="sheet-card__empty">Таблица пуста. Попробуйте позже или откройте Google Sheets напрямую.</p>
+  {% endif %}
+</section>
+{% endblock %}

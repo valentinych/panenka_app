@@ -31,6 +31,7 @@ from .question_store import question_store
 
 bp = Blueprint("main", __name__)
 
+QUESTION_SOURCE_SHEET_ID = "1kjXOU8cE09vJk8xWzY4vWd1HLCpZQqySi9wULBPg-Iw"
 AUTH_FILE = Path("auth.json")
 AUTH_ENV_VAR = "AUTH_JSON"
 AUTH_S3_BUCKET_ENV = "AUTH_JSON_S3_BUCKET"
@@ -1714,6 +1715,105 @@ def question_browser():
         not_taken_max=not_taken_max,
         taken_max_bound=taken_max_bound,
         not_taken_max_bound=not_taken_max_bound,
+    )
+
+
+@bp.route("/questions/source")
+@login_required
+def question_source_table():
+    sheet_direct_url = (
+        f"https://docs.google.com/spreadsheets/d/{QUESTION_SOURCE_SHEET_ID}/edit?usp=sharing"
+    )
+    sheet_api_url = (
+        f"https://docs.google.com/spreadsheets/d/{QUESTION_SOURCE_SHEET_ID}/gviz/tq?tqx=out:json"
+    )
+
+    sheet_data: dict[str, object] = {"columns": [], "rows": [], "total_rows": 0}
+    load_error: str | None = None
+
+    try:
+        response = requests.get(sheet_api_url, timeout=10)
+        response.raise_for_status()
+        payload_raw = response.text
+        start_index = payload_raw.find("(")
+        end_index = payload_raw.rfind(")")
+        if start_index == -1 or end_index == -1:
+            raise ValueError("Unexpected response format from Google Sheets")
+        payload = json.loads(payload_raw[start_index + 1 : end_index])
+        table = payload.get("table", {})
+        raw_columns = table.get("cols") or []
+        raw_rows = table.get("rows") or []
+
+        used_column_indexes: list[int] = []
+        for index, _column in enumerate(raw_columns):
+            column_has_data = False
+            for raw_row in raw_rows:
+                cells = raw_row.get("c") or []
+                if index < len(cells):
+                    cell = cells[index]
+                    if cell and cell.get("v") not in (None, ""):
+                        column_has_data = True
+                        break
+            if column_has_data:
+                used_column_indexes.append(index)
+
+        column_overrides = {0: "№", 1: "Игрок"}
+        columns: list[str] = []
+        for index in used_column_indexes:
+            column = raw_columns[index] if index < len(raw_columns) else {}
+            label = (column.get("label") or "").strip()
+            if not label:
+                label = column_overrides.get(index, "")
+            if not label:
+                label = (column.get("id") or f"Колонка {index + 1}").strip()
+            columns.append(label)
+
+        rows: list[list[str]] = []
+        for raw_row in raw_rows:
+            cells = raw_row.get("c") or []
+            formatted_row: list[str] = []
+            has_content = False
+            for index in used_column_indexes:
+                value: object = ""
+                if index < len(cells):
+                    cell = cells[index]
+                    if cell:
+                        value = cell.get("f")
+                        if value is None:
+                            value = cell.get("v")
+                if value is None:
+                    value = ""
+                if isinstance(value, float):
+                    if value.is_integer():
+                        display_value = str(int(value))
+                    else:
+                        display_value = f"{value:.2f}".rstrip("0").rstrip(".")
+                else:
+                    display_value = str(value)
+                if display_value:
+                    has_content = True
+                formatted_row.append(display_value)
+            if has_content:
+                rows.append(formatted_row)
+
+        sheet_data = {
+            "columns": columns,
+            "rows": rows,
+            "total_rows": len(rows),
+        }
+    except Exception as exc:  # pragma: no cover - network failure should be rare
+        current_app.logger.warning(
+            "Failed to load question source sheet: %s", exc, exc_info=True
+        )
+        load_error = (
+            "Не удалось загрузить таблицу Google Sheets. Попробуйте открыть документ по прямой ссылке."
+        )
+
+    return render_template(
+        "question_source_table.html",
+        sheet_direct_url=sheet_direct_url,
+        sheet_data=sheet_data,
+        load_error=load_error,
     )
 
 
