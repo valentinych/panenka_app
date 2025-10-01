@@ -14,8 +14,11 @@ from typing import Iterable
 from .season2 import Season2Importer, Season2ResultsStore
 
 DEFAULT_SEASON1_FIXTURE = Path("app/static/data/season01_tour_results.json")
+DEFAULT_SEASON3_FIXTURE = Path("app/static/data/season03_tour_results.json")
+DEFAULT_SEASON4_FIXTURE = Path("app/static/data/season04_tour_results.json")
 DEFAULT_SEASON2_DATA_ROOT = Path("data/raw/season02/csv")
 DEFAULT_SEASON2_MANIFEST = Path("data/raw/season02/manifest.json")
+DEFAULT_EXTRA_FIXTURES = (DEFAULT_SEASON3_FIXTURE, DEFAULT_SEASON4_FIXTURE)
 
 _FIGHT_CODE_PATTERN = re.compile(
     r"S(?P<season>\d{2})E(?P<tour>\d{2})F(?P<fight>\d{2})",
@@ -29,6 +32,7 @@ def load_historical_dataset(
     season1_json: str | Path = DEFAULT_SEASON1_FIXTURE,
     season2_data_root: str | Path = DEFAULT_SEASON2_DATA_ROOT,
     season2_manifest: str | Path = DEFAULT_SEASON2_MANIFEST,
+    extra_fixtures: Iterable[str | Path] = DEFAULT_EXTRA_FIXTURES,
 ) -> dict[str, Iterable]:
     """Load historical fight payload assembled from seasons 1 and 2.
 
@@ -43,6 +47,7 @@ def load_historical_dataset(
     season1_path = Path(season1_json)
     season2_root_path = Path(season2_data_root)
     season2_manifest_path = Path(season2_manifest)
+    extra_fixture_paths = [Path(path) for path in extra_fixtures]
 
     with tempfile.TemporaryDirectory() as tmpdir:
         output = Path(tmpdir) / "historical.sqlite3"
@@ -51,6 +56,7 @@ def load_historical_dataset(
             season2_data_root=season2_root_path,
             season2_manifest=season2_manifest_path,
             output=output,
+            extra_fixtures=extra_fixture_paths,
         )
         fights, seasons = _extract_historical_records(output)
 
@@ -77,6 +83,7 @@ def build_historical_database(
     season2_data_root: Path,
     season2_manifest: Path,
     output: Path,
+    extra_fixtures: Iterable[Path] = (),
 ) -> dict[str, dict[str, int]]:
     """Compile season 1 and 2 fight snapshots into a SQLite bundle."""
 
@@ -91,11 +98,19 @@ def build_historical_database(
         manifest=season2_manifest,
     )
 
+    fixture_summaries: dict[str, dict[str, int]] = {"season2": season2_summary}
     with store.connection() as conn:
-        season1_summary = _insert_season1_results(conn, fixture_path=season1_json)
+        for fixture_path in [season1_json, *extra_fixtures]:
+            if not fixture_path.exists():
+                continue
+            season_number, summary = _insert_fixture_results(
+                conn,
+                fixture_path=fixture_path,
+            )
+            fixture_summaries[f"season{season_number}"] = summary
         conn.commit()
 
-    return {"season1": season1_summary, "season2": season2_summary}
+    return fixture_summaries
 
 
 def _sanitize_name(value: str | None) -> str:
@@ -182,17 +197,18 @@ def _parse_fight_code(code: str) -> tuple[int, int, int]:
     )
 
 
-def _insert_season1_results(
+def _insert_fixture_results(
     conn: sqlite3.Connection,
     *,
     fixture_path: Path,
-) -> dict[str, int]:
+) -> tuple[int, dict[str, int]]:
     data = json.loads(fixture_path.read_text(encoding="utf-8"))
     season_number = int(data.get("season_number") or 1)
     season_id = _ensure_season(conn, season_number)
+    source_label = f"fixture_season_{season_number:02d}"
     import_id = _record_import(
         conn,
-        source="season01_fixture",
+        source=source_label,
         identifier=str(fixture_path),
         season_number=season_number,
     )
@@ -287,7 +303,7 @@ def _insert_season1_results(
                     )
                     results_inserted += 1
 
-    return {
+    return season_number, {
         "fights": fights_inserted,
         "participants": participants_inserted,
         "questions": questions_inserted,

@@ -1,0 +1,151 @@
+{
+  "season_number": 3,
+  "tours": [
+    {
+      "tour_number": 1,
+      "gid": 301,
+      "fights": [
+        {
+          "code": "S03E01F01",
+          "letter": "A",
+          "players": [
+            {"name": "Александр Новиков", "total": 120},
+            {"name": "Дарья Осипова", "total": 80},
+            {"name": "Илья Сазонов", "total": 60},
+            {"name": "Ольга Кузнецова", "total": 30}
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Команды",
+              "nominal": 10,
+              "results": [
+                {"delta": 10, "is_correct": true},
+                {"delta": 0, "is_correct": false},
+                {"delta": 0, "is_correct": false},
+                {"delta": 0, "is_correct": false}
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "История",
+              "nominal": 20,
+              "results": [
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 0, "is_correct": false},
+                {"delta": 0, "is_correct": false}
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Музыка",
+              "nominal": 30,
+              "results": [
+                {"delta": 30, "is_correct": true},
+                {"delta": 30, "is_correct": true},
+                {"delta": 30, "is_correct": true},
+                {"delta": 0, "is_correct": false}
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Наука",
+              "nominal": 40,
+              "results": [
+                {"delta": 40, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 10, "is_correct": true},
+                {"delta": 30, "is_correct": true}
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Спорт",
+              "nominal": 50,
+              "results": [
+                {"delta": 20, "is_correct": true},
+                {"delta": 10, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 0, "is_correct": false}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tour_number": 2,
+      "gid": 302,
+      "fights": [
+        {
+          "code": "S03E02F01",
+          "letter": "B",
+          "players": [
+            {"name": "Виктор Смирнов", "total": 110},
+            {"name": "Ксения Павлова", "total": 90},
+            {"name": "Николай Рыбаков", "total": 70},
+            {"name": "Татьяна Белова", "total": 40}
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Литература",
+              "nominal": 10,
+              "results": [
+                {"delta": 10, "is_correct": true},
+                {"delta": 10, "is_correct": true},
+                {"delta": 0, "is_correct": false},
+                {"delta": 0, "is_correct": false}
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Путешествия",
+              "nominal": 20,
+              "results": [
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 10, "is_correct": true},
+                {"delta": 0, "is_correct": false}
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Технологии",
+              "nominal": 30,
+              "results": [
+                {"delta": 30, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 10, "is_correct": true}
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "География",
+              "nominal": 40,
+              "results": [
+                {"delta": 30, "is_correct": true},
+                {"delta": 30, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true}
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Кино",
+              "nominal": 50,
+              "results": [
+                {"delta": 20, "is_correct": true},
+                {"delta": 10, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 10, "is_correct": true}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
