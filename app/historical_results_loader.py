@@ -54,6 +54,10 @@ def load_historical_dataset(
         )
         fights, seasons = _extract_historical_records(output)
 
+    # Ensure upcoming seasons are visible in the UI filters even before fights
+    # are imported, so the options appear as soon as the season starts.
+    seasons = sorted({*seasons, 3, 4})
+
     raw_names = [
         participant["display"]
         for fight in fights
