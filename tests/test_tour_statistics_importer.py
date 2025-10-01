@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
 
-from app.tour_statistics_importer import TourStatisticsImporter
+from app.tour_statistics_importer import TourStatisticsImporter, _normalise_text
 from app.tour_statistics_store import TourStatisticsStore
 
 
@@ -167,10 +168,6 @@ THEMES = [
 ]
 
 
-def _normalize(value: str) -> str:
-    return value.strip().lower().replace("ё", "е")
-
-
 @pytest.fixture
 def store(tmp_path: Path) -> TourStatisticsStore:
     db_path = tmp_path / "tour_stats.sqlite3"
@@ -178,7 +175,7 @@ def store(tmp_path: Path) -> TourStatisticsStore:
     store.ensure_schema()
     with store.connection() as conn:
         for player in PLAYERS:
-            normalized = _normalize(player)
+            normalized = _normalise_text(player)
             player_id = conn.execute(
                 "INSERT INTO players (full_name, normalized_name) VALUES (?, ?)",
                 (player, normalized),
@@ -260,6 +257,43 @@ def test_imports_two_fights_and_results(store: TourStatisticsStore) -> None:
         ).fetchall()
         assert [row["delta"] for row in results] == [10, 0, -10, 0]
         assert [row["is_correct"] for row in results] == [1, 0, 0, 0]
+
+
+def test_imports_players_with_quoted_names(store: TourStatisticsStore) -> None:
+    importer = TourStatisticsImporter(store=store, sheet_id="sheet", sheet_name="S01E02")
+
+    quoted_rows = deepcopy(SHEET_ROWS)
+    quoted_rows[1] = list(quoted_rows[1])
+    quoted_rows[1][3] = ' " Денис Лавренюк" '
+
+    importer.import_rows(quoted_rows)
+
+    with store.connection() as conn:
+        row = conn.execute(
+            """
+            SELECT p.full_name
+            FROM fights f
+            JOIN fight_participants fp ON fp.fight_id = f.id
+            JOIN players p ON p.id = fp.player_id
+            WHERE f.fight_code = ? AND fp.seat_index = ?
+            """,
+            ("S01E02F01", 3),
+        ).fetchone()
+
+    assert row is not None
+    assert row["full_name"] == "Денис Лавренюк"
+
+
+@pytest.mark.parametrize(
+    "raw, expected",
+    [
+        ('" Денис Лавренюк"', "денис лавренюк"),
+        ("«Мария Тимохова»", "мария тимохова"),
+        ("“Евгений”   Капитульский", "евгений капитульский"),
+    ],
+)
+def test_normalise_text_strips_quotes(raw: str, expected: str) -> None:
+    assert _normalise_text(raw) == expected
 
 
 def test_reimport_supersedes_previous_import(store: TourStatisticsStore) -> None:
