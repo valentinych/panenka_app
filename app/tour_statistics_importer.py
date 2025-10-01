@@ -257,6 +257,8 @@ class TourStatisticsImporter:
             conn.commit()
             try:
                 conn.execute("BEGIN")
+                if not dry_run:
+                    self._supersede_previous_imports(conn, import_id)
                 for fight in fights:
                     self._delete_existing_fight(conn, fight.fight_code)
                     season_id = self._ensure_season(conn, fight.season_number)
@@ -304,6 +306,25 @@ class TourStatisticsImporter:
         conn.execute(
             "UPDATE imports SET finished_at = datetime('now'), status = ?, message = COALESCE(?, message) WHERE id = ?",
             (status, message, import_id),
+        )
+
+    def _supersede_previous_imports(self, conn, current_import_id: int) -> None:
+        supersede_message = f"Superseded by import {current_import_id}"
+        conn.execute(
+            (
+                "UPDATE imports "
+                "SET status = 'superseded', "
+                "    message = CASE "
+                "        WHEN message IS NULL OR message = '' THEN ? "
+                "        ELSE message "
+                "    END "
+                "WHERE source = ? "
+                "  AND source_identifier = ? "
+                "  AND sheet_name = ? "
+                "  AND id <> ? "
+                "  AND status IN ('success', 'dry_run')"
+            ),
+            (supersede_message, "google_sheets", self._sheet_id, self._sheet_name, current_import_id),
         )
 
     def _ensure_season(self, conn, season_number: int) -> int:

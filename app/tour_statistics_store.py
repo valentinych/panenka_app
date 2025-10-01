@@ -250,6 +250,7 @@ class TourStatisticsStore:
             "question_results totals do not match fight_participants.total_score"
         )
 
+        conn.execute("DROP TRIGGER IF EXISTS trg_question_results_check_insert")
         conn.execute(
             f"""
             CREATE TRIGGER IF NOT EXISTS trg_question_results_check_insert
@@ -266,6 +267,16 @@ class TourStatisticsStore:
                             WHERE id = NEW.participant_id
                         )
                     )
+                    AND EXISTS (
+                        SELECT 1 FROM questions
+                        WHERE fight_id = (
+                            SELECT fight_id FROM fight_participants
+                            WHERE id = NEW.participant_id
+                        )
+                    )
+                    AND EXISTS (
+                        SELECT 1 FROM questions WHERE id = NEW.question_id
+                    )
                     AND (
                         SELECT COALESCE(SUM(delta), 0) FROM question_results
                         WHERE participant_id = NEW.participant_id
@@ -279,6 +290,7 @@ class TourStatisticsStore:
             """
         )
 
+        conn.execute("DROP TRIGGER IF EXISTS trg_question_results_check_update")
         conn.execute(
             f"""
             CREATE TRIGGER IF NOT EXISTS trg_question_results_check_update
@@ -294,6 +306,16 @@ class TourStatisticsStore:
                             SELECT fight_id FROM fight_participants
                             WHERE id = NEW.participant_id
                         )
+                    )
+                    AND EXISTS (
+                        SELECT 1 FROM questions
+                        WHERE fight_id = (
+                            SELECT fight_id FROM fight_participants
+                            WHERE id = NEW.participant_id
+                        )
+                    )
+                    AND EXISTS (
+                        SELECT 1 FROM questions WHERE id = NEW.question_id
                     )
                     AND (
                         SELECT COALESCE(SUM(delta), 0) FROM question_results
@@ -317,6 +339,16 @@ class TourStatisticsStore:
                             WHERE id = OLD.participant_id
                         )
                     )
+                    AND EXISTS (
+                        SELECT 1 FROM questions
+                        WHERE fight_id = (
+                            SELECT fight_id FROM fight_participants
+                            WHERE id = OLD.participant_id
+                        )
+                    )
+                    AND EXISTS (
+                        SELECT 1 FROM questions WHERE id = OLD.question_id
+                    )
                     AND (
                         SELECT COALESCE(SUM(delta), 0) FROM question_results
                         WHERE participant_id = OLD.participant_id
@@ -330,6 +362,7 @@ class TourStatisticsStore:
             """
         )
 
+        conn.execute("DROP TRIGGER IF EXISTS trg_question_results_check_delete")
         conn.execute(
             f"""
             CREATE TRIGGER IF NOT EXISTS trg_question_results_check_delete
@@ -346,6 +379,16 @@ class TourStatisticsStore:
                             WHERE id = OLD.participant_id
                         )
                     )
+                    AND EXISTS (
+                        SELECT 1 FROM questions
+                        WHERE fight_id = (
+                            SELECT fight_id FROM fight_participants
+                            WHERE id = OLD.participant_id
+                        )
+                    )
+                    AND EXISTS (
+                        SELECT 1 FROM questions WHERE id = OLD.question_id
+                    )
                     AND (
                         SELECT COALESCE(SUM(delta), 0) FROM question_results
                         WHERE participant_id = OLD.participant_id
@@ -359,6 +402,7 @@ class TourStatisticsStore:
             """
         )
 
+        conn.execute("DROP TRIGGER IF EXISTS trg_fight_participants_score_check")
         conn.execute(
             f"""
             CREATE TRIGGER IF NOT EXISTS trg_fight_participants_score_check
@@ -370,6 +414,10 @@ class TourStatisticsStore:
                         WHERE participant_id = NEW.id
                     ) = (
                         SELECT COUNT(*) FROM questions
+                        WHERE fight_id = NEW.fight_id
+                    )
+                    AND EXISTS (
+                        SELECT 1 FROM questions
                         WHERE fight_id = NEW.fight_id
                     )
                     AND (
