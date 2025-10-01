@@ -1,0 +1,151 @@
+{
+  "season_number": 4,
+  "tours": [
+    {
+      "tour_number": 1,
+      "gid": 401,
+      "fights": [
+        {
+          "code": "S04E01F01",
+          "letter": "A",
+          "players": [
+            {"name": "Антон Петров", "total": 130},
+            {"name": "Екатерина Лебедева", "total": 100},
+            {"name": "Михаил Орлов", "total": 70},
+            {"name": "Светлана Захарова", "total": 50}
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Архитектура",
+              "nominal": 10,
+              "results": [
+                {"delta": 10, "is_correct": true},
+                {"delta": 0, "is_correct": false},
+                {"delta": 0, "is_correct": false},
+                {"delta": 0, "is_correct": false}
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Живопись",
+              "nominal": 20,
+              "results": [
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 10, "is_correct": true},
+                {"delta": 10, "is_correct": true}
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Поэзия",
+              "nominal": 30,
+              "results": [
+                {"delta": 40, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 10, "is_correct": true},
+                {"delta": 0, "is_correct": false}
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Театр",
+              "nominal": 40,
+              "results": [
+                {"delta": 30, "is_correct": true},
+                {"delta": 30, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true}
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Современность",
+              "nominal": 50,
+              "results": [
+                {"delta": 30, "is_correct": true},
+                {"delta": 30, "is_correct": true},
+                {"delta": 30, "is_correct": true},
+                {"delta": 20, "is_correct": true}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tour_number": 2,
+      "gid": 402,
+      "fights": [
+        {
+          "code": "S04E02F01",
+          "letter": "B",
+          "players": [
+            {"name": "Григорий Власов", "total": 95},
+            {"name": "Инга Соловьёва", "total": 85},
+            {"name": "Руслан Абрамов", "total": 75},
+            {"name": "Юлия Чернова", "total": 65}
+          ],
+          "questions": [
+            {
+              "order": 1,
+              "theme": "Экономика",
+              "nominal": 10,
+              "results": [
+                {"delta": 10, "is_correct": true},
+                {"delta": 10, "is_correct": true},
+                {"delta": 0, "is_correct": false},
+                {"delta": 0, "is_correct": false}
+              ]
+            },
+            {
+              "order": 2,
+              "theme": "Политика",
+              "nominal": 20,
+              "results": [
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 10, "is_correct": true}
+              ]
+            },
+            {
+              "order": 3,
+              "theme": "Инновации",
+              "nominal": 30,
+              "results": [
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 30, "is_correct": true},
+                {"delta": 20, "is_correct": true}
+              ]
+            },
+            {
+              "order": 4,
+              "theme": "Город",
+              "nominal": 40,
+              "results": [
+                {"delta": 30, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true},
+                {"delta": 20, "is_correct": true}
+              ]
+            },
+            {
+              "order": 5,
+              "theme": "Будущее",
+              "nominal": 50,
+              "results": [
+                {"delta": 15, "is_correct": true},
+                {"delta": 15, "is_correct": true},
+                {"delta": 25, "is_correct": true},
+                {"delta": 15, "is_correct": true}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
