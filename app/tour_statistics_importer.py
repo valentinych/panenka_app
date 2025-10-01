@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import re
-from typing import List, Optional, Sequence
+from typing import Callable, List, Optional, Sequence
 
 from .tour_statistics_store import TourStatisticsStore
 
@@ -217,6 +217,7 @@ class TourStatisticsImportSummary:
     participants_inserted: int = 0
     questions_inserted: int = 0
     question_results_inserted: int = 0
+    fight_codes: List[str] = field(default_factory=list)
 
     def as_dict(self) -> dict[str, int]:
         return {
@@ -235,7 +236,13 @@ class TourStatisticsImporter:
         self._sheet_id = sheet_id
         self._sheet_name = sheet_name
 
-    def import_rows(self, rows: Sequence[Sequence[str]]) -> TourStatisticsImportSummary:
+    def import_rows(
+        self,
+        rows: Sequence[Sequence[str]],
+        *,
+        dry_run: bool = False,
+        trace_sql: Optional[Callable[[str], None]] = None,
+    ) -> TourStatisticsImportSummary:
         parser = _SheetParser(rows)
         fights = parser.parse()
         summary = TourStatisticsImportSummary()
@@ -244,6 +251,8 @@ class TourStatisticsImporter:
 
         self._store.ensure_schema()
         with self._store.connection() as conn:
+            if trace_sql is not None:
+                conn.set_trace_callback(trace_sql)
             import_id = self._create_import_record(conn)
             conn.commit()
             try:
@@ -259,10 +268,23 @@ class TourStatisticsImporter:
                     summary.participants_inserted += len(participant_ids)
                     summary.questions_inserted += question_stats["questions"]
                     summary.question_results_inserted += question_stats["question_results"]
-                self._complete_import(conn, import_id, status="success")
-                conn.commit()
+                    summary.fight_codes.append(fight.fight_code)
+                if dry_run:
+                    conn.rollback()
+                    conn.execute("BEGIN")
+                    self._complete_import(
+                        conn,
+                        import_id,
+                        status="dry_run",
+                        message="Dry-run requested; no changes were committed.",
+                    )
+                    conn.commit()
+                else:
+                    self._complete_import(conn, import_id, status="success")
+                    conn.commit()
             except Exception as exc:  # pragma: no cover - defensive path
                 conn.rollback()
+                conn.execute("BEGIN")
                 self._complete_import(conn, import_id, status="failed", message=str(exc))
                 conn.commit()
                 raise
