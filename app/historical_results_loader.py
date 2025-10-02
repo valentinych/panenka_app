@@ -19,6 +19,8 @@ DEFAULT_SEASON4_FIXTURE = Path("app/static/data/season04_tour_results.json")
 DEFAULT_SEASON2_DATA_ROOT = Path("data/raw/season02/csv")
 DEFAULT_SEASON2_MANIFEST = Path("data/raw/season02/manifest.json")
 DEFAULT_EXTRA_FIXTURES = (DEFAULT_SEASON3_FIXTURE, DEFAULT_SEASON4_FIXTURE)
+FUTURE_SEASONS = (3, 4)
+REQUIRED_SEASONS = {1, 2, 3, 4}
 
 _FIGHT_CODE_PATTERN = re.compile(
     r"S(?P<season>\d{2})E(?P<tour>\d{2})F(?P<fight>\d{2})",
@@ -34,16 +36,61 @@ def load_historical_dataset(
     season2_manifest: str | Path = DEFAULT_SEASON2_MANIFEST,
     extra_fixtures: Iterable[str | Path] = DEFAULT_EXTRA_FIXTURES,
 ) -> dict[str, Iterable]:
-    """Load historical fight payload assembled from seasons 1 and 2.
+    """Load a cached snapshot of historical fights for the dashboard."""
 
-    The heavy lifting is delegated to :func:`build_historical_database`, which
-    reuses the Season 2 importer to normalise CSV snapshots. To avoid committing
-    binary assets the SQLite database is created inside a temporary directory
-    and converted to a lightweight in-memory representation before returning to
-    the caller. Results are cached across calls for the lifetime of the
-    process so repeated requests do not rebuild the dataset.
+    dataset = _load_dataset_from_results_store()
+    if dataset is None:
+        dataset = _load_dataset_from_fixtures(
+            season1_json=season1_json,
+            season2_data_root=season2_data_root,
+            season2_manifest=season2_manifest,
+            extra_fixtures=extra_fixtures,
+        )
+
+    dataset["seasons"] = sorted({*dataset["seasons"], *FUTURE_SEASONS})
+    return dataset
+
+
+def _load_dataset_from_results_store() -> dict[str, Iterable] | None:
+    """Attempt to build the dataset from the persisted results database.
+
+    The loader only switches to the database source when all required seasons
+    are present and contain fights. Otherwise the JSON fixtures are used as a
+    fallback so existing environments keep functioning during rollouts.
     """
 
+    store = Season2ResultsStore(enable_season_seed=False)
+    db_path = Path(store.db_path)
+    if not db_path.exists():
+        return None
+
+    try:
+        fights, seasons = _extract_historical_records(db_path)
+    except sqlite3.Error:
+        return None
+
+    if not fights:
+        return None
+
+    fight_seasons = {fight.get("season_number") for fight in fights}
+    if not REQUIRED_SEASONS.issubset(fight_seasons):
+        return None
+
+    raw_names = _build_raw_names(fights)
+    return {
+        "fights": fights,
+        "raw_names": raw_names,
+        "seasons": list(seasons),
+    }
+
+
+def _load_dataset_from_fixtures(
+    *,
+    season1_json: str | Path,
+    season2_data_root: str | Path,
+    season2_manifest: str | Path,
+    extra_fixtures: Iterable[str | Path],
+) -> dict[str, Iterable]:
     season1_path = Path(season1_json)
     season2_root_path = Path(season2_data_root)
     season2_manifest_path = Path(season2_manifest)
@@ -60,21 +107,20 @@ def load_historical_dataset(
         )
         fights, seasons = _extract_historical_records(output)
 
-    # Ensure upcoming seasons are visible in the UI filters even before fights
-    # are imported, so the options appear as soon as the season starts.
-    seasons = sorted({*seasons, 3, 4})
-
-    raw_names = [
-        participant["display"]
-        for fight in fights
-        for participant in fight.get("participants", [])
-    ]
-
+    raw_names = _build_raw_names(fights)
     return {
         "fights": fights,
         "raw_names": raw_names,
         "seasons": seasons,
     }
+
+
+def _build_raw_names(fights: Iterable[dict]) -> list[str]:
+    return [
+        participant["display"]
+        for fight in fights
+        for participant in fight.get("participants", [])
+    ]
 
 
 def build_historical_database(
