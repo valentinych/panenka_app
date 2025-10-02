@@ -14,12 +14,14 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import re
 import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, List
+from urllib.parse import quote
 
 import requests
 
@@ -80,12 +82,64 @@ def fetch_sheet_catalog(sheet_id: str) -> List[SheetInfo]:
     return entries
 
 
-def fetch_sheet_rows(sheet_id: str, gid: str) -> List[List[str]]:
-    """Download a worksheet and return it as a matrix of strings."""
+def _fetch_sheet_rows_via_gviz(sheet_id: str, gid: str) -> List[List[str]]:
+    """Download worksheet contents using the legacy GViz CSV endpoint."""
 
     csv_text = _http_get(GVIZ_CSV_ENDPOINT.format(sheet_id=sheet_id, gid=gid))
     reader = csv.reader(csv_text.splitlines())
     return [list(row) for row in reader]
+
+
+def _fetch_sheet_rows_via_api(sheet_id: str, sheet_name: str, api_key: str) -> List[List[str]]:
+    """Download worksheet contents via the Google Sheets public API."""
+
+    encoded_range = quote(f"{sheet_name}!A1:ZZ200", safe="")
+    url = (
+        "https://sheets.googleapis.com/v4/spreadsheets/{sheet_id}/values/{range}?"
+        "key={api_key}&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE"
+    ).format(sheet_id=sheet_id, range=encoded_range, api_key=api_key)
+
+    response = requests.get(url, timeout=30)
+    if response.status_code != 200:
+        raise FetchError(
+            "Google Sheets API request failed: "
+            f"HTTP {response.status_code} {response.text.strip()}"
+        )
+
+    try:
+        payload = response.json()
+    except ValueError as exc:  # pragma: no cover - defensive guard
+        raise FetchError("Unable to decode Google Sheets API response as JSON") from exc
+
+    rows = payload.get("values", [])
+    if not rows:
+        return []
+
+    # ``values`` omits trailing empty cells; normalise row lengths so that
+    # downstream parsers can rely on consistent indexing behaviour matching
+    # the CSV export.
+    max_width = max(len(row) for row in rows)
+    normalised: List[List[str]] = []
+    for raw_row in rows:
+        row = list(raw_row)
+        if len(row) < max_width:
+            row.extend("" for _ in range(max_width - len(row)))
+        normalised.append(row)
+    return normalised
+
+
+def fetch_sheet_rows(sheet_id: str, sheet: SheetInfo, *, api_key: str | None = None) -> List[List[str]]:
+    """Download a worksheet and return it as a matrix of strings."""
+
+    if api_key:
+        try:
+            return _fetch_sheet_rows_via_api(sheet_id, sheet.name, api_key)
+        except FetchError:
+            # Fall back to GViz if the API request is rejected. Upstream code
+            # will still surface empty results, but this preserves the previous
+            # behaviour when no API access is configured.
+            pass
+    return _fetch_sheet_rows_via_gviz(sheet_id, sheet.gid)
 
 
 def build_player_map(rows: Iterable[Iterable[str]]) -> dict[str, str]:
@@ -126,7 +180,12 @@ def _format_sheet_range(start: int, end: int) -> str:
     return f"{start_letter}:{end_letter}"
 
 
-def generate_dataset(sheet_id: str, *, include_sheet_details: bool = True) -> dict:
+def generate_dataset(
+    sheet_id: str,
+    *,
+    include_sheet_details: bool = True,
+    api_key: str | None = None,
+) -> dict:
     """Download the spreadsheet and build a JSON-serialisable dataset."""
 
     sheets = fetch_sheet_catalog(sheet_id)
@@ -134,7 +193,7 @@ def generate_dataset(sheet_id: str, *, include_sheet_details: bool = True) -> di
     if player_sheet is None:
         raise FetchError("Worksheet 'PlayerList' was not found in the spreadsheet.")
 
-    player_rows = fetch_sheet_rows(sheet_id, player_sheet.gid)
+    player_rows = fetch_sheet_rows(sheet_id, player_sheet, api_key=api_key)
     alias_map = build_player_map(player_rows)
 
     fights: List[dict] = []
@@ -143,7 +202,7 @@ def generate_dataset(sheet_id: str, *, include_sheet_details: bool = True) -> di
     for sheet in sheets:
         if sheet.name == PLAYER_LIST_SHEET:
             continue
-        rows = fetch_sheet_rows(sheet_id, sheet.gid)
+        rows = fetch_sheet_rows(sheet_id, sheet, api_key=api_key)
         parser = _SheetParser(rows)
         for fight in parser.parse():
             participants = []
@@ -216,13 +275,26 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Do not include sheet metadata (column ranges and row numbers) in the output.",
     )
+    parser.add_argument(
+        "--api-key",
+        help=(
+            "Optional Google Sheets API key. When supplied, the script fetches "
+            "worksheets via the official API to retain fight headers and player "
+            "names."
+        ),
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    api_key = args.api_key or os.environ.get("GOOGLE_API_KEY")
     try:
-        dataset = generate_dataset(args.sheet_id, include_sheet_details=not args.no_sheet_details)
+        dataset = generate_dataset(
+            args.sheet_id,
+            include_sheet_details=not args.no_sheet_details,
+            api_key=api_key,
+        )
     except (FetchError, ValueError, requests.RequestException) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
