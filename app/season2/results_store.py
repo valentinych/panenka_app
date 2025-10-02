@@ -14,13 +14,24 @@ class Season2ResultsStore:
     """Manage the database schema used for Season 2 tour results."""
 
     def __init__(self, db_path: Optional[str] = None, *, enable_season_seed: bool = True) -> None:
-        configured_path = db_path or os.getenv("PANENKA_RESULTS_DB")
+        configured_path = db_path
+        if configured_path is None:
+            configured_path = os.getenv("PANENKA_RESULTS_DB")
+
+        if isinstance(configured_path, str):
+            configured_path = configured_path.strip()
+
         if configured_path:
             base_path = Path(configured_path).expanduser()
             if not base_path.is_absolute():
                 base_path = (Path.cwd() / base_path).resolve()
             else:
                 base_path = base_path.resolve()
+            if base_path.exists() and base_path.is_dir():
+                raise ValueError(
+                    f"Configured results database path '{base_path}' is a directory; "
+                    "provide a SQLite filename instead."
+                )
         else:
             base_path = Path(__file__).resolve().parent / "season2_results.sqlite3"
 
