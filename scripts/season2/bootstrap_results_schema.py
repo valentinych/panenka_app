@@ -4,8 +4,6 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
-
 from app.season2 import Season2ResultsStore
 
 
@@ -14,7 +12,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--database",
         dest="database",
-        type=Path,
         help="Path to the results database (defaults to PANENKA_RESULTS_DB or app/season2/season2_results.sqlite3)",
     )
     parser.add_argument(
@@ -28,10 +25,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    store = Season2ResultsStore(
-        db_path=str(args.database) if args.database else None,
-        enable_season_seed=args.seed,
-    )
+    configured_path = (args.database or "").strip() or None
+    store = Season2ResultsStore(db_path=configured_path, enable_season_seed=args.seed)
     store.ensure_schema()
     print(f"Ensured Season 2 results schema at {store.db_path}")
 

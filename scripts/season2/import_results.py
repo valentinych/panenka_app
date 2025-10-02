@@ -24,7 +24,6 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--db-path",
-        type=Path,
         help="Optional override for the results database path.",
     )
     parser.add_argument(
@@ -40,7 +39,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
-    store = Season2ResultsStore(db_path=str(args.db_path) if args.db_path else None)
+    configured_path = (args.db_path or "").strip() or None
+    store = Season2ResultsStore(db_path=configured_path)
     importer = Season2Importer(store=store, data_root=args.data_root, manifest_path=args.manifest)
 
     summary = importer.import_season(tours=args.tours)
