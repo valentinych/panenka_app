@@ -55,6 +55,14 @@ class ParseS3ReferenceTestCase(unittest.TestCase):
                 self.assertEqual(bucket, expected_bucket)
                 self.assertEqual(key, expected_key)
 
+    def test_custom_default_key(self):
+        bucket, key = _parse_s3_reference(
+            "https://player-creds.s3.amazonaws.com", default_key="game_active.json"
+        )
+
+        self.assertEqual(bucket, "player-creds")
+        self.assertEqual(key, "game_active.json")
+
     def test_invalid_or_missing_references(self):
         for reference in ("https://example.com/auth.json", None, ""):
             with self.subTest(reference=reference):
