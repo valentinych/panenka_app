@@ -1511,8 +1511,8 @@ def dashboard():
 @bp.route("/game-ten")
 @login_required
 def game_ten():
-    active_url = os.getenv("GAME_TEN_ACTIVE_URL", "")
-    live_url = os.getenv("GAME_TEN_LIVE_URL", "")
+    active_url = os.getenv("GAME_TEN_ACTIVE_URL", "").strip() or "game_active.json"
+    live_url = os.getenv("GAME_TEN_LIVE_URL", "").strip()
     return render_template(
         "game_ten.html",
         game_ten_active_url=active_url,
