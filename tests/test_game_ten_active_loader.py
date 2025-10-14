@@ -81,3 +81,19 @@ def test_game_ten_active_s3_url_without_key_uses_default(monkeypatch):
     assert response.status_code == 200
     assert response.get_json() == expected_payload
     assert captured_calls == [("my-bucket", "game_active.json", "game_active.json")]
+
+
+def test_game_ten_active_local_file(monkeypatch, tmp_path):
+    expected_payload = {"question": {"title": "Local file"}, "answers": [1, 2, 3]}
+    local_file = tmp_path / "game_active.json"
+    local_file.write_text(json.dumps(expected_payload), encoding="utf-8")
+
+    monkeypatch.setattr("app.routes.GAME_TEN_ACTIVE_LOCAL_PATH", local_file)
+
+    app = create_app()
+    with app.test_client() as client:
+        _login(client)
+        response = client.get("/api/game-ten/active")
+
+    assert response.status_code == 200
+    assert response.get_json() == expected_payload
