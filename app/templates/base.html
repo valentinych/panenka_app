@@ -13,8 +13,15 @@
     <div class="background"></div>
     <main class="layout{% block layout_modifier %}{% endblock %}">
       <header class="masthead">
-        <h1 class="brand"><a href="{{ url_for('main.dashboard') }}">Panenka Live</a></h1>
-        <p class="subtitle">Interactive buzzer platform for quick-fire trivia.</p>
+        <h1 class="brand">
+          <a class="brand-link" href="{{ url_for('main.dashboard') }}">
+            <span aria-hidden="true" class="brand-logo">
+              <span class="brand-logo__inner">10</span>
+            </span>
+            <span class="brand-name">ДЕСЯТЬ</span>
+          </a>
+        </h1>
+        <p class="subtitle">Молниеносная викторина на десять вопросов.</p>
       </header>
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
