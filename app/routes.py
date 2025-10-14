@@ -706,8 +706,20 @@ def _load_from_file():
         return json.load(f)
 
 
-def _parse_s3_reference(reference):
-    """Return (bucket, key) parsed from different S3 URI/URL formats."""
+def _parse_s3_reference(reference, *, default_key=DEFAULT_S3_KEY):
+    """Return (bucket, key) parsed from different S3 URI/URL formats.
+
+    Parameters
+    ----------
+    reference:
+        Строковое представление ссылки на объект S3. Может быть в форматах
+        ``s3://bucket/key`` либо ``https://bucket.s3.amazonaws.com/key`` и т.д.
+    default_key:
+        Имя объекта, которое будет использовано, если ссылка указывает только на
+        бакет без конкретного ключа. Для исторических данных по умолчанию
+        используется ``auth.json``, но для других файлов (например,
+        ``game_active.json``) вызывающий код может передать собственное значение.
+    """
 
     if not reference:
         return None, None
@@ -720,7 +732,7 @@ def _parse_s3_reference(reference):
 
     if scheme == "s3":
         bucket = host.strip()
-        key = path or DEFAULT_S3_KEY
+        key = path or default_key
         return bucket or None, key
 
     if scheme in {"https", "http"} and host:
@@ -732,7 +744,7 @@ def _parse_s3_reference(reference):
                 if marker in host_lower:
                     bucket = host_lower.split(marker, 1)[0]
                     if bucket:
-                        return bucket or None, path or DEFAULT_S3_KEY
+                        return bucket or None, path or default_key
 
         # Path-style URLs (s3.amazonaws.com/bucket/key, s3.us-east-1.amazonaws.com/bucket/key, s3-accelerate.amazonaws.com/bucket/key)
         path_style_hosts = {
@@ -748,8 +760,8 @@ def _parse_s3_reference(reference):
                 parts = path.split("/", 1)
                 if parts[0]:
                     bucket = parts[0]
-                    key = parts[1] if len(parts) == 2 else DEFAULT_S3_KEY
-                    return bucket or None, key or DEFAULT_S3_KEY
+                    key = parts[1] if len(parts) == 2 else default_key
+                    return bucket or None, key or default_key
 
     return None, None
 
@@ -954,7 +966,9 @@ def _load_game_ten_active_payload():
     raw_reference = _get_sanitized_env(GAME_TEN_ACTIVE_URL_ENV)
 
     if raw_reference:
-        bucket, key = _parse_s3_reference(raw_reference)
+        bucket, key = _parse_s3_reference(
+            raw_reference, default_key=GAME_TEN_ACTIVE_DEFAULT_KEY
+        )
         if bucket:
             current_app.logger.info(
                 "Загружаем %s из S3 по конфигурации GAME_TEN_ACTIVE_URL", context_label
