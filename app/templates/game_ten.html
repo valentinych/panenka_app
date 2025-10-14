@@ -77,8 +77,21 @@
       return;
     }
 
-    const activeUrl = (gameRoot.dataset.activeUrl || '').trim();
-    const liveUrl = (gameRoot.dataset.liveUrl || '').trim();
+    function resolveAssetUrl(rawValue, fallback = '') {
+      const value = (rawValue || fallback || '').trim();
+      if (!value) {
+        return '';
+      }
+      try {
+        return new URL(value, window.location.origin).toString();
+      } catch (error) {
+        console.warn('Не удалось нормализовать URL ресурса, будет использовано исходное значение.', value, error);
+        return value;
+      }
+    }
+
+    const activeUrl = resolveAssetUrl(gameRoot.dataset.activeUrl, 'game_active.json');
+    const liveUrl = resolveAssetUrl(gameRoot.dataset.liveUrl);
     const errorNode = gameRoot.querySelector('[data-role="error"]');
 
     const MAX_PLAYER_LIVES = 3;
