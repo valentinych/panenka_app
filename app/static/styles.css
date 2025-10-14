@@ -199,6 +199,525 @@ select:focus {
   background: var(--accent-hover);
 }
 
+.layout--game-ten {
+  width: min(1800px, 100vw);
+  max-width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  padding: clamp(1rem, 2vw, 1.75rem);
+  gap: 1rem;
+  grid-template-rows: min-content 1fr;
+}
+
+.layout--game-ten .masthead {
+  margin-bottom: 0.75rem;
+}
+
+.layout--game-ten .brand {
+  font-size: clamp(2rem, 3.4vw, 2.8rem);
+}
+
+.layout--game-ten .subtitle {
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.layout--game-ten .card {
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  gap: 1rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.game-ten {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+  min-height: 0;
+}
+
+.game-ten__error {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 140, 140, 0.45);
+  background: rgba(255, 94, 94, 0.18);
+  color: #ffd1d1;
+  font-weight: 600;
+}
+
+.game-ten__hud {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 280px) 1fr;
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .game-ten__hud {
+    grid-template-columns: 1fr;
+  }
+}
+
+.game-ten__hud-meta {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.game-ten__question-badge {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.game-ten__question-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.game-ten__question-meta {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.game-ten__theme {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.game-ten__subtitle {
+  font-size: 1.05rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.game-ten__active-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.game-ten__active-select {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(10, 18, 40, 0.85);
+  color: inherit;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+}
+
+.game-ten__active-select:focus-visible {
+  outline: none;
+  border-color: var(--border-glow);
+  box-shadow: 0 0 0 3px rgba(111, 123, 247, 0.35);
+}
+
+.game-ten__hud-teams {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.game-ten__team-card {
+  display: grid;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.9rem;
+  padding: 0.75rem;
+  min-height: 0;
+}
+
+.game-ten__team-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.game-ten__team-name {
+  font-weight: 600;
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+
+.game-ten__team-life {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.85);
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.game-ten__team-life::before {
+  content: "🛡️";
+  font-size: 1.15rem;
+}
+
+.game-ten__team-life[aria-pressed="false"] {
+  opacity: 0.35;
+  filter: grayscale(0.4);
+}
+
+.game-ten__team-life:hover,
+.game-ten__team-life:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+  border-color: var(--border-glow);
+  background: rgba(59, 72, 138, 0.85);
+}
+
+.game-ten__timer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.game-ten__timer-display {
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.game-ten__timer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.game-ten__timer-btn {
+  flex: 1 1 auto;
+  min-width: 72px;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(12, 20, 43, 0.7);
+  color: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.game-ten__timer-btn:hover,
+.game-ten__timer-btn:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+  border-color: var(--border-glow);
+  background: rgba(111, 123, 247, 0.22);
+}
+
+.game-ten__players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.game-ten__player {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 20, 43, 0.55);
+  font-size: 0.95rem;
+}
+
+.game-ten__player.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 183, 3, 0.35);
+}
+
+.game-ten__player-name {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.game-ten__player-lives {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.game-ten__life {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.game-ten__life::before {
+  content: "❤";
+  color: var(--success);
+}
+
+.game-ten__life[aria-pressed="false"]::before {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.game-ten__life[aria-pressed="false"] {
+  filter: saturate(0);
+  opacity: 0.55;
+}
+
+.game-ten__life:hover,
+.game-ten__life:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+  border-color: var(--border-glow);
+}
+
+.game-ten__hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.game-ten__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(12, 20, 43, 0.65);
+  color: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.game-ten__hint[aria-pressed="false"] {
+  opacity: 0.45;
+  text-decoration: line-through;
+  filter: saturate(0);
+}
+
+.game-ten__hint:hover,
+.game-ten__hint:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+  border-color: var(--border-glow);
+  background: rgba(111, 123, 247, 0.2);
+}
+
+.game-ten__hint-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.game-ten__board {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.game-ten__prompt {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 20, 43, 0.75);
+}
+
+.game-ten__prompt-theme {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.game-ten__prompt-text {
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.game-ten__grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+}
+
+@media (max-width: 1200px) {
+  .game-ten__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .game-ten__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .game-ten__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.game-ten__tile {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 20, 43, 0.65);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+}
+
+.game-ten__tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-glow);
+  box-shadow: 0 14px 30px rgba(10, 20, 60, 0.35);
+}
+
+.game-ten__tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: transparent;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.game-ten__tile.is-correct::after {
+  background: rgba(74, 222, 128, 0.35);
+}
+
+.game-ten__tile.is-incorrect::after {
+  background: rgba(255, 107, 107, 0.35);
+}
+
+.game-ten__tile.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.28);
+}
+
+.game-ten__tile-image {
+  position: relative;
+  width: 100%;
+  padding-top: 65%;
+  background-image: var(--tile-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.game-ten__tile-image > * {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.game-ten__tile-image.is-empty {
+  background: rgba(17, 27, 48, 0.85);
+}
+
+.game-ten__tile-placeholder {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0 0.75rem;
+}
+
+.game-ten__tile-image:not(.is-empty) .game-ten__tile-placeholder {
+  display: none;
+}
+
+.game-ten__tile-caption {
+  padding: 0.55rem 0.75rem;
+  background: rgba(12, 20, 43, 0.85);
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.game-ten__tile.is-hidden {
+  display: none;
+}
+
+.game-ten__reveal {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.game-ten__reveal-title {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.game-ten__reveal-hint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.game-ten__reveal-body {
+  min-height: 3.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 20, 43, 0.65);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
 .link {
   color: var(--accent);
   text-decoration: underline;
