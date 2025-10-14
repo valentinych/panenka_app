@@ -38,6 +38,14 @@ AUTH_S3_BUCKET_ENV = "AUTH_JSON_S3_BUCKET"
 AUTH_S3_KEY_ENV = "AUTH_JSON_S3_KEY"
 AUTH_S3_BUCKET_FALLBACK_ENV = "AUTH_JSON_S3_BUCKET_NAME"
 AUTH_S3_URI_ENV = "AUTH_JSON_S3_URI"
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+GAME_TEN_ACTIVE_URL_ENV = "GAME_TEN_ACTIVE_URL"
+GAME_TEN_ACTIVE_S3_BUCKET_ENV = "GAME_TEN_ACTIVE_S3_BUCKET"
+GAME_TEN_ACTIVE_S3_KEY_ENV = "GAME_TEN_ACTIVE_S3_KEY"
+GAME_TEN_ACTIVE_DEFAULT_KEY = "game_active.json"
+GAME_TEN_ACTIVE_TEMPLATE_PATH = PROJECT_ROOT / "data" / "game_active.template.json"
 AUTH_JSON_URL_ENV = "AUTH_JSON_URL"
 DEFAULT_S3_KEY = "auth.json"
 
@@ -807,7 +815,7 @@ def _load_from_url(url):
 def _load_from_s3():
     import logging
     logger = logging.getLogger(__name__)
-    
+
     bucket_name = _get_sanitized_env(AUTH_S3_BUCKET_ENV) or _get_sanitized_env(
         AUTH_S3_BUCKET_FALLBACK_ENV
     )
@@ -865,6 +873,144 @@ def _load_from_s3():
         return json.loads(raw_contents)
     except json.JSONDecodeError as exc:
         raise ValueError("auth.json file stored in S3 contains invalid JSON.") from exc
+
+
+def _download_json_from_s3(bucket_name, object_key, *, context_label):
+    try:
+        import boto3
+        from botocore.exceptions import BotoCoreError, ClientError
+    except ImportError as exc:  # pragma: no cover - requires optional dependency
+        raise ValueError(
+            f"Загрузка {context_label} из S3 требует установленного пакета boto3."
+        ) from exc
+
+    try:
+        s3_client = boto3.client("s3")
+        response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
+    except (BotoCoreError, ClientError) as exc:
+        raise ValueError(
+            f"Не удалось загрузить {context_label} из S3 (s3://{bucket_name}/{object_key}). Ошибка: {exc}"
+        ) from exc
+
+    body = response.get("Body")
+    if body is None:
+        raise ValueError(
+            f"Получен пустой ответ при загрузке {context_label} из S3 (s3://{bucket_name}/{object_key})."
+        )
+
+    raw_contents = body.read()
+    if isinstance(raw_contents, bytes):
+        raw_contents = raw_contents.decode("utf-8")
+
+    try:
+        return json.loads(raw_contents)
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            f"Файл {context_label} из S3 (s3://{bucket_name}/{object_key}) содержит некорректный JSON."
+        ) from exc
+
+
+def _load_json_from_http(url, *, context_label):
+    try:
+        response = requests.get(url, timeout=10)
+    except requests.RequestException as exc:
+        raise ValueError(
+            f"Не удалось загрузить {context_label} по адресу {url}: {exc}"
+        ) from exc
+
+    if not response.ok:
+        raise ValueError(
+            f"Сервер вернул статус {response.status_code} при загрузке {context_label} по адресу {url}."
+        )
+
+    try:
+        return response.json()
+    except ValueError as exc:
+        raise ValueError(
+            f"Ответ по адресу {url} не является корректным JSON для {context_label}."
+        ) from exc
+
+
+def _load_json_from_path(path, *, context_label):
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except FileNotFoundError as exc:
+        raise ValueError(
+            f"Файл {context_label} не найден по пути {path}."
+        ) from exc
+    except OSError as exc:
+        raise ValueError(
+            f"Не удалось прочитать файл {context_label} по пути {path}: {exc}"
+        ) from exc
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            f"Файл {context_label} по пути {path} содержит некорректный JSON."
+        ) from exc
+
+
+def _load_game_ten_active_payload():
+    context_label = "game_active.json"
+    raw_reference = _get_sanitized_env(GAME_TEN_ACTIVE_URL_ENV)
+
+    if raw_reference:
+        bucket, key = _parse_s3_reference(raw_reference)
+        if bucket:
+            current_app.logger.info(
+                "Загружаем %s из S3 по конфигурации GAME_TEN_ACTIVE_URL", context_label
+            )
+            return _download_json_from_s3(
+                bucket, key or GAME_TEN_ACTIVE_DEFAULT_KEY, context_label=context_label
+            )
+
+        lowered = raw_reference.lower()
+        if lowered.startswith("http://") or lowered.startswith("https://"):
+            current_app.logger.info(
+                "Загружаем %s по HTTP из %s", context_label, raw_reference
+            )
+            return _load_json_from_http(raw_reference, context_label=context_label)
+
+        candidate_path = Path(raw_reference)
+        if not candidate_path.is_absolute():
+            candidate_path = (PROJECT_ROOT / raw_reference).resolve()
+        if candidate_path.exists():
+            current_app.logger.info(
+                "Загружаем %s из локального файла %s, указанного в GAME_TEN_ACTIVE_URL",
+                context_label,
+                candidate_path,
+            )
+            return _load_json_from_path(candidate_path, context_label=context_label)
+
+        current_app.logger.warning(
+            "Значение GAME_TEN_ACTIVE_URL (%s) не соответствует доступному ресурсу."
+            " Будет произведена попытка использовать запасные варианты.",
+            raw_reference,
+        )
+
+    bucket_name = _get_sanitized_env(GAME_TEN_ACTIVE_S3_BUCKET_ENV)
+    object_key = (
+        _get_sanitized_env(GAME_TEN_ACTIVE_S3_KEY_ENV) or GAME_TEN_ACTIVE_DEFAULT_KEY
+    )
+    if bucket_name:
+        current_app.logger.info(
+            "Загружаем %s из S3 по конфигурации GAME_TEN_ACTIVE_S3_BUCKET/GAME_TEN_ACTIVE_S3_KEY",
+            context_label,
+        )
+        return _download_json_from_s3(
+            bucket_name, object_key, context_label=context_label
+        )
+
+    if GAME_TEN_ACTIVE_TEMPLATE_PATH.exists():
+        current_app.logger.info(
+            "Используется шаблонный файл %s по пути %s", context_label, GAME_TEN_ACTIVE_TEMPLATE_PATH
+        )
+        return _load_json_from_path(
+            GAME_TEN_ACTIVE_TEMPLATE_PATH, context_label=context_label
+        )
+
+    raise ValueError(
+        "Не удалось определить источник данных для game_active.json. Проверьте переменные окружения."
+    )
 
 
 def load_credentials():
@@ -1543,13 +1689,32 @@ def dashboard():
 @bp.route("/game-ten")
 @login_required
 def game_ten():
-    active_url = os.getenv("GAME_TEN_ACTIVE_URL", "").strip() or "game_active.json"
-    live_url = os.getenv("GAME_TEN_LIVE_URL", "").strip()
+    raw_active_url = _get_sanitized_env(GAME_TEN_ACTIVE_URL_ENV)
+    if raw_active_url and raw_active_url.lower().startswith(("http://", "https://")):
+        active_url = raw_active_url
+    else:
+        active_url = url_for("main.game_ten_active_data")
+
+    live_url = _get_sanitized_env("GAME_TEN_LIVE_URL") or ""
     return render_template(
         "game_ten.html",
         game_ten_active_url=active_url,
         game_ten_live_url=live_url,
     )
+
+
+@bp.route("/api/game-ten/active")
+@login_required
+def game_ten_active_data():
+    try:
+        payload = _load_game_ten_active_payload()
+    except ValueError as exc:
+        current_app.logger.error("Не удалось загрузить game_active.json: %s", exc)
+        return jsonify({"error": str(exc)}), 502
+
+    response = jsonify(payload)
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 def _fetch_historical_records(selected_season: int | None):
