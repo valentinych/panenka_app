@@ -46,6 +46,7 @@ GAME_TEN_ACTIVE_S3_BUCKET_ENV = "GAME_TEN_ACTIVE_S3_BUCKET"
 GAME_TEN_ACTIVE_S3_KEY_ENV = "GAME_TEN_ACTIVE_S3_KEY"
 GAME_TEN_ACTIVE_DEFAULT_KEY = "game_active.json"
 GAME_TEN_ACTIVE_TEMPLATE_PATH = PROJECT_ROOT / "data" / "game_active.template.json"
+GAME_TEN_ACTIVE_LOCAL_PATH = PROJECT_ROOT / GAME_TEN_ACTIVE_DEFAULT_KEY
 AUTH_JSON_URL_ENV = "AUTH_JSON_URL"
 DEFAULT_S3_KEY = "auth.json"
 
@@ -1012,6 +1013,14 @@ def _load_game_ten_active_payload():
         )
         return _download_json_from_s3(
             bucket_name, object_key, context_label=context_label
+        )
+
+    if GAME_TEN_ACTIVE_LOCAL_PATH.exists():
+        current_app.logger.info(
+            "Загружаем %s из локального файла %s", context_label, GAME_TEN_ACTIVE_LOCAL_PATH
+        )
+        return _load_json_from_path(
+            GAME_TEN_ACTIVE_LOCAL_PATH, context_label=context_label
         )
 
     if GAME_TEN_ACTIVE_TEMPLATE_PATH.exists():
