@@ -1508,6 +1508,18 @@ def dashboard():
     )
 
 
+@bp.route("/game-ten")
+@login_required
+def game_ten():
+    active_url = os.getenv("GAME_TEN_ACTIVE_URL", "")
+    live_url = os.getenv("GAME_TEN_LIVE_URL", "")
+    return render_template(
+        "game_ten.html",
+        game_ten_active_url=active_url,
+        game_ten_live_url=live_url,
+    )
+
+
 def _fetch_historical_records(selected_season: int | None):
     dataset = load_historical_dataset()
     fights_all: list[dict] = list(dataset["fights"])

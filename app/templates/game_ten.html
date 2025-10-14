@@ -1,0 +1,802 @@
+{% extends "base.html" %}
+{% block title %}Игра «10» · Panenka Live{% endblock %}
+{% block layout_modifier %} layout--full layout--game-ten{% endblock %}
+{% block content %}
+<div class="game-ten" data-active-url="{{ game_ten_active_url }}" data-live-url="{{ game_ten_live_url }}">
+  <p class="game-ten__error" data-role="error" hidden></p>
+
+  <section class="card game-ten__hud">
+    <div class="game-ten__hud-meta">
+      <div class="game-ten__question-badge">
+        <span class="game-ten__question-number" data-role="question-number">–</span>
+        <div class="game-ten__question-meta">
+          <div class="game-ten__theme" data-role="theme">Тема вопроса</div>
+          <div class="game-ten__subtitle" data-role="subtitle">Текст вопроса будет загружен</div>
+        </div>
+      </div>
+      <label class="game-ten__active-label" for="game-ten-active-player">Игрок на вопросе</label>
+      <select id="game-ten-active-player" class="game-ten__active-select" data-role="active-player"></select>
+    </div>
+    <div class="game-ten__hud-teams">
+      {% for idx in range(2) %}
+      <article class="game-ten__team-card" data-team-slot="{{ idx }}">
+        <header class="game-ten__team-header">
+          <div class="game-ten__team-name" data-role="team-name">Команда {{ idx + 1 }}</div>
+          <button type="button" class="game-ten__team-life" data-role="team-life" aria-pressed="true">
+            <span class="sr-only">Командная жизнь</span>
+          </button>
+        </header>
+        <div class="game-ten__timer-bar">
+          <div class="game-ten__timer-display" data-role="timer-display">20:00</div>
+          <div class="game-ten__timer-controls">
+            <button type="button" class="game-ten__timer-btn" data-action="toggle">Старт</button>
+            <button type="button" class="game-ten__timer-btn" data-action="plus">+10</button>
+            <button type="button" class="game-ten__timer-btn" data-action="minus">-10</button>
+            <button type="button" class="game-ten__timer-btn" data-action="reset">Сброс</button>
+          </div>
+        </div>
+        <div class="game-ten__players" data-role="players"></div>
+        <div class="game-ten__hints" data-role="hints"></div>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="card game-ten__board">
+    <div class="game-ten__prompt">
+      <div class="game-ten__prompt-theme" data-role="prompt-theme">Тема вопроса</div>
+      <div class="game-ten__prompt-text" data-role="prompt-text">Текст вопроса появится после загрузки game_active.json</div>
+    </div>
+    <div class="game-ten__grid">
+      {% for idx in range(10) %}
+      <article class="game-ten__tile" data-index="{{ idx }}" tabindex="0">
+        <div class="game-ten__tile-image" data-role="tile-image">
+          <span class="game-ten__tile-placeholder">Нет изображения</span>
+        </div>
+        <div class="game-ten__tile-caption" data-role="tile-caption">Ответ {{ idx + 1 }}</div>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="card game-ten__reveal">
+    <div class="game-ten__reveal-header">
+      <h2 class="game-ten__reveal-title">Комментарий</h2>
+      <p class="game-ten__reveal-hint">Нажмите на плитку, чтобы отметить её статус и показать пояснение из game_active.json.</p>
+    </div>
+    <div class="game-ten__reveal-body" data-role="reveal-body">Выберите ответ, чтобы увидеть комментарий.</div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const gameRoot = document.querySelector('.game-ten');
+    if (!gameRoot) {
+      return;
+    }
+
+    const activeUrl = (gameRoot.dataset.activeUrl || '').trim();
+    const liveUrl = (gameRoot.dataset.liveUrl || '').trim();
+    const errorNode = gameRoot.querySelector('[data-role="error"]');
+
+    const MAX_PLAYER_LIVES = 3;
+    const DEFAULT_TIMER_SECONDS = 20 * 60;
+    const HINT_ICONS = {
+      pass: '⏭',
+      switch: '🔄',
+      opponent: '🎯',
+    };
+
+    const timerControllers = new Map();
+    let saveTimerId = null;
+
+    function showError(message) {
+      if (!errorNode) {
+        return;
+      }
+      errorNode.textContent = message;
+      errorNode.hidden = false;
+    }
+
+    function hideError() {
+      if (!errorNode) {
+        return;
+      }
+      errorNode.hidden = true;
+      errorNode.textContent = '';
+    }
+
+    async function loadJson(url) {
+      if (!url) {
+        throw new Error('URL для загрузки не задан.');
+      }
+      const response = await fetch(url, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`Не удалось загрузить данные (${response.status}).`);
+      }
+      return response.json();
+    }
+
+    function formatTime(totalSeconds) {
+      const safeSeconds = Math.max(0, Math.round(totalSeconds));
+      const minutes = Math.floor(safeSeconds / 60);
+      const seconds = safeSeconds % 60;
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function createDefaultState(activeData) {
+      const timerSeconds = Number(activeData?.timer_seconds);
+      const initialTimer = Number.isFinite(timerSeconds) && timerSeconds > 0 ? timerSeconds : DEFAULT_TIMER_SECONDS;
+
+      const teams = Array.isArray(activeData?.teams) ? activeData.teams : [];
+      const answers = Array.isArray(activeData?.answers) ? activeData.answers : [];
+
+      const state = {
+        version: 1,
+        updatedAt: new Date().toISOString(),
+        activePlayerId: typeof activeData?.active_player_id === 'string' ? activeData.active_player_id : null,
+        selectedAnswer: 0,
+        answers: answers.map(() => ({ status: 'neutral', revealed: false })),
+        timers: {},
+        players: {},
+        teamLives: {},
+        hints: {},
+        initialTimers: {},
+      };
+
+      teams.forEach((team, index) => {
+        const teamId = typeof team?.id === 'string' && team.id.trim() ? team.id.trim() : `team-${index + 1}`;
+        state.timers[teamId] = {
+          remaining: initialTimer,
+          running: false,
+          lastStartedAt: null,
+        };
+        state.initialTimers[teamId] = initialTimer;
+        state.teamLives[teamId] = true;
+        state.players[teamId] = {};
+        const players = Array.isArray(team?.players) ? team.players : [];
+        players.forEach((player, playerIndex) => {
+          const playerId = typeof player?.id === 'string' && player.id.trim()
+            ? player.id.trim()
+            : `${teamId}-player-${playerIndex + 1}`;
+          state.players[teamId][playerId] = { lives: MAX_PLAYER_LIVES };
+        });
+      });
+
+      const hints = Array.isArray(activeData?.hints) ? activeData.hints : [];
+      Object.keys(state.players).forEach((teamId) => {
+        state.hints[teamId] = {};
+        hints.forEach((hint, hintIndex) => {
+          const hintId = typeof hint?.id === 'string' && hint.id.trim()
+            ? hint.id.trim()
+            : `hint-${hintIndex + 1}`;
+          state.hints[teamId][hintId] = true;
+        });
+      });
+
+      return state;
+    }
+
+    function mergeState(defaultState, savedState, activeData) {
+      if (!savedState || typeof savedState !== 'object') {
+        return defaultState;
+      }
+
+      const merged = JSON.parse(JSON.stringify(defaultState));
+
+      if (typeof savedState.activePlayerId === 'string') {
+        merged.activePlayerId = savedState.activePlayerId;
+      }
+
+      if (Number.isInteger(savedState.selectedAnswer)) {
+        merged.selectedAnswer = Math.min(Math.max(savedState.selectedAnswer, 0), merged.answers.length - 1);
+      }
+
+      if (Array.isArray(savedState.answers)) {
+        merged.answers = merged.answers.map((entry, index) => {
+          const saved = savedState.answers[index];
+          if (!saved || typeof saved !== 'object') {
+            return entry;
+          }
+          const status = saved.status;
+          const allowed = ['neutral', 'correct', 'incorrect'];
+          const mergedStatus = allowed.includes(status) ? status : entry.status;
+          const revealed = Boolean(saved.revealed);
+          return { status: mergedStatus, revealed };
+        });
+      }
+
+      Object.entries(merged.timers).forEach(([teamId, timerState]) => {
+        const savedTimer = savedState.timers && savedState.timers[teamId];
+        if (!savedTimer) {
+          return;
+        }
+        if (Number.isFinite(savedTimer.remaining)) {
+          timerState.remaining = Math.max(0, Number(savedTimer.remaining));
+        }
+        timerState.running = Boolean(savedTimer.running);
+        timerState.lastStartedAt = typeof savedTimer.lastStartedAt === 'string' && savedTimer.lastStartedAt
+          ? savedTimer.lastStartedAt
+          : null;
+      });
+
+      Object.entries(merged.players).forEach(([teamId, players]) => {
+        const savedPlayers = savedState.players && savedState.players[teamId];
+        if (!savedPlayers) {
+          return;
+        }
+        Object.entries(players).forEach(([playerId, playerState]) => {
+          const savedPlayer = savedPlayers[playerId];
+          if (!savedPlayer) {
+            return;
+          }
+          if (Number.isFinite(savedPlayer.lives)) {
+            playerState.lives = Math.min(Math.max(Math.round(savedPlayer.lives), 0), MAX_PLAYER_LIVES);
+          }
+        });
+      });
+
+      Object.entries(merged.teamLives).forEach(([teamId]) => {
+        if (typeof savedState.teamLives?.[teamId] === 'boolean') {
+          merged.teamLives[teamId] = savedState.teamLives[teamId];
+        }
+      });
+
+      Object.entries(merged.hints).forEach(([teamId, hintMap]) => {
+        const savedHints = savedState.hints && savedState.hints[teamId];
+        if (!savedHints) {
+          return;
+        }
+        Object.keys(hintMap).forEach((hintId) => {
+          if (typeof savedHints[hintId] === 'boolean') {
+            hintMap[hintId] = savedHints[hintId];
+          }
+        });
+      });
+
+      merged.initialTimers = merged.initialTimers || {};
+      if (savedState.initialTimers && typeof savedState.initialTimers === 'object') {
+        Object.entries(savedState.initialTimers).forEach(([teamId, value]) => {
+          if (Number.isFinite(value)) {
+            merged.initialTimers[teamId] = Math.max(0, Number(value));
+          }
+        });
+      }
+
+      if (typeof savedState.updatedAt === 'string') {
+        merged.updatedAt = savedState.updatedAt;
+      }
+
+      return merged;
+    }
+
+    function scheduleSave(state) {
+      if (!liveUrl) {
+        return;
+      }
+      if (saveTimerId !== null) {
+        window.clearTimeout(saveTimerId);
+      }
+      saveTimerId = window.setTimeout(async () => {
+        saveTimerId = null;
+        const payload = {
+          ...state,
+          updatedAt: new Date().toISOString(),
+        };
+        try {
+          const response = await fetch(liveUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) {
+            throw new Error(`Не удалось сохранить состояние (${response.status}).`);
+          }
+          hideError();
+        } catch (error) {
+          console.error(error);
+          showError('Не удалось сохранить состояние игры. Проверьте подключение к AWS.');
+        }
+      }, 400);
+    }
+
+    function setupTimers(state, teams) {
+      timerControllers.forEach((controller) => {
+        window.clearInterval(controller.intervalId);
+      });
+      timerControllers.clear();
+
+      teams.forEach((teamCard) => {
+        const teamId = teamCard.dataset.teamId;
+        const timerDisplay = teamCard.querySelector('[data-role="timer-display"]');
+        const toggleBtn = teamCard.querySelector('[data-action="toggle"]');
+        const plusBtn = teamCard.querySelector('[data-action="plus"]');
+        const minusBtn = teamCard.querySelector('[data-action="minus"]');
+        const resetBtn = teamCard.querySelector('[data-action="reset"]');
+        const timerState = state.timers[teamId];
+        if (!timerDisplay || !timerState) {
+          return;
+        }
+
+        const controller = {
+          intervalId: null,
+          lastTick: null,
+        };
+
+        function updateDisplay() {
+          timerDisplay.textContent = formatTime(timerState.remaining);
+          if (toggleBtn) {
+            toggleBtn.textContent = timerState.running ? 'Пауза' : 'Старт';
+          }
+        }
+
+        function syncTimer() {
+          if (!timerState.running) {
+            controller.lastTick = Date.now();
+            return;
+          }
+          const now = Date.now();
+          if (controller.lastTick !== null) {
+            const elapsed = (now - controller.lastTick) / 1000;
+            if (Number.isFinite(elapsed) && elapsed > 0) {
+              timerState.remaining = Math.max(0, timerState.remaining - elapsed);
+            }
+          }
+          controller.lastTick = now;
+        }
+
+        function stopTimer({ silent } = { silent: false }) {
+          if (!timerState.running) {
+            return;
+          }
+          syncTimer();
+          timerState.running = false;
+          timerState.lastStartedAt = null;
+          if (controller.intervalId !== null) {
+            window.clearInterval(controller.intervalId);
+            controller.intervalId = null;
+          }
+          updateDisplay();
+          if (!silent) {
+            scheduleSave(state);
+          }
+        }
+
+        function startInterval() {
+          if (controller.intervalId !== null) {
+            window.clearInterval(controller.intervalId);
+          }
+          controller.lastTick = Date.now();
+          controller.intervalId = window.setInterval(() => {
+            syncTimer();
+            updateDisplay();
+            if (timerState.remaining <= 0) {
+              stopTimer({ silent: false });
+            }
+          }, 250);
+        }
+
+        function startTimer() {
+          if (timerState.running) {
+            return;
+          }
+          syncTimer();
+          timerState.running = true;
+          timerState.lastStartedAt = new Date().toISOString();
+          startInterval();
+          updateDisplay();
+          scheduleSave(state);
+        }
+
+        function adjust(secondsDelta) {
+          if (timerState.running) {
+            syncTimer();
+            timerState.lastStartedAt = new Date().toISOString();
+          }
+          timerState.remaining = Math.max(0, timerState.remaining + secondsDelta);
+          updateDisplay();
+          scheduleSave(state);
+        }
+
+        function resetTimer() {
+          const baseTimer = Number.isFinite(state.initialTimers?.[teamId])
+            ? state.initialTimers[teamId]
+            : DEFAULT_TIMER_SECONDS;
+          timerState.remaining = baseTimer;
+          stopTimer({ silent: true });
+          controller.lastTick = Date.now();
+          timerState.running = false;
+          timerState.lastStartedAt = null;
+          updateDisplay();
+          scheduleSave(state);
+        }
+
+        updateDisplay();
+
+        if (timerState.running && timerState.lastStartedAt) {
+          const lastStart = Date.parse(timerState.lastStartedAt);
+          if (!Number.isNaN(lastStart)) {
+            const elapsed = (Date.now() - lastStart) / 1000;
+            timerState.remaining = Math.max(0, timerState.remaining - elapsed);
+          }
+          timerState.running = timerState.remaining > 0;
+          if (timerState.running) {
+            startInterval();
+          } else {
+            timerState.lastStartedAt = null;
+            controller.lastTick = Date.now();
+          }
+          updateDisplay();
+        }
+
+        toggleBtn?.addEventListener('click', () => {
+          if (timerState.running) {
+            stopTimer();
+          } else {
+            startTimer();
+          }
+        });
+
+        plusBtn?.addEventListener('click', () => adjust(10));
+        minusBtn?.addEventListener('click', () => adjust(-10));
+        resetBtn?.addEventListener('click', resetTimer);
+
+        timerControllers.set(teamId, controller);
+      });
+    }
+
+    function renderPlayers(teamCard, teamData, state) {
+      const playersContainer = teamCard.querySelector('[data-role="players"]');
+      if (!playersContainer) {
+        return;
+      }
+      playersContainer.innerHTML = '';
+      const teamId = teamCard.dataset.teamId;
+      const players = Array.isArray(teamData?.players) ? teamData.players : [];
+      if (!state.players[teamId]) {
+        state.players[teamId] = {};
+      }
+      const statePlayers = state.players[teamId];
+
+      players.forEach((player, index) => {
+        const playerId = typeof player?.id === 'string' && player.id.trim()
+          ? player.id.trim()
+          : `${teamId}-player-${index + 1}`;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'game-ten__player';
+        wrapper.dataset.playerId = playerId;
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'game-ten__player-name';
+        nameEl.textContent = player?.name || `Игрок ${index + 1}`;
+        wrapper.appendChild(nameEl);
+
+        const livesEl = document.createElement('div');
+        livesEl.className = 'game-ten__player-lives';
+        if (!statePlayers[playerId]) {
+          statePlayers[playerId] = { lives: MAX_PLAYER_LIVES };
+        }
+        const playerState = statePlayers[playerId];
+
+        for (let i = 0; i < MAX_PLAYER_LIVES; i += 1) {
+          const lifeButton = document.createElement('button');
+          lifeButton.type = 'button';
+          lifeButton.className = 'game-ten__life';
+          lifeButton.dataset.index = String(i);
+          lifeButton.setAttribute('aria-pressed', i < playerState.lives ? 'true' : 'false');
+          lifeButton.title = 'Кликните, чтобы переключить жизнь';
+          livesEl.appendChild(lifeButton);
+        }
+
+        livesEl.addEventListener('click', (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLElement) || !target.classList.contains('game-ten__life')) {
+            return;
+          }
+          const lifeIndex = Number.parseInt(target.dataset.index || '0', 10);
+          const current = state.players[teamId][playerId]?.lives ?? MAX_PLAYER_LIVES;
+          const nextLives = lifeIndex < current ? lifeIndex : lifeIndex + 1;
+          state.players[teamId][playerId].lives = Math.min(Math.max(nextLives, 0), MAX_PLAYER_LIVES);
+          Array.from(livesEl.querySelectorAll('.game-ten__life')).forEach((buttonEl, idx) => {
+            buttonEl.setAttribute('aria-pressed', idx < state.players[teamId][playerId].lives ? 'true' : 'false');
+          });
+          scheduleSave(state);
+          updateActivePlayerHighlight(state);
+        });
+
+        wrapper.appendChild(livesEl);
+        playersContainer.appendChild(wrapper);
+      });
+    }
+
+    function renderHints(teamCard, teamData, activeData, state) {
+      const hintsContainer = teamCard.querySelector('[data-role="hints"]');
+      if (!hintsContainer) {
+        return;
+      }
+      hintsContainer.innerHTML = '';
+      const teamId = teamCard.dataset.teamId;
+      const hints = Array.isArray(activeData?.hints) ? activeData.hints : [];
+      if (!state.hints[teamId]) {
+        state.hints[teamId] = {};
+      }
+      const stateHints = state.hints[teamId];
+
+      hints.forEach((hint, index) => {
+        const hintId = typeof hint?.id === 'string' && hint.id.trim()
+          ? hint.id.trim()
+          : `hint-${index + 1}`;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'game-ten__hint';
+        button.dataset.hintId = hintId;
+        button.setAttribute('aria-pressed', stateHints[hintId] ? 'true' : 'false');
+        const icon = hint?.icon || HINT_ICONS[hintId] || '💡';
+        button.innerHTML = `<span class="game-ten__hint-icon" aria-hidden="true">${icon}</span><span class="game-ten__hint-label">${hint?.label || `Подсказка ${index + 1}`}</span>`;
+        if (hint?.description) {
+          button.title = hint.description;
+        }
+        button.addEventListener('click', () => {
+          state.hints[teamId][hintId] = !state.hints[teamId][hintId];
+          button.setAttribute('aria-pressed', state.hints[teamId][hintId] ? 'true' : 'false');
+          scheduleSave(state);
+        });
+        hintsContainer.appendChild(button);
+      });
+    }
+
+    function updateActivePlayerHighlight(state) {
+      const activeId = state.activePlayerId;
+      gameRoot.querySelectorAll('.game-ten__player').forEach((playerEl) => {
+        const playerId = playerEl.dataset.playerId;
+        playerEl.classList.toggle('is-active', activeId === playerId);
+      });
+    }
+
+    function renderTeams(activeData, state) {
+      const teamsData = Array.isArray(activeData?.teams) ? activeData.teams : [];
+      const teamsContainer = gameRoot.querySelector('.game-ten__hud-teams');
+      const existingCards = Array.from(gameRoot.querySelectorAll('.game-ten__team-card'));
+
+      while (existingCards.length < teamsData.length) {
+        const clone = existingCards[existingCards.length - 1].cloneNode(true);
+        clone.dataset.teamSlot = String(existingCards.length);
+        teamsContainer.appendChild(clone);
+        existingCards.push(clone);
+      }
+      while (existingCards.length > teamsData.length) {
+        const card = existingCards.pop();
+        card?.remove();
+      }
+
+      const cards = Array.from(gameRoot.querySelectorAll('.game-ten__team-card'));
+      cards.forEach((teamCard, index) => {
+        const teamData = teamsData[index];
+        if (!teamData) {
+          return;
+        }
+        const teamId = typeof teamData?.id === 'string' && teamData.id.trim()
+          ? teamData.id.trim()
+          : `team-${index + 1}`;
+        teamCard.dataset.teamId = teamId;
+
+        const teamNameEl = teamCard.querySelector('[data-role="team-name"]');
+        if (teamNameEl) {
+          teamNameEl.textContent = teamData?.name || `Команда ${index + 1}`;
+        }
+
+        const teamLifeButton = teamCard.querySelector('[data-role="team-life"]');
+        if (teamLifeButton) {
+          if (typeof state.teamLives[teamId] !== 'boolean') {
+            state.teamLives[teamId] = true;
+          }
+          teamLifeButton.setAttribute('aria-pressed', state.teamLives[teamId] ? 'true' : 'false');
+          teamLifeButton.addEventListener('click', () => {
+            state.teamLives[teamId] = !state.teamLives[teamId];
+            teamLifeButton.setAttribute('aria-pressed', state.teamLives[teamId] ? 'true' : 'false');
+            scheduleSave(state);
+          });
+        }
+
+        renderPlayers(teamCard, teamData, state);
+        renderHints(teamCard, teamData, activeData, state);
+      });
+
+      setupTimers(state, cards);
+      return cards;
+    }
+
+    function renderQuestion(activeData) {
+      const question = activeData?.question || {};
+      const numberEl = gameRoot.querySelector('[data-role="question-number"]');
+      if (numberEl) {
+        if (typeof question.number === 'number') {
+          numberEl.textContent = `${question.number}.`;
+        } else if (question.number) {
+          numberEl.textContent = String(question.number);
+        } else {
+          numberEl.textContent = '–';
+        }
+      }
+      const themeEl = gameRoot.querySelector('[data-role="theme"]');
+      if (themeEl) {
+        themeEl.textContent = question.theme || 'Тема не указана';
+      }
+      const subtitleEl = gameRoot.querySelector('[data-role="subtitle"]');
+      if (subtitleEl) {
+        subtitleEl.textContent = question.subtitle || question.title || 'Загружаем вопрос…';
+      }
+      const promptThemeEl = gameRoot.querySelector('[data-role="prompt-theme"]');
+      if (promptThemeEl) {
+        promptThemeEl.textContent = question.title || question.theme || 'Вопрос';
+      }
+      const promptTextEl = gameRoot.querySelector('[data-role="prompt-text"]');
+      if (promptTextEl) {
+        promptTextEl.textContent = question.prompt || question.subtitle || question.title || '—';
+      }
+    }
+
+    function renderActivePlayerSelect(activeData, state) {
+      const select = gameRoot.querySelector('[data-role="active-player"]');
+      if (!select) {
+        return;
+      }
+      select.innerHTML = '';
+      const teams = Array.isArray(activeData?.teams) ? activeData.teams : [];
+      const options = [];
+      teams.forEach((team, teamIndex) => {
+        const teamId = typeof team?.id === 'string' && team.id.trim()
+          ? team.id.trim()
+          : `team-${teamIndex + 1}`;
+        const players = Array.isArray(team?.players) ? team.players : [];
+        players.forEach((player, playerIndex) => {
+          const playerId = typeof player?.id === 'string' && player.id.trim()
+            ? player.id.trim()
+            : `${teamId}-player-${playerIndex + 1}`;
+          const option = document.createElement('option');
+          option.value = playerId;
+          option.textContent = `${team?.name || `Команда ${teamIndex + 1}`}: ${player?.name || `Игрок ${playerIndex + 1}`}`;
+          select.appendChild(option);
+          options.push(playerId);
+        });
+      });
+      const fallback = options.includes(state.activePlayerId) ? state.activePlayerId : options[0] || '';
+      state.activePlayerId = fallback || null;
+      select.value = fallback || '';
+      select.addEventListener('change', () => {
+        state.activePlayerId = select.value || null;
+        updateActivePlayerHighlight(state);
+        scheduleSave(state);
+      });
+      updateActivePlayerHighlight(state);
+    }
+
+    function renderAnswers(activeData, state) {
+      const answers = Array.isArray(activeData?.answers) ? activeData.answers : [];
+      const tiles = Array.from(gameRoot.querySelectorAll('.game-ten__tile'));
+
+      tiles.forEach((tile, index) => {
+        const answerData = answers[index];
+        if (!answerData) {
+          tile.classList.add('is-hidden');
+          return;
+        }
+        tile.classList.remove('is-hidden');
+        const tileImage = tile.querySelector('[data-role="tile-image"]');
+        const tileCaption = tile.querySelector('[data-role="tile-caption"]');
+        const imageUrl = answerData.image || '';
+        if (tileImage) {
+          if (imageUrl) {
+            tileImage.style.setProperty('--tile-image', `url("${imageUrl.replace(/"/g, '\\"')}")`);
+            tileImage.classList.remove('is-empty');
+          } else {
+            tileImage.style.removeProperty('--tile-image');
+            tileImage.classList.add('is-empty');
+          }
+        }
+        if (tileCaption) {
+          tileCaption.textContent = answerData.caption || `Ответ ${index + 1}`;
+        }
+        tile.dataset.answerId = typeof answerData?.id === 'string' ? answerData.id : `answer-${index + 1}`;
+      });
+
+      function applyAnswerState(index) {
+        const tile = tiles[index];
+        if (!tile) {
+          return;
+        }
+        const stateEntry = state.answers[index];
+        tile.classList.remove('is-correct', 'is-incorrect', 'is-selected');
+        if (stateEntry?.status === 'correct') {
+          tile.classList.add('is-correct');
+        } else if (stateEntry?.status === 'incorrect') {
+          tile.classList.add('is-incorrect');
+        }
+        if (state.selectedAnswer === index) {
+          tile.classList.add('is-selected');
+        }
+      }
+
+      function updateReveal() {
+        const revealBody = gameRoot.querySelector('[data-role="reveal-body"]');
+        if (!revealBody) {
+          return;
+        }
+        const selected = state.selectedAnswer;
+        const answer = answers[selected];
+        if (!answer) {
+          revealBody.textContent = 'Выберите ответ, чтобы увидеть комментарий.';
+          return;
+        }
+        const comment = answer.comment || answer.reveal || 'Комментарий отсутствует в game_active.json.';
+        revealBody.textContent = comment;
+      }
+
+      tiles.forEach((tile, index) => {
+        applyAnswerState(index);
+        tile.addEventListener('click', () => {
+          const entry = state.answers[index];
+          if (!entry) {
+            return;
+          }
+          const order = ['neutral', 'correct', 'incorrect'];
+          const nextIndex = (order.indexOf(entry.status) + 1) % order.length;
+          entry.status = order[nextIndex];
+          state.selectedAnswer = index;
+          entry.revealed = true;
+          tiles.forEach((_, idx) => applyAnswerState(idx));
+          updateReveal();
+          scheduleSave(state);
+        });
+        tile.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            tile.click();
+          }
+        });
+      });
+
+      if (Number.isInteger(state.selectedAnswer)) {
+        state.selectedAnswer = Math.min(Math.max(state.selectedAnswer, 0), answers.length - 1);
+      } else {
+        state.selectedAnswer = 0;
+      }
+      tiles.forEach((_, idx) => applyAnswerState(idx));
+      updateReveal();
+    }
+
+    (async () => {
+      try {
+        const activeData = await loadJson(activeUrl);
+        let liveData = null;
+        if (liveUrl) {
+          try {
+            liveData = await loadJson(liveUrl);
+          } catch (error) {
+            console.warn('Не удалось загрузить game_live.json, будет использовано состояние по умолчанию.', error);
+          }
+        }
+
+        const defaultState = createDefaultState(activeData);
+        const state = mergeState(defaultState, liveData, activeData);
+
+        renderQuestion(activeData);
+        const teamCards = renderTeams(activeData, state);
+        renderActivePlayerSelect(activeData, state);
+        renderAnswers(activeData, state);
+        updateActivePlayerHighlight(state);
+        hideError();
+
+        if (!liveData && liveUrl) {
+          scheduleSave(state);
+        }
+      } catch (error) {
+        console.error(error);
+        showError(error.message || 'Не удалось загрузить данные для игры.');
+      }
+    })();
+  });
+</script>
+{% endblock %}
