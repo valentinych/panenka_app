@@ -7,7 +7,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 from functools import wraps
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 from uuid import uuid4
 
 from flask import (
@@ -754,6 +754,38 @@ def _load_from_url(url):
         from urllib.error import HTTPError, URLError
     except ImportError as exc:  # pragma: no cover - standard library always available
         raise ValueError("Unable to import urllib to download auth.json from URL.") from exc
+
+    parsed = urlparse(url)
+    bucket_from_url, key_from_url = _parse_s3_reference(url)
+    if bucket_from_url and key_from_url:
+        host_lower = (parsed.netloc or "").lower()
+        path_no_slash = parsed.path.strip("/")
+        path_segments = [segment for segment in parsed.path.split("/") if segment]
+
+        path_style_hosts = {
+            "s3.amazonaws.com",
+            "s3-accelerate.amazonaws.com",
+        }
+        is_path_style_host = (
+            host_lower in path_style_hosts
+            or host_lower.startswith("s3.")
+            or host_lower.startswith("s3-")
+        )
+
+        missing_key = False
+        if not path_no_slash:
+            missing_key = True
+        elif is_path_style_host and len(path_segments) == 1:
+            missing_key = True
+
+        if missing_key:
+            if is_path_style_host and path_segments:
+                bucket_segment = path_segments[0]
+                new_path = f"/{bucket_segment}/{key_from_url}"
+            else:
+                new_path = f"/{key_from_url}"
+            parsed = parsed._replace(path=new_path)
+            url = urlunparse(parsed)
 
     try:
         with urlopen(url) as response:
