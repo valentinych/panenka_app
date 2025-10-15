@@ -661,8 +661,8 @@ select:focus {
 
 .game-ten__tile {
   position: relative;
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  display: flex;
+  flex-direction: column;
   border-radius: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(12, 20, 43, 0.65);
@@ -700,34 +700,45 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.28);
 }
 
+
 .game-ten__tile-image {
   position: relative;
   width: 100%;
-  padding-top: 65%;
-  background-image: var(--tile-image);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.game-ten__tile-image > * {
-  position: absolute;
-  inset: 0;
+  aspect-ratio: 4 / 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
+  padding: 0.45rem;
+  background: rgba(17, 27, 48, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.game-ten__tile-image.is-empty {
-  background: rgba(17, 27, 48, 0.85);
+@supports not (aspect-ratio: 1) {
+  .game-ten__tile-image {
+    height: 0;
+    padding-top: 75%;
+  }
+
+  .game-ten__tile-image > * {
+    position: absolute;
+    inset: 0.45rem;
+  }
+}
+
+.game-ten__tile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 24px rgba(9, 16, 35, 0.35);
 }
 
 .game-ten__tile-placeholder {
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
   text-align: center;
   padding: 0 0.75rem;
+  pointer-events: none;
 }
 
 .game-ten__tile-image:not(.is-empty) .game-ten__tile-placeholder {
@@ -735,12 +746,12 @@ select:focus {
 }
 
 .game-ten__tile-caption {
-  padding: 0.55rem 0.75rem;
+  padding: 0.5rem 0.7rem;
   background: rgba(12, 20, 43, 0.85);
   font-weight: 600;
   text-align: center;
-  font-size: 1.05rem;
-  line-height: 1.25;
+  font-size: clamp(0.85rem, 1.4vw, 1rem);
+  line-height: 1.35;
   word-break: break-word;
 }
 

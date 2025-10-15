@@ -50,8 +50,9 @@
     <div class="game-ten__grid">
       {% for idx in range(10) %}
       <article class="game-ten__tile" data-index="{{ idx }}" tabindex="0">
-        <div class="game-ten__tile-image" data-role="tile-image">
+        <div class="game-ten__tile-image is-empty" data-role="tile-image">
           <span class="game-ten__tile-placeholder">Нет изображения</span>
+          <img data-role="tile-img" alt="" loading="lazy" hidden>
         </div>
         <div class="game-ten__tile-caption" data-role="tile-caption">Ответ {{ idx + 1 }}</div>
       </article>
@@ -647,7 +648,7 @@
       }
       const promptTextEl = gameRoot.querySelector('[data-role="prompt-text"]');
       if (promptTextEl) {
-        promptTextEl.textContent = question.prompt || question.subtitle || question.title || '—';
+        promptTextEl.textContent = question.prompt || question.title || '—';
       }
     }
 
@@ -698,19 +699,27 @@
         }
         tile.classList.remove('is-hidden');
         const tileImage = tile.querySelector('[data-role="tile-image"]');
+        const tileImg = tile.querySelector('[data-role="tile-img"]');
         const tileCaption = tile.querySelector('[data-role="tile-caption"]');
+        const captionText = typeof answerData?.caption === 'string' && answerData.caption.trim()
+          ? answerData.caption.trim()
+          : `Ответ ${index + 1}`;
         const imageUrl = answerData.image || '';
-        if (tileImage) {
+        if (tileImage && tileImg) {
           if (imageUrl) {
-            tileImage.style.setProperty('--tile-image', `url("${imageUrl.replace(/"/g, '\\"')}")`);
+            tileImg.src = imageUrl;
+            tileImg.alt = captionText;
+            tileImg.hidden = false;
             tileImage.classList.remove('is-empty');
           } else {
-            tileImage.style.removeProperty('--tile-image');
+            tileImg.removeAttribute('src');
+            tileImg.alt = '';
+            tileImg.hidden = true;
             tileImage.classList.add('is-empty');
           }
         }
         if (tileCaption) {
-          tileCaption.textContent = answerData.caption || `Ответ ${index + 1}`;
+          tileCaption.textContent = captionText;
         }
         tile.dataset.answerId = typeof answerData?.id === 'string' ? answerData.id : `answer-${index + 1}`;
       });
