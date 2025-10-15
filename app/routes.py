@@ -50,6 +50,9 @@ GAME_TEN_ACTIVE_S3_KEY_ENV = "GAME_TEN_ACTIVE_S3_KEY"
 GAME_TEN_ACTIVE_DEFAULT_KEY = "game_active.json"
 GAME_TEN_ACTIVE_TEMPLATE_PATH = PROJECT_ROOT / "data" / "game_active.template.json"
 GAME_TEN_ACTIVE_LOCAL_PATH = PROJECT_ROOT / GAME_TEN_ACTIVE_DEFAULT_KEY
+GAME_TEN_RUN_DEFAULT_KEY = "game_run.json"
+GAME_TEN_RUN_LOCAL_PATH = PROJECT_ROOT / GAME_TEN_RUN_DEFAULT_KEY
+GAME_TEN_ADMIN_ID = "888"
 AUTH_JSON_URL_ENV = "AUTH_JSON_URL"
 DEFAULT_S3_KEY = "auth.json"
 
@@ -818,6 +821,45 @@ def _build_sibling_s3_key(reference_key, sibling_basename):
     return f"{prefix}/{sibling_basename}"
 
 
+def _resolve_game_ten_run_destination():
+    raw_reference = _get_sanitized_env(GAME_TEN_ACTIVE_URL_ENV)
+    if raw_reference:
+        bucket, key = _parse_s3_reference(
+            raw_reference, default_key=GAME_TEN_ACTIVE_DEFAULT_KEY
+        )
+        if bucket:
+            resolved_key = key or GAME_TEN_ACTIVE_DEFAULT_KEY
+            run_key = _build_sibling_s3_key(resolved_key, GAME_TEN_RUN_DEFAULT_KEY)
+            return bucket, run_key
+
+    bucket_name = _get_sanitized_env(GAME_TEN_ACTIVE_S3_BUCKET_ENV)
+    object_key = _get_sanitized_env(GAME_TEN_ACTIVE_S3_KEY_ENV) or GAME_TEN_ACTIVE_DEFAULT_KEY
+    if bucket_name:
+        run_key = _build_sibling_s3_key(object_key, GAME_TEN_RUN_DEFAULT_KEY)
+        return bucket_name, run_key
+
+    auth_bucket = (
+        _get_sanitized_env(AUTH_S3_BUCKET_ENV)
+        or _get_sanitized_env(AUTH_S3_BUCKET_FALLBACK_ENV)
+    )
+    auth_key_reference = _get_sanitized_env(AUTH_S3_KEY_ENV)
+    auth_uri_reference = _get_sanitized_env(AUTH_S3_URI_ENV)
+    if auth_uri_reference:
+        parsed_bucket, parsed_key = _parse_s3_reference(
+            auth_uri_reference, default_key=DEFAULT_S3_KEY
+        )
+        if parsed_bucket:
+            auth_bucket = parsed_bucket
+        if parsed_key:
+            auth_key_reference = parsed_key
+
+    if auth_bucket:
+        run_key = _build_sibling_s3_key(auth_key_reference, GAME_TEN_RUN_DEFAULT_KEY)
+        return auth_bucket, run_key
+
+    return None, None
+
+
 def _load_from_url(url):
     if not url:
         logger.info("_load_from_url: empty URL provided")
@@ -1037,6 +1079,93 @@ def _download_json_from_s3(bucket_name, object_key, *, context_label):
             f"Файл {context_label} из S3 (s3://{bucket_name}/{object_key}) содержит некорректный JSON."
         ) from exc
 
+
+def _download_json_from_s3_optional(bucket_name, object_key, *, context_label):
+    current_app.logger.info(
+        "Опциональная S3 загрузка %s: bucket=%s key=%s", context_label, bucket_name, object_key
+    )
+
+    try:
+        import boto3
+        from botocore.exceptions import BotoCoreError, ClientError
+    except ImportError as exc:  # pragma: no cover - requires optional dependency
+        current_app.logger.error("boto3 недоступен для загрузки %s", context_label)
+        raise ValueError(
+            f"Загрузка {context_label} из S3 требует установленного пакета boto3."
+        ) from exc
+
+    try:
+        s3_client = boto3.client("s3")
+        response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
+    except ClientError as exc:
+        error_code = (exc.response or {}).get("Error", {}).get("Code") if hasattr(exc, "response") else None
+        if error_code in {"NoSuchKey", "404"}:
+            current_app.logger.info(
+                "%s отсутствует в S3 (s3://%s/%s)", context_label, bucket_name, object_key
+            )
+            return None
+        current_app.logger.error(
+            "Ошибка S3 при загрузке %s: %s", context_label, exc
+        )
+        raise ValueError(
+            f"Не удалось загрузить {context_label} из S3 (s3://{bucket_name}/{object_key}). Ошибка: {exc}"
+        ) from exc
+    except BotoCoreError as exc:
+        current_app.logger.error(
+            "Ошибка S3 при загрузке %s: %s", context_label, exc
+        )
+        raise ValueError(
+            f"Не удалось загрузить {context_label} из S3 (s3://{bucket_name}/{object_key}). Ошибка: {exc}"
+        ) from exc
+
+    body = response.get("Body")
+    if body is None:
+        raise ValueError(
+            f"Получен пустой ответ при загрузке {context_label} из S3 (s3://{bucket_name}/{object_key})."
+        )
+
+    raw_contents = body.read()
+    if isinstance(raw_contents, bytes):
+        raw_contents = raw_contents.decode("utf-8")
+
+    try:
+        return json.loads(raw_contents)
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            f"Файл {context_label} из S3 (s3://{bucket_name}/{object_key}) содержит некорректный JSON."
+        ) from exc
+
+
+def _upload_json_to_s3(bucket_name, object_key, payload, *, context_label):
+    current_app.logger.info(
+        "Сохраняем %s в S3: bucket=%s key=%s", context_label, bucket_name, object_key
+    )
+
+    try:
+        import boto3
+        from botocore.exceptions import BotoCoreError, ClientError
+    except ImportError as exc:  # pragma: no cover - requires optional dependency
+        current_app.logger.error("boto3 недоступен для сохранения %s", context_label)
+        raise ValueError(
+            f"Сохранение {context_label} в S3 требует установленного пакета boto3."
+        ) from exc
+
+    try:
+        s3_client = boto3.client("s3")
+        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        s3_client.put_object(
+            Bucket=bucket_name,
+            Key=object_key,
+            Body=body,
+            ContentType="application/json; charset=utf-8",
+        )
+    except (BotoCoreError, ClientError) as exc:
+        current_app.logger.error(
+            "Ошибка S3 при сохранении %s: %s", context_label, exc
+        )
+        raise ValueError(
+            f"Не удалось сохранить {context_label} в S3 (s3://{bucket_name}/{object_key}). Ошибка: {exc}"
+        ) from exc
 
 def _load_json_from_http(url, *, context_label):
     try:
@@ -1262,6 +1391,15 @@ def login_required(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+def _is_game_ten_admin() -> bool:
+    return session.get("user_id") == GAME_TEN_ADMIN_ID
+
+
+def _require_game_ten_admin() -> None:
+    if not _is_game_ten_admin():
+        abort(403)
 
 
 @bp.route("/buzzer")
@@ -1868,29 +2006,32 @@ def dashboard():
         "dashboard.html",
         login_code=session.get("user_id"),
         user_name=session.get("user_name"),
+        is_game_ten_admin=_is_game_ten_admin(),
     )
 
 
 @bp.route("/game-ten")
 @login_required
 def game_ten():
+    _require_game_ten_admin()
     raw_active_url = _get_sanitized_env(GAME_TEN_ACTIVE_URL_ENV)
     if raw_active_url and raw_active_url.lower().startswith(("http://", "https://")):
         active_url = raw_active_url
     else:
         active_url = url_for("main.game_ten_active_data")
 
-    live_url = _get_sanitized_env("GAME_TEN_LIVE_URL") or ""
+    run_url = url_for("main.game_ten_run_data")
     return render_template(
         "game_ten.html",
         game_ten_active_url=active_url,
-        game_ten_live_url=live_url,
+        game_ten_run_url=run_url,
     )
 
 
 @bp.route("/api/game-ten/active")
 @login_required
 def game_ten_active_data():
+    _require_game_ten_admin()
     try:
         payload = _load_game_ten_active_payload()
     except ValueError as exc:
@@ -1898,6 +2039,76 @@ def game_ten_active_data():
         return jsonify({"error": str(exc)}), 502
 
     response = jsonify(payload)
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
+@bp.route("/api/game-ten/run", methods=["GET", "PUT"])
+@login_required
+def game_ten_run_data():
+    _require_game_ten_admin()
+    context_label = GAME_TEN_RUN_DEFAULT_KEY
+    bucket, key = _resolve_game_ten_run_destination()
+
+    if request.method == "GET":
+        if bucket and key:
+            try:
+                payload = _download_json_from_s3_optional(
+                    bucket, key, context_label=context_label
+                )
+            except ValueError as exc:
+                current_app.logger.error(
+                    "Не удалось загрузить %s: %s", context_label, exc
+                )
+                return jsonify({"error": str(exc)}), 502
+            if payload is None:
+                return jsonify({"error": f"{context_label} not found"}), 404
+            response = jsonify(payload)
+            response.headers["Cache-Control"] = "no-store"
+            return response
+
+        if GAME_TEN_RUN_LOCAL_PATH.exists():
+            try:
+                payload = _load_json_from_path(
+                    GAME_TEN_RUN_LOCAL_PATH, context_label=context_label
+                )
+            except ValueError as exc:
+                current_app.logger.error(
+                    "Не удалось прочитать локальный %s: %s", context_label, exc
+                )
+                return jsonify({"error": str(exc)}), 500
+            response = jsonify(payload)
+            response.headers["Cache-Control"] = "no-store"
+            return response
+
+        return jsonify({"error": f"{context_label} not found"}), 404
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify({"error": "Некорректный JSON payload."}), 400
+
+    if bucket and key:
+        try:
+            _upload_json_to_s3(bucket, key, payload, context_label=context_label)
+        except ValueError as exc:
+            current_app.logger.error(
+                "Не удалось сохранить %s: %s", context_label, exc
+            )
+            return jsonify({"error": str(exc)}), 502
+    else:
+        try:
+            GAME_TEN_RUN_LOCAL_PATH.parent.mkdir(parents=True, exist_ok=True)
+            GAME_TEN_RUN_LOCAL_PATH.write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except OSError as exc:
+            current_app.logger.error(
+                "Не удалось сохранить локальный %s: %s", context_label, exc
+            )
+            return jsonify({"error": str(exc)}), 500
+
+    response = jsonify({"status": "ok"})
     response.headers["Cache-Control"] = "no-store"
     return response
 

@@ -3,13 +3,13 @@
 {% block title %}Игра «10» · Panenka Live{% endblock %}
 {% block layout_modifier %} layout--full layout--game-ten{% endblock %}
 {% block content %}
-<div class="game-ten" data-active-url="{{ game_ten_active_url }}" data-live-url="{{ game_ten_live_url }}">
+<div class="game-ten" data-active-url="{{ game_ten_active_url }}" data-run-url="{{ game_ten_run_url }}">
   <p class="game-ten__error" data-role="error" hidden></p>
 
   <section class="card game-ten__hud">
     <div class="game-ten__brand">
       <h1 class="brand brand--hud">
-        <a class="brand-link" href="{{ url_for('main.dashboard') }}">
+        <a class="brand-link" href="{{ url_for('main.dashboard') }}" data-role="home-link">
           <span aria-hidden="true" class="brand-logo">
             <span class="brand-logo__inner">10</span>
           </span>
@@ -69,19 +69,25 @@
   </section>
 
   <section class="card game-ten__board">
-    <div class="game-ten__prompt">
-      <div class="game-ten__prompt-text" data-role="prompt-text">Текст вопроса появится после загрузки game_active.json</div>
+    <div class="game-ten__selection" data-role="question-selection">
+      <h2 class="game-ten__selection-title">Выберите тему вопроса</h2>
+      <div class="game-ten__selection-grid" data-role="question-grid"></div>
     </div>
-    <div class="game-ten__grid">
-      {% for idx in range(10) %}
-      <article class="game-ten__tile" data-index="{{ idx }}" tabindex="0">
-        <div class="game-ten__tile-image is-empty" data-role="tile-image">
-          <span class="game-ten__tile-placeholder">Нет изображения</span>
-          <img data-role="tile-img" alt="" loading="lazy" hidden>
-        </div>
-        <div class="game-ten__tile-caption" data-role="tile-caption">Ответ {{ idx + 1 }}</div>
-      </article>
-      {% endfor %}
+    <div class="game-ten__question-view" data-role="question-view" hidden>
+      <div class="game-ten__prompt">
+        <div class="game-ten__prompt-text" data-role="prompt-text">Текст вопроса появится после загрузки game_active.json</div>
+      </div>
+      <div class="game-ten__grid" data-role="answer-grid">
+        {% for idx in range(10) %}
+        <article class="game-ten__tile" data-index="{{ idx }}" tabindex="0">
+          <div class="game-ten__tile-image is-empty" data-role="tile-image">
+            <span class="game-ten__tile-placeholder">Нет изображения</span>
+            <img data-role="tile-img" alt="" loading="lazy" hidden>
+          </div>
+          <div class="game-ten__tile-caption" data-role="tile-caption">Ответ {{ idx + 1 }}</div>
+        </article>
+        {% endfor %}
+      </div>
     </div>
   </section>
 
@@ -113,7 +119,7 @@
     }
 
     const activeUrl = resolveAssetUrl(gameRoot.dataset.activeUrl, 'game_active.json');
-    const liveUrl = resolveAssetUrl(gameRoot.dataset.liveUrl);
+    const runUrl = resolveAssetUrl(gameRoot.dataset.runUrl, 'game_run.json');
     const errorNode = gameRoot.querySelector('[data-role="error"]');
 
     const MAX_PLAYER_LIVES = 3;
@@ -143,13 +149,19 @@
       errorNode.textContent = '';
     }
 
-    async function loadJson(url) {
+    async function loadJson(url, options = {}) {
       if (!url) {
         throw new Error('URL для загрузки не задан.');
       }
+      const { allowNotFound = false } = options || {};
       const response = await fetch(url, { cache: 'no-store' });
       if (!response.ok) {
-        throw new Error(`Не удалось загрузить данные (${response.status}).`);
+        if (allowNotFound && response.status === 404) {
+          return null;
+        }
+        const error = new Error(`Не удалось загрузить данные (${response.status}).`);
+        error.status = response.status;
+        throw error;
       }
       return response.json();
     }
@@ -197,19 +209,39 @@
       return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
 
-    function createDefaultState(activeData) {
+    function normalizeQuestions(activeData) {
+      const questions = Array.isArray(activeData?.questions) ? activeData.questions : [];
+      return questions.map((question, index) => {
+        const normalizedId = typeof question?.id === 'string' && question.id.trim()
+          ? question.id.trim()
+          : `question-${index + 1}`;
+        const answers = Array.isArray(question?.answers) ? question.answers : [];
+        const numberValue = Number.isFinite(question?.number) ? Number(question.number) : index + 1;
+        return {
+          id: normalizedId,
+          index,
+          number: numberValue,
+          theme: typeof question?.theme === 'string' ? question.theme.trim() : '',
+          title: typeof question?.title === 'string' ? question.title.trim() : '',
+          subtitle: typeof question?.subtitle === 'string' ? question.subtitle.trim() : '',
+          prompt: typeof question?.prompt === 'string' ? question.prompt.trim() : '',
+          answers,
+        };
+      });
+    }
+
+    function createDefaultState(activeData, questions) {
       const timerSeconds = Number(activeData?.timer_seconds);
       const initialTimer = Number.isFinite(timerSeconds) && timerSeconds > 0 ? timerSeconds : DEFAULT_TIMER_SECONDS;
 
       const teams = Array.isArray(activeData?.teams) ? activeData.teams : [];
-      const answers = Array.isArray(activeData?.answers) ? activeData.answers : [];
 
       const state = {
-        version: 1,
+        version: 2,
         updatedAt: new Date().toISOString(),
         activePlayerId: typeof activeData?.active_player_id === 'string' ? activeData.active_player_id : null,
-        selectedAnswer: null,
-        answers: answers.map(() => ({ status: 'neutral', revealed: false })),
+        selectedQuestionId: null,
+        questionStates: {},
         timers: {},
         players: {},
         teamLives: {},
@@ -247,10 +279,18 @@
         });
       });
 
+      questions.forEach((question) => {
+        state.questionStates[question.id] = {
+          answers: question.answers.map(() => ({ status: 'neutral', revealed: false })),
+          selectedAnswer: null,
+          used: false,
+        };
+      });
+
       return state;
     }
 
-    function mergeState(defaultState, savedState, activeData) {
+    function mergeState(defaultState, savedState, activeData, questions) {
       if (!savedState || typeof savedState !== 'object') {
         return defaultState;
       }
@@ -261,28 +301,56 @@
         merged.activePlayerId = savedState.activePlayerId;
       }
 
-      if (Number.isInteger(savedState.selectedAnswer)) {
-        if (merged.answers.length > 0) {
-          merged.selectedAnswer = Math.min(
-            Math.max(savedState.selectedAnswer, 0),
-            merged.answers.length - 1,
-          );
-        } else {
-          merged.selectedAnswer = null;
-        }
+      if (typeof savedState.selectedQuestionId === 'string') {
+        merged.selectedQuestionId = savedState.selectedQuestionId;
+      } else if (savedState.selectedQuestionId === null) {
+        merged.selectedQuestionId = null;
       }
 
-      if (Array.isArray(savedState.answers)) {
-        merged.answers = merged.answers.map((entry, index) => {
-          const saved = savedState.answers[index];
-          if (!saved || typeof saved !== 'object') {
-            return entry;
+      if (savedState.questionStates && typeof savedState.questionStates === 'object') {
+        questions.forEach((question) => {
+          const questionId = question.id;
+          const defaultQuestionState = merged.questionStates[questionId] || {
+            answers: question.answers.map(() => ({ status: 'neutral', revealed: false })),
+            selectedAnswer: null,
+            used: false,
+          };
+          merged.questionStates[questionId] = defaultQuestionState;
+
+          const savedQuestionState = savedState.questionStates[questionId];
+          if (!savedQuestionState || typeof savedQuestionState !== 'object') {
+            return;
           }
-          const status = saved.status;
-          const allowed = ['neutral', 'correct', 'incorrect'];
-          const mergedStatus = allowed.includes(status) ? status : entry.status;
-          const revealed = Boolean(saved.revealed);
-          return { status: mergedStatus, revealed };
+
+          if (Array.isArray(savedQuestionState.answers)) {
+            defaultQuestionState.answers = defaultQuestionState.answers.map((entry, index) => {
+              const savedEntry = savedQuestionState.answers[index];
+              if (!savedEntry || typeof savedEntry !== 'object') {
+                return entry;
+              }
+              const allowedStatuses = ['neutral', 'correct', 'incorrect'];
+              const status = allowedStatuses.includes(savedEntry.status) ? savedEntry.status : entry.status;
+              const revealed = Boolean(savedEntry.revealed);
+              return { status, revealed };
+            });
+          }
+
+          if (Number.isInteger(savedQuestionState.selectedAnswer)) {
+            if (defaultQuestionState.answers.length > 0) {
+              defaultQuestionState.selectedAnswer = Math.min(
+                Math.max(savedQuestionState.selectedAnswer, 0),
+                defaultQuestionState.answers.length - 1,
+              );
+            } else {
+              defaultQuestionState.selectedAnswer = null;
+            }
+          } else if (savedQuestionState.selectedAnswer === null) {
+            defaultQuestionState.selectedAnswer = null;
+          }
+
+          if (typeof savedQuestionState.used === 'boolean') {
+            defaultQuestionState.used = savedQuestionState.used;
+          }
         });
       }
 
@@ -351,7 +419,7 @@
     }
 
     function scheduleSave(state) {
-      if (!liveUrl) {
+      if (!runUrl) {
         return;
       }
       if (saveTimerId !== null) {
@@ -364,7 +432,7 @@
           updatedAt: new Date().toISOString(),
         };
         try {
-          const response = await fetch(liveUrl, {
+          const response = await fetch(runUrl, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
@@ -678,46 +746,354 @@
       return cards;
     }
 
-    function renderQuestion(activeData) {
-      const question = activeData?.question || {};
+    function renderQuestionHeader(questionMeta) {
       const numberEl = gameRoot.querySelector('[data-role="question-number"]');
       if (numberEl) {
-        if (typeof question.number === 'number') {
-          numberEl.textContent = `${question.number}.`;
-        } else if (question.number) {
-          numberEl.textContent = String(question.number);
+        if (questionMeta && Number.isFinite(questionMeta.number)) {
+          numberEl.textContent = `${questionMeta.number}.`;
         } else {
           numberEl.textContent = '–';
         }
       }
+
       const themeEl = gameRoot.querySelector('[data-role="theme"]');
       if (themeEl) {
-        themeEl.textContent = question.theme || 'Тема не указана';
-      }
-      const subtitleEl = gameRoot.querySelector('[data-role="subtitle"]');
-      if (subtitleEl) {
-        const rawSubtitle = typeof question.subtitle === 'string' ? question.subtitle.trim() : '';
-        const titleText = typeof question.title === 'string' ? question.title.trim() : '';
-        const promptText = typeof question.prompt === 'string' ? question.prompt.trim() : '';
-        const normalizedSubtitle = rawSubtitle.toLowerCase();
-        const shouldHideSubtitle = !rawSubtitle
-          || rawSubtitle === titleText
-          || rawSubtitle === promptText
-          || normalizedSubtitle === 'только ведущий управляет игрой';
-        if (shouldHideSubtitle) {
-          subtitleEl.hidden = true;
-          subtitleEl.textContent = '';
+        if (questionMeta) {
+          themeEl.textContent = questionMeta.theme || 'Тема не указана';
         } else {
-          subtitleEl.hidden = false;
-          subtitleEl.textContent = rawSubtitle;
+          themeEl.textContent = 'Выберите тему вопроса';
         }
       }
+
+      const subtitleEl = gameRoot.querySelector('[data-role="subtitle"]');
+      if (subtitleEl) {
+        if (!questionMeta) {
+          subtitleEl.hidden = false;
+          subtitleEl.textContent = 'Нажмите на карточку, чтобы открыть вопрос.';
+        } else {
+          const rawSubtitle = questionMeta.subtitle || '';
+          const titleText = questionMeta.title || '';
+          const promptText = questionMeta.prompt || '';
+          const normalizedSubtitle = rawSubtitle.toLowerCase();
+          const shouldHideSubtitle = !rawSubtitle
+            || rawSubtitle === titleText
+            || rawSubtitle === promptText
+            || normalizedSubtitle === 'только ведущий управляет игрой';
+          if (shouldHideSubtitle) {
+            subtitleEl.hidden = true;
+            subtitleEl.textContent = '';
+          } else {
+            subtitleEl.hidden = false;
+            subtitleEl.textContent = rawSubtitle;
+          }
+        }
+      }
+
       const promptTextEl = gameRoot.querySelector('[data-role="prompt-text"]');
       if (promptTextEl) {
-        const promptValue = typeof question.prompt === 'string' && question.prompt.trim()
-          ? question.prompt.trim()
-          : (typeof question.title === 'string' && question.title.trim() ? question.title.trim() : '—');
-        promptTextEl.textContent = promptValue;
+        if (!questionMeta) {
+          promptTextEl.textContent = 'Выберите вопрос, чтобы начать раунд.';
+        } else {
+          const promptValue = questionMeta.prompt
+            || questionMeta.title
+            || questionMeta.theme
+            || '—';
+          promptTextEl.textContent = promptValue;
+        }
+      }
+    }
+
+    function ensureQuestionState(state, questionMeta) {
+      if (!questionMeta) {
+        return null;
+      }
+      const answerCount = Array.isArray(questionMeta.answers) ? questionMeta.answers.length : 0;
+      const allowedStatuses = ['neutral', 'correct', 'incorrect'];
+      let entry = state.questionStates[questionMeta.id];
+      if (!entry) {
+        entry = {
+          answers: [],
+          selectedAnswer: null,
+          used: false,
+        };
+        state.questionStates[questionMeta.id] = entry;
+      }
+      entry.answers = Array.from({ length: answerCount }, (_, index) => {
+        const existing = entry.answers?.[index];
+        if (!existing || typeof existing !== 'object') {
+          return { status: 'neutral', revealed: false };
+        }
+        const status = allowedStatuses.includes(existing.status) ? existing.status : 'neutral';
+        const revealed = Boolean(existing.revealed);
+        return { status, revealed };
+      });
+      if (!Number.isInteger(entry.selectedAnswer) || entry.selectedAnswer < 0 || entry.selectedAnswer >= answerCount) {
+        entry.selectedAnswer = null;
+      }
+      entry.used = Boolean(entry.used);
+      return entry;
+    }
+
+    function updateQuestionSelectionCards(state) {
+      const cards = gameRoot.querySelectorAll('.game-ten__selection-card');
+      cards.forEach((card) => {
+        const questionId = card.dataset.questionId;
+        const questionState = questionId ? state.questionStates[questionId] : null;
+        card.classList.toggle('is-active', state.selectedQuestionId === questionId);
+        card.classList.toggle('is-used', Boolean(questionState?.used));
+      });
+    }
+
+    function renderQuestionSelection(questions, state, onSelect) {
+      const selection = gameRoot.querySelector('[data-role="question-selection"]');
+      const grid = selection?.querySelector('[data-role="question-grid"]');
+      if (!selection || !grid) {
+        return;
+      }
+      grid.innerHTML = '';
+      questions.forEach((question) => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'game-ten__selection-card';
+        card.dataset.questionId = question.id;
+
+        const numberEl = document.createElement('span');
+        numberEl.className = 'game-ten__selection-number';
+        numberEl.textContent = `Вопрос ${question.number}`;
+        card.appendChild(numberEl);
+
+        const themeEl = document.createElement('span');
+        themeEl.className = 'game-ten__selection-theme';
+        themeEl.textContent = question.theme || 'Без темы';
+        card.appendChild(themeEl);
+
+        const titleEl = document.createElement('span');
+        titleEl.className = 'game-ten__selection-title-text';
+        const description = question.title || question.prompt || 'Описание появится после выбора.';
+        titleEl.textContent = description;
+        card.appendChild(titleEl);
+
+        card.addEventListener('click', () => {
+          onSelect(question);
+        });
+
+        grid.appendChild(card);
+      });
+
+      updateQuestionSelectionCards(state);
+    }
+
+    function showQuestionSelection(state, { skipSave = false } = {}) {
+      const selection = gameRoot.querySelector('[data-role="question-selection"]');
+      const questionView = gameRoot.querySelector('[data-role="question-view"]');
+      if (selection) {
+        selection.hidden = false;
+      }
+      if (questionView) {
+        questionView.hidden = true;
+      }
+      const revealBody = gameRoot.querySelector('[data-role="reveal-body"]');
+      if (revealBody) {
+        revealBody.textContent = '';
+        revealBody.hidden = true;
+      }
+      const previousSelected = state.selectedQuestionId;
+      state.selectedQuestionId = null;
+      renderQuestionHeader(null);
+      updateQuestionSelectionCards(state);
+      if (!skipSave && previousSelected !== null) {
+        scheduleSave(state);
+      }
+    }
+
+    function renderAnswersForQuestion(questionMeta, questionState, state) {
+      const answers = Array.isArray(questionMeta.answers) ? questionMeta.answers : [];
+      const tiles = Array.from(gameRoot.querySelectorAll('.game-ten__tile'));
+      const revealBody = gameRoot.querySelector('[data-role="reveal-body"]');
+
+      function applyAnswerState(index) {
+        const tile = tiles[index];
+        if (!tile) {
+          return;
+        }
+        tile.classList.remove('is-correct', 'is-incorrect', 'is-selected');
+        const entry = questionState.answers[index];
+        if (!entry) {
+          return;
+        }
+        if (entry.status === 'correct') {
+          tile.classList.add('is-correct');
+        } else if (entry.status === 'incorrect') {
+          tile.classList.add('is-incorrect');
+        }
+        if (questionState.selectedAnswer === index) {
+          tile.classList.add('is-selected');
+        }
+      }
+
+      function updateRevealBody() {
+        if (!revealBody) {
+          return;
+        }
+        const selectedIndex = Number.isInteger(questionState.selectedAnswer)
+          ? questionState.selectedAnswer
+          : null;
+        if (selectedIndex === null || !questionState.answers[selectedIndex]?.revealed) {
+          revealBody.textContent = '';
+          revealBody.hidden = true;
+          return;
+        }
+        const answer = answers[selectedIndex];
+        if (!answer) {
+          revealBody.textContent = '';
+          revealBody.hidden = true;
+          return;
+        }
+        const comment = typeof answer.comment === 'string' && answer.comment.trim()
+          ? answer.comment.trim()
+          : (typeof answer.reveal === 'string' && answer.reveal.trim() ? answer.reveal.trim() : '');
+        if (comment) {
+          revealBody.textContent = comment;
+          revealBody.hidden = false;
+        } else {
+          revealBody.textContent = '';
+          revealBody.hidden = true;
+        }
+      }
+
+      tiles.forEach((tile, index) => {
+        const answerData = answers[index];
+        tile.classList.remove('is-hidden', 'is-correct', 'is-incorrect', 'is-selected');
+        tile.dataset.questionId = questionMeta.id;
+        tile.dataset.answerIndex = String(index);
+
+        if (!answerData) {
+          tile.classList.add('is-hidden');
+          tile.dataset.answerId = '';
+          tile.dataset.correct = '';
+          const tileImage = tile.querySelector('[data-role="tile-image"]');
+          tileImage?.classList.add('is-empty');
+          const tileImg = tile.querySelector('[data-role="tile-img"]');
+          if (tileImg) {
+            tileImg.removeAttribute('src');
+            tileImg.alt = '';
+            tileImg.hidden = true;
+          }
+          const tileCaption = tile.querySelector('[data-role="tile-caption"]');
+          if (tileCaption) {
+            tileCaption.textContent = `Ответ ${index + 1}`;
+          }
+          tile.onclick = null;
+          tile.onkeydown = null;
+          return;
+        }
+
+        const tileImage = tile.querySelector('[data-role="tile-image"]');
+        const tileImg = tile.querySelector('[data-role="tile-img"]');
+        const tileCaption = tile.querySelector('[data-role="tile-caption"]');
+        const captionText = answerData.caption && String(answerData.caption).trim()
+          ? String(answerData.caption).trim()
+          : `Ответ ${index + 1}`;
+        const imageUrl = typeof answerData.image === 'string' ? answerData.image.trim() : '';
+
+        if (tileImage && tileImg) {
+          if (imageUrl) {
+            tileImg.src = imageUrl;
+            tileImg.alt = captionText;
+            tileImg.hidden = false;
+            tileImage.classList.remove('is-empty');
+          } else {
+            tileImg.removeAttribute('src');
+            tileImg.alt = '';
+            tileImg.hidden = true;
+            tileImage.classList.add('is-empty');
+          }
+        }
+
+        if (tileCaption) {
+          tileCaption.textContent = captionText;
+        }
+
+        const answerId = typeof answerData.id === 'string' && answerData.id.trim()
+          ? answerData.id.trim()
+          : `answer-${index + 1}`;
+        tile.dataset.answerId = answerId;
+        tile.dataset.correct = answerData.is_correct ? 'true' : 'false';
+
+        const handleActivation = () => {
+          const entry = questionState.answers[index];
+          if (!entry) {
+            return;
+          }
+          const isCorrect = Boolean(answerData.is_correct);
+          const targetStatus = isCorrect ? 'correct' : 'incorrect';
+          if (entry.status === targetStatus && entry.revealed) {
+            entry.status = 'neutral';
+            entry.revealed = false;
+            if (questionState.selectedAnswer === index) {
+              questionState.selectedAnswer = null;
+            }
+          } else {
+            entry.status = targetStatus;
+            entry.revealed = true;
+            questionState.selectedAnswer = index;
+          }
+          tiles.forEach((_, idx) => applyAnswerState(idx));
+          updateRevealBody();
+          scheduleSave(state);
+        };
+
+        tile.onclick = handleActivation;
+        tile.onkeydown = (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleActivation();
+          }
+        };
+      });
+
+      if (!Number.isInteger(questionState.selectedAnswer) || questionState.selectedAnswer >= answers.length) {
+        questionState.selectedAnswer = null;
+      }
+
+      tiles.forEach((_, idx) => applyAnswerState(idx));
+      updateRevealBody();
+    }
+
+    function showQuestion(questionMeta, state, { skipSave = false } = {}) {
+      if (!questionMeta) {
+        showQuestionSelection(state, { skipSave });
+        return;
+      }
+
+      const selection = gameRoot.querySelector('[data-role="question-selection"]');
+      const questionView = gameRoot.querySelector('[data-role="question-view"]');
+      if (selection) {
+        selection.hidden = true;
+      }
+      if (questionView) {
+        questionView.hidden = false;
+      }
+
+      const questionState = ensureQuestionState(state, questionMeta);
+      if (!questionState) {
+        renderQuestionHeader(questionMeta);
+        return;
+      }
+
+      const previousSelected = state.selectedQuestionId;
+      const wasUsed = questionState.used;
+      state.selectedQuestionId = questionMeta.id;
+      if (!questionState.used) {
+        questionState.used = true;
+      }
+
+      renderQuestionHeader(questionMeta);
+      renderAnswersForQuestion(questionMeta, questionState, state);
+      updateQuestionSelectionCards(state);
+
+      if (!skipSave && (previousSelected !== questionMeta.id || !wasUsed)) {
+        scheduleSave(state);
       }
     }
 
@@ -760,137 +1136,63 @@
     }
 
     function renderAnswers(activeData, state) {
-      const answers = Array.isArray(activeData?.answers) ? activeData.answers : [];
-      const tiles = Array.from(gameRoot.querySelectorAll('.game-ten__tile'));
-
-      tiles.forEach((tile, index) => {
-        const answerData = answers[index];
-        if (!answerData) {
-          tile.classList.add('is-hidden');
-          return;
-        }
-        tile.classList.remove('is-hidden');
-        const tileImage = tile.querySelector('[data-role="tile-image"]');
-        const tileImg = tile.querySelector('[data-role="tile-img"]');
-        const tileCaption = tile.querySelector('[data-role="tile-caption"]');
-        const captionText = typeof answerData?.caption === 'string' && answerData.caption.trim()
-          ? answerData.caption.trim()
-          : `Ответ ${index + 1}`;
-        const imageUrl = answerData.image || '';
-        if (tileImage && tileImg) {
-          if (imageUrl) {
-            tileImg.src = imageUrl;
-            tileImg.alt = captionText;
-            tileImg.hidden = false;
-            tileImage.classList.remove('is-empty');
-          } else {
-            tileImg.removeAttribute('src');
-            tileImg.alt = '';
-            tileImg.hidden = true;
-            tileImage.classList.add('is-empty');
-          }
-        }
-        if (tileCaption) {
-          tileCaption.textContent = captionText;
-        }
-        tile.dataset.answerId = typeof answerData?.id === 'string' ? answerData.id : `answer-${index + 1}`;
-      });
-
-      function applyAnswerState(index) {
-        const tile = tiles[index];
-        if (!tile) {
-          return;
-        }
-        const stateEntry = state.answers[index];
-        tile.classList.remove('is-correct', 'is-incorrect', 'is-selected');
-        if (stateEntry?.status === 'correct') {
-          tile.classList.add('is-correct');
-        } else if (stateEntry?.status === 'incorrect') {
-          tile.classList.add('is-incorrect');
-        }
-        if (state.selectedAnswer === index) {
-          tile.classList.add('is-selected');
-        }
+      console.warn('renderAnswers is deprecated. Используйте showQuestion().');
+      if (!activeData) {
+        showQuestionSelection(state);
+        return;
       }
-
-      function updateReveal() {
-        const revealBody = gameRoot.querySelector('[data-role="reveal-body"]');
-        if (!revealBody) {
-          return;
-        }
-        const selected = Number.isInteger(state.selectedAnswer) ? state.selectedAnswer : null;
-        const answer = selected !== null ? answers[selected] : null;
-        if (!answer) {
-          revealBody.textContent = '';
-          revealBody.hidden = true;
-          return;
-        }
-        const comment = answer.comment || answer.reveal || '';
-        if (comment) {
-          revealBody.textContent = comment;
-          revealBody.hidden = false;
-        } else {
-          revealBody.textContent = '';
-          revealBody.hidden = true;
-        }
-      }
-
-      tiles.forEach((tile, index) => {
-        applyAnswerState(index);
-        tile.addEventListener('click', () => {
-          const entry = state.answers[index];
-          if (!entry) {
-            return;
-          }
-          const order = ['neutral', 'correct', 'incorrect'];
-          const nextIndex = (order.indexOf(entry.status) + 1) % order.length;
-          entry.status = order[nextIndex];
-          state.selectedAnswer = index;
-          entry.revealed = true;
-          tiles.forEach((_, idx) => applyAnswerState(idx));
-          updateReveal();
-          scheduleSave(state);
-        });
-        tile.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            tile.click();
-          }
-        });
-      });
-
-      if (Number.isInteger(state.selectedAnswer) && answers.length > 0) {
-        state.selectedAnswer = Math.min(Math.max(state.selectedAnswer, 0), answers.length - 1);
+      const questions = normalizeQuestions(activeData);
+      const target = questions.find((question) => question.id === state.selectedQuestionId) || questions[0];
+      if (target) {
+        showQuestion(target, state, { skipSave: true });
       } else {
-        state.selectedAnswer = null;
+        showQuestionSelection(state, { skipSave: true });
       }
-      tiles.forEach((_, idx) => applyAnswerState(idx));
-      updateReveal();
     }
 
     (async () => {
       try {
         const activeData = await loadJson(activeUrl);
-        let liveData = null;
-        if (liveUrl) {
+        const questions = normalizeQuestions(activeData);
+
+        let runData = null;
+        if (runUrl) {
           try {
-            liveData = await loadJson(liveUrl);
+            runData = await loadJson(runUrl, { allowNotFound: true });
           } catch (error) {
-            console.warn('Не удалось загрузить game_live.json, будет использовано состояние по умолчанию.', error);
+            console.warn('Не удалось загрузить game_run.json, будет использовано состояние по умолчанию.', error);
           }
         }
 
-        const defaultState = createDefaultState(activeData);
-        const state = mergeState(defaultState, liveData, activeData);
+        const defaultState = createDefaultState(activeData, questions);
+        const state = mergeState(defaultState, runData, activeData, questions);
 
-        renderQuestion(activeData);
+        questions.forEach((question) => {
+          ensureQuestionState(state, question);
+        });
+
+        renderQuestionSelection(questions, state, (question) => {
+          showQuestion(question, state);
+        });
         const teamCards = renderTeams(activeData, state);
         renderActivePlayerSelect(activeData, state);
-        renderAnswers(activeData, state);
         updateActivePlayerHighlight(state);
         hideError();
 
-        if (!liveData && liveUrl) {
+        const homeLink = gameRoot.querySelector('[data-role="home-link"]');
+        homeLink?.addEventListener('click', (event) => {
+          event.preventDefault();
+          showQuestionSelection(state);
+        });
+
+        const initialQuestion = questions.find((question) => question.id === state.selectedQuestionId);
+        if (initialQuestion) {
+          showQuestion(initialQuestion, state, { skipSave: true });
+        } else {
+          showQuestionSelection(state, { skipSave: true });
+        }
+
+        if (!runData && runUrl) {
           scheduleSave(state);
         }
       } catch (error) {

@@ -1,11 +1,4 @@
 {
-  "question": {
-    "number": 0,
-    "theme": "Чемпионат мира",
-    "title": "Удалите те команды, которые одержали хотя бы одну победу в матче на ЧМ",
-    "subtitle": "",
-    "prompt": "Удалите карточки сборных без побед на чемпионатах мира."
-  },
   "timer_seconds": 1200,
   "active_player_id": "team-a:player-1",
   "hints": [
@@ -48,66 +41,266 @@
       ]
     }
   ],
-  "answers": [
+  "questions": [
     {
-      "id": "honduras",
-      "caption": "Гондурас",
-      "image": "https://example.com/images/honduras.png",
-      "comment": "Сборная Гондураса на чемпионатах мира пока не побеждала."
+      "id": "world-cup-wins",
+      "number": 1,
+      "theme": "Чемпионат мира",
+      "title": "Удалите те команды, которые одержали хотя бы одну победу в матче на ЧМ",
+      "subtitle": "",
+      "prompt": "Удалите карточки сборных без побед на чемпионатах мира.",
+      "answers": [
+        {
+          "id": "honduras",
+          "caption": "Гондурас",
+          "image": "https://example.com/images/honduras.png",
+          "comment": "Сборная Гондураса на чемпионатах мира пока не побеждала.",
+          "is_correct": false
+        },
+        {
+          "id": "bosnia",
+          "caption": "Босния и Герцеговина",
+          "image": "https://example.com/images/bosnia.png",
+          "comment": "В 2014 году боснийцы выиграли у Ирана и тем самым имеют победу.",
+          "is_correct": true
+        },
+        {
+          "id": "bolivia",
+          "caption": "Боливия",
+          "image": "https://example.com/images/bolivia.png",
+          "comment": "Последняя победа Боливии на ЧМ датируется 1950 годом.",
+          "is_correct": false
+        },
+        {
+          "id": "cuba",
+          "caption": "Куба",
+          "image": "https://example.com/images/cuba.png",
+          "comment": "Куба выходила в четвертьфинал в 1938 году.",
+          "is_correct": true
+        },
+        {
+          "id": "new-zealand",
+          "caption": "Новая Зеландия",
+          "image": "https://example.com/images/new-zealand.png",
+          "comment": "Новозеландцы пока не выигрывали матчей на ЧМ, но трижды играли вничью.",
+          "is_correct": false
+        },
+        {
+          "id": "salvador",
+          "caption": "Сальвадор",
+          "image": "https://example.com/images/salvador.png",
+          "comment": "Сборная Сальвадора пока без побед на чемпионатах мира.",
+          "is_correct": false
+        },
+        {
+          "id": "slovenia",
+          "caption": "Словения",
+          "image": "https://example.com/images/slovenia.png",
+          "comment": "В 2010 году словенцы обыграли Алжир в группе.",
+          "is_correct": true
+        },
+        {
+          "id": "wales",
+          "caption": "Уэльс",
+          "image": "https://example.com/images/wales.png",
+          "comment": "В 1958 году Уэльс победил в переигровке Венгрию.",
+          "is_correct": true
+        },
+        {
+          "id": "jamaica",
+          "caption": "Ямайка",
+          "image": "https://example.com/images/jamaica.png",
+          "comment": "У ямайцев есть победа над Японией в 1998 году.",
+          "is_correct": true
+        },
+        {
+          "id": "canada",
+          "caption": "Канада",
+          "image": "https://example.com/images/canada.png",
+          "comment": "Канада пока идёт без побед на ЧМ.",
+          "is_correct": false
+        }
+      ]
     },
     {
-      "id": "bosnia",
-      "caption": "Босния и Герцеговина",
-      "image": "https://example.com/images/bosnia.png",
-      "comment": "В 2014 году боснийцы выиграли у Ирана и тем самым имеют победу."
+      "id": "golden-boot",
+      "number": 2,
+      "theme": "Бомбардиры",
+      "title": "Назовите обладателей Золотой бутсы",
+      "subtitle": "",
+      "prompt": "Выберите футболистов, становившихся лучшими бомбардирами чемпионата мира.",
+      "answers": [
+        { "id": "closer", "caption": "Мирослав Клозе", "image": "https://example.com/images/closer.png", "comment": "Вице-чемпион мира 2002 года.", "is_correct": false },
+        { "id": "ronaldo", "caption": "Роналдо", "image": "https://example.com/images/ronaldo.png", "comment": "Лучший бомбардир ЧМ-2002.", "is_correct": true },
+        { "id": "stoichkov", "caption": "Христо Стоичков", "image": "https://example.com/images/stoichkov.png", "comment": "Разделил звание лучшего бомбардира ЧМ-1994.", "is_correct": true },
+        { "id": "messir", "caption": "Лионель Месси", "image": "https://example.com/images/messi.png", "comment": "На ЧМ-2014 был признан лучшим игроком, но не бомбардиром.", "is_correct": false },
+        { "id": "james", "caption": "Хамес Родригес", "image": "https://example.com/images/james.png", "comment": "Забил шесть голов на ЧМ-2014.", "is_correct": true },
+        { "id": "forlan", "caption": "Диего Форлан", "image": "https://example.com/images/forlan.png", "comment": "Лучший игрок ЧМ-2010.", "is_correct": false },
+        { "id": "kane", "caption": "Харри Кейн", "image": "https://example.com/images/kane.png", "comment": "Лучший бомбардир ЧМ-2018.", "is_correct": true },
+        { "id": "villa", "caption": "Давид Вилья", "image": "https://example.com/images/villa.png", "comment": "Забил 5 голов на ЧМ-2010, но уступил титул.", "is_correct": false },
+        { "id": "fontaine", "caption": "Жюст Фонтен", "image": "https://example.com/images/fontaine.png", "comment": "12 голов на ЧМ-1958.", "is_correct": true },
+        { "id": "pele", "caption": "Пеле", "image": "https://example.com/images/pele.png", "comment": "Хотя забил 12 голов на ЧМ, звание не получал.", "is_correct": false }
+      ]
     },
     {
-      "id": "bolivia",
-      "caption": "Боливия",
-      "image": "https://example.com/images/bolivia.png",
-      "comment": "Последняя победа Боливии на ЧМ датируется 1950 годом."
+      "id": "euro-hosts",
+      "number": 3,
+      "theme": "Евро",
+      "title": "Страны-хозяйки чемпионатов Европы",
+      "subtitle": "",
+      "prompt": "Среди карточек найдите страны, принимавшие финальные турниры Евро.",
+      "answers": [
+        { "id": "france", "caption": "Франция", "image": "https://example.com/images/france.png", "comment": "Принимала Евро 1960, 1984 и 2016.", "is_correct": true },
+        { "id": "netherlands", "caption": "Нидерланды", "image": "https://example.com/images/netherlands.png", "comment": "Совместный хозяин Евро-2000.", "is_correct": true },
+        { "id": "hungary", "caption": "Венгрия", "image": "https://example.com/images/hungary.png", "comment": "Принимала матчи Евро-2020.", "is_correct": true },
+        { "id": "denmark", "caption": "Дания", "image": "https://example.com/images/denmark.png", "comment": "Провела Евро-2020 совместно.", "is_correct": true },
+        { "id": "iceland", "caption": "Исландия", "image": "https://example.com/images/iceland.png", "comment": "Никогда не принимала турнир.", "is_correct": false },
+        { "id": "croatia", "caption": "Хорватия", "image": "https://example.com/images/croatia.png", "comment": "Не была хозяйкой Евро.", "is_correct": false },
+        { "id": "serbia", "caption": "Сербия", "image": "https://example.com/images/serbia.png", "comment": "Не принимала финалы Евро.", "is_correct": false },
+        { "id": "germany", "caption": "Германия", "image": "https://example.com/images/germany.png", "comment": "Принимает Евро-2024.", "is_correct": true },
+        { "id": "italy", "caption": "Италия", "image": "https://example.com/images/italy.png", "comment": "Хозяйка Евро-1968 и 1980.", "is_correct": true },
+        { "id": "sweden", "caption": "Швеция", "image": "https://example.com/images/sweden.png", "comment": "Провела Евро-1992.", "is_correct": true }
+      ]
     },
     {
-      "id": "cuba",
-      "caption": "Куба",
-      "image": "https://example.com/images/cuba.png",
-      "comment": "Куба выходила в четвертьфинал в 1938 году."
+      "id": "ballon-dor",
+      "number": 4,
+      "theme": "Золотой мяч",
+      "title": "Обладатели Золотого мяча",
+      "subtitle": "",
+      "prompt": "Кликните по карточкам лауреатов награды France Football.",
+      "answers": [
+        { "id": "modric", "caption": "Лука Модрич", "image": "https://example.com/images/modric.png", "comment": "Обладатель 2018 года.", "is_correct": true },
+        { "id": "xavi", "caption": "Хави", "image": "https://example.com/images/xavi.png", "comment": "Несколько раз был в тройке, но не выигрывал.", "is_correct": false },
+        { "id": "shevchenko", "caption": "Андрей Шевченко", "image": "https://example.com/images/shevchenko.png", "comment": "Победил в 2004 году.", "is_correct": true },
+        { "id": "figo", "caption": "Луиш Фигу", "image": "https://example.com/images/figo.png", "comment": "Лауреат 2000 года.", "is_correct": true },
+        { "id": "iniesta", "caption": "Андрес Иньеста", "image": "https://example.com/images/iniesta.png", "comment": "Несмотря на успехи, награду не получил.", "is_correct": false },
+        { "id": "beckham", "caption": "Дэвид Бекхэм", "image": "https://example.com/images/beckham.png", "comment": "Финишировал вторым в 1999.", "is_correct": false },
+        { "id": "ronaldinho", "caption": "Роналдиньо", "image": "https://example.com/images/ronaldinho.png", "comment": "Обладатель 2005 года.", "is_correct": true },
+        { "id": "cruyff", "caption": "Йохан Кройф", "image": "https://example.com/images/cruyff.png", "comment": "Трёхкратный лауреат.", "is_correct": true },
+        { "id": "ribery", "caption": "Франк Рибери", "image": "https://example.com/images/ribery.png", "comment": "В 2013 году был третьим.", "is_correct": false },
+        { "id": "neymar", "caption": "Неймар", "image": "https://example.com/images/neymar.png", "comment": "Пока не выигрывал.", "is_correct": false }
+      ]
     },
     {
-      "id": "new-zealand",
-      "caption": "Новая Зеландия",
-      "image": "https://example.com/images/new-zealand.png",
-      "comment": "Новозеландцы пока не выигрывали матчей на ЧМ, но трижды играли вничью."
+      "id": "champions-league-coaches",
+      "number": 5,
+      "theme": "Тренеры ЛЧ",
+      "title": "Победители Лиги чемпионов",
+      "subtitle": "",
+      "prompt": "Выберите тренеров, выигрывавших Лигу чемпионов УЕФА.",
+      "answers": [
+        { "id": "mourinho", "caption": "Жозе Моуринью", "image": "https://example.com/images/mourinho.png", "comment": "Выигрывал с Порту и Интером.", "is_correct": true },
+        { "id": "klopp", "caption": "Юрген Клопп", "image": "https://example.com/images/klopp.png", "comment": "Победил с Ливерпулем в 2019.", "is_correct": true },
+        { "id": "pochettino", "caption": "Маурисио Почеттино", "image": "https://example.com/images/pochettino.png", "comment": "Выводил команду в финал, но не побеждал.", "is_correct": false },
+        { "id": "hiddink", "caption": "Гус Хиддинк", "image": "https://example.com/images/hiddink.png", "comment": "Не выигрывал ЛЧ.", "is_correct": false },
+        { "id": "ancelotti", "caption": "Карло Анчелотти", "image": "https://example.com/images/ancelotti.png", "comment": "Рекордсмен по победам.", "is_correct": true },
+        { "id": "pep", "caption": "Пеп Гвардиола", "image": "https://example.com/images/pep.png", "comment": "Выигрывал с Барселоной и Манчестер Сити.", "is_correct": true },
+        { "id": "wenger", "caption": "Арсен Венгер", "image": "https://example.com/images/wenger.png", "comment": "Финалист 2006 года.", "is_correct": false },
+        { "id": "benitez", "caption": "Рафаэль Бенитес", "image": "https://example.com/images/benitez.png", "comment": "Побеждал с Ливерпулем и Челси.", "is_correct": true },
+        { "id": "rangnick", "caption": "Ральф Рангник", "image": "https://example.com/images/rangnick.png", "comment": "Не выигрывал ЛЧ.", "is_correct": false },
+        { "id": "delbosque", "caption": "Висенте дель Боске", "image": "https://example.com/images/delbosque.png", "comment": "Выигрывал с Реалом.", "is_correct": true }
+      ]
     },
     {
-      "id": "salvador",
-      "caption": "Сальвадор",
-      "image": "https://example.com/images/salvador.png",
-      "comment": "Сборная Сальвадора пока без побед на чемпионатах мира."
+      "id": "premier-league-legends",
+      "number": 6,
+      "theme": "Легенды АПЛ",
+      "title": "Игроки символической сборной АПЛ",
+      "subtitle": "",
+      "prompt": "Выберите футболистов, вошедших в символическую сборную 20-летия АПЛ.",
+      "answers": [
+        { "id": "schmeichel", "caption": "Питер Шмейхель", "image": "https://example.com/images/schmeichel.png", "comment": "Вратарь сборной 20-летия.", "is_correct": true },
+        { "id": "vidic", "caption": "Неманья Видич", "image": "https://example.com/images/vidic.png", "comment": "Вошёл в символическую команду.", "is_correct": true },
+        { "id": "giggs", "caption": "Райан Гиггз", "image": "https://example.com/images/giggs.png", "comment": "Тоже в списке.", "is_correct": true },
+        { "id": "gerrard", "caption": "Стивен Джеррард", "image": "https://example.com/images/gerrard.png", "comment": "Включён в сборную.", "is_correct": true },
+        { "id": "lampard", "caption": "Фрэнк Лэмпард", "image": "https://example.com/images/lampard.png", "comment": "Есть в списке.", "is_correct": true },
+        { "id": "henry", "caption": "Тьерри Анри", "image": "https://example.com/images/henry.png", "comment": "Вошёл в символическую сборную.", "is_correct": true },
+        { "id": "suarez", "caption": "Луис Суарес", "image": "https://example.com/images/suarez.png", "comment": "Не включался.", "is_correct": false },
+        { "id": "aguero", "caption": "Серхио Агуэро", "image": "https://example.com/images/aguero.png", "comment": "Вошёл в состав.", "is_correct": true },
+        { "id": "kane-pl", "caption": "Харри Кейн", "image": "https://example.com/images/kane.png", "comment": "В итоговый список не попал.", "is_correct": false },
+        { "id": "kompany", "caption": "Венсан Компани", "image": "https://example.com/images/kompany.png", "comment": "Центральный защитник в сборной.", "is_correct": true }
+      ]
     },
     {
-      "id": "slovenia",
-      "caption": "Словения",
-      "image": "https://example.com/images/slovenia.png",
-      "comment": "В 2010 году словенцы обыграли Алжир в группе."
+      "id": "la-liga-derbies",
+      "number": 7,
+      "theme": "Дерби",
+      "title": "Испанские дерби",
+      "subtitle": "",
+      "prompt": "Выберите пары городов, где проходят известные дерби Ла Лиги.",
+      "answers": [
+        { "id": "madrid", "caption": "Мадрид", "image": "https://example.com/images/madrid.png", "comment": "Реал против Атлетико.", "is_correct": true },
+        { "id": "barcelona", "caption": "Барселона", "image": "https://example.com/images/barcelona.png", "comment": "Барса против Эспаньола.", "is_correct": true },
+        { "id": "valencia", "caption": "Валенсия", "image": "https://example.com/images/valencia.png", "comment": "Дерби с Леванте.", "is_correct": true },
+        { "id": "seville", "caption": "Севилья", "image": "https://example.com/images/seville.png", "comment": "Севилья - Бетис.", "is_correct": true },
+        { "id": "malaga", "caption": "Малага", "image": "https://example.com/images/malaga.png", "comment": "Нет постоянного дерби.", "is_correct": false },
+        { "id": "bilbao", "caption": "Бильбао", "image": "https://example.com/images/bilbao.png", "comment": "Атлетик - Реал Сосьедад.", "is_correct": true },
+        { "id": "granada", "caption": "Гранада", "image": "https://example.com/images/granada.png", "comment": "Не считается дерби Ла Лиги.", "is_correct": false },
+        { "id": "santander", "caption": "Сантандер", "image": "https://example.com/images/santander.png", "comment": "Нет постоянного дерби.", "is_correct": false },
+        { "id": "vigo", "caption": "Виго", "image": "https://example.com/images/vigo.png", "comment": "Кельта против Депортиво.", "is_correct": true },
+        { "id": "palma", "caption": "Пальма", "image": "https://example.com/images/palma.png", "comment": "Нет дерби на уровне Примеры.", "is_correct": false }
+      ]
     },
     {
-      "id": "wales",
-      "caption": "Уэльс",
-      "image": "https://example.com/images/wales.png",
-      "comment": "В 1958 году Уэльс победил в переигровке Венгрию."
+      "id": "world-records",
+      "number": 8,
+      "theme": "Рекорды",
+      "title": "Мировые футбольные рекорды",
+      "subtitle": "",
+      "prompt": "Определите рекордные достижения, принадлежащие футболистам.",
+      "answers": [
+        { "id": "goals-season", "caption": "91 гол за сезон", "image": "https://example.com/images/goals.png", "comment": "Лионель Месси, 2012.", "is_correct": true },
+        { "id": "fastest-red", "caption": "Удаление на 1-й минуте", "image": "https://example.com/images/redcard.png", "comment": "Есть в футболе.", "is_correct": true },
+        { "id": "longest-serve", "caption": "Самая длинная подача", "image": "https://example.com/images/serve.png", "comment": "Относится к волейболу.", "is_correct": false },
+        { "id": "fastest-hat", "caption": "Хет-трик за 70 секунд", "image": "https://example.com/images/hattrick.png", "comment": "Рекорд футбола.", "is_correct": true },
+        { "id": "tallest-goal", "caption": "Гол с 100 метров", "image": "https://example.com/images/longgoal.png", "comment": "Рекорд футбола.", "is_correct": true },
+        { "id": "fastest-serve-tennis", "caption": "253 км/ч подача", "image": "https://example.com/images/tennis.png", "comment": "Теннисный рекорд.", "is_correct": false },
+        { "id": "most-matches", "caption": "2000 матчей подряд", "image": "https://example.com/images/matches.png", "comment": "Не относится к футболу.", "is_correct": false },
+        { "id": "youngest-scorer", "caption": "Гол в 13 лет", "image": "https://example.com/images/young.png", "comment": "Футбольное достижение.", "is_correct": true },
+        { "id": "fastest-marathon", "caption": "Марафон за 2 часа", "image": "https://example.com/images/marathon.png", "comment": "Лёгкая атлетика.", "is_correct": false },
+        { "id": "highest-transfer", "caption": "Трансфер за €222 млн", "image": "https://example.com/images/transfer.png", "comment": "Мировой футбольный рекорд.", "is_correct": true }
+      ]
     },
     {
-      "id": "jamaica",
-      "caption": "Ямайка",
-      "image": "https://example.com/images/jamaica.png",
-      "comment": "У ямайцев есть победа над Японией в 1998 году."
+      "id": "women-world-cup",
+      "number": 9,
+      "theme": "Женский футбол",
+      "title": "Победители женского ЧМ",
+      "subtitle": "",
+      "prompt": "Отметьте сборные, становившиеся чемпионами мира среди женщин.",
+      "answers": [
+        { "id": "usa", "caption": "США", "image": "https://example.com/images/usa.png", "comment": "Четырёхкратные чемпионки.", "is_correct": true },
+        { "id": "germany-w", "caption": "Германия", "image": "https://example.com/images/germany.png", "comment": "Дважды выигрывала.", "is_correct": true },
+        { "id": "norway", "caption": "Норвегия", "image": "https://example.com/images/norway.png", "comment": "Чемпионки 1995 года.", "is_correct": true },
+        { "id": "japan", "caption": "Япония", "image": "https://example.com/images/japan.png", "comment": "Победили в 2011.", "is_correct": true },
+        { "id": "brazil-w", "caption": "Бразилия", "image": "https://example.com/images/brazil.png", "comment": "Финалисты, но без титула.", "is_correct": false },
+        { "id": "sweden-w", "caption": "Швеция", "image": "https://example.com/images/sweden.png", "comment": "Не выигрывала ЧМ.", "is_correct": false },
+        { "id": "england-w", "caption": "Англия", "image": "https://example.com/images/england.png", "comment": "Чемпионки 2023 года.", "is_correct": true },
+        { "id": "france-w", "caption": "Франция", "image": "https://example.com/images/france.png", "comment": "Хозяева, но без титула.", "is_correct": false },
+        { "id": "china-w", "caption": "Китай", "image": "https://example.com/images/china.png", "comment": "Финалистки 1999, но не чемпионы.", "is_correct": false },
+        { "id": "spain-w", "caption": "Испания", "image": "https://example.com/images/spain.png", "comment": "Чемпионки 2023.", "is_correct": true }
+      ]
     },
     {
-      "id": "canada",
-      "caption": "Канада",
-      "image": "https://example.com/images/canada.png",
-      "comment": "Канада пока идёт без побед на ЧМ."
+      "id": "records-keepers",
+      "number": 10,
+      "theme": "Вратари",
+      "title": "Вратарские рекорды",
+      "subtitle": "",
+      "prompt": "Определите рекорды, установленные вратарями.",
+      "answers": [
+        { "id": "clean-sheets", "caption": "134 сухих матчей", "image": "https://example.com/images/cleansheet.png", "comment": "Рекорд принадлежит Джанлуиджи Буффону.", "is_correct": true },
+        { "id": "longest-goalkeeper-goal", "caption": "Гол с 105 метров", "image": "https://example.com/images/longgoalkeeper.png", "comment": "Рекорд Асмира Беговича.", "is_correct": true },
+        { "id": "fastest-penalty", "caption": "Пенальти за 1 секунду", "image": "https://example.com/images/penalty.png", "comment": "Не относится к реальности.", "is_correct": false },
+        { "id": "oldest-player", "caption": "Игрок в 55 лет", "image": "https://example.com/images/oldplayer.png", "comment": "Рекорд футбола, но не обязательно вратаря.", "is_correct": false },
+        { "id": "most-consecutive", "caption": "Стойкость 1310 минут", "image": "https://example.com/images/minutes.png", "comment": "Рекорд Эдвина ван дер Сара.", "is_correct": true },
+        { "id": "most-goals-scored", "caption": "50 голов", "image": "https://example.com/images/goals.png", "comment": "Такой серии у вратаря нет.", "is_correct": false },
+        { "id": "longest-career", "caption": "30 сезонов подряд", "image": "https://example.com/images/career.png", "comment": "Не рекорд вратаря.", "is_correct": false },
+        { "id": "most-penalties-saved", "caption": "10 подряд отражённых пенальти", "image": "https://example.com/images/saves.png", "comment": "Футбольный рекорд вратаря.", "is_correct": true },
+        { "id": "captain-goals", "caption": "Капитан забил 15", "image": "https://example.com/images/captain.png", "comment": "Не специфично к вратарю.", "is_correct": false },
+        { "id": "oldest-keeper", "caption": "Вратарь в 45 лет", "image": "https://example.com/images/oldkeeper.png", "comment": "Играл Джон Барридж.", "is_correct": true }
+      ]
     }
   ]
 }

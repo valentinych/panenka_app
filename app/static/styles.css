@@ -716,6 +716,102 @@ select:focus {
   gap: 0.75rem;
 }
 
+.game-ten__selection {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 20, 43, 0.75);
+}
+
+.game-ten__selection-title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+}
+
+.game-ten__selection-grid {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 1200px) {
+  .game-ten__selection-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .game-ten__selection-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .game-ten__selection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.game-ten__selection-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.85rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(14, 24, 52, 0.8);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+}
+
+.game-ten__selection-card:hover,
+.game-ten__selection-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--border-glow);
+  outline: none;
+  box-shadow: 0 12px 24px rgba(10, 20, 60, 0.32);
+}
+
+.game-ten__selection-card.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 183, 3, 0.35);
+}
+
+.game-ten__selection-card.is-used::after {
+  content: "Использовано";
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 183, 3, 0.28);
+}
+
+.game-ten__selection-number {
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+.game-ten__selection-theme {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 700;
+}
+
+.game-ten__selection-title-text {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  line-height: 1.35;
+}
+
 .game-ten__prompt {
   padding: 0.7rem 1rem;
   border-radius: 0.75rem;
@@ -786,11 +882,11 @@ select:focus {
 }
 
 .game-ten__tile.is-correct::after {
-  background: rgba(74, 222, 128, 0.35);
+  background: rgba(74, 222, 128, 0.55);
 }
 
 .game-ten__tile.is-incorrect::after {
-  background: rgba(255, 107, 107, 0.35);
+  background: rgba(255, 107, 107, 0.55);
 }
 
 .game-ten__tile.is-selected {

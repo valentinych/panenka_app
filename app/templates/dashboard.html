@@ -16,10 +16,12 @@
       <h3>Game Lobby</h3>
       <p>Host-managed rooms with quick joining via shareable codes.</p>
     </a>
+    {% if is_game_ten_admin %}
     <a class="placeholder placeholder-link" href="{{ url_for('main.game_ten') }}">
       <h3>Игра «10»</h3>
       <p>Полностью ведущая панель для раунда из десяти изображений, таймеров и подсказок.</p>
     </a>
+    {% endif %}
     <a class="placeholder placeholder-link" href="{{ url_for('main.question_browser') }}">
       <h3>Question Explorer</h3>
       <p>Browse the trivia database, filter by keywords, and try AI-assisted search.</p>
