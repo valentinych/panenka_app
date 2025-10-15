@@ -932,6 +932,7 @@ select:focus {
   padding: 0.5rem 0.7rem;
   background: rgba(12, 20, 43, 0.85);
   font-weight: 600;
+  color: #fff;
   text-align: center;
   font-size: clamp(1.275rem, 2.1vw, 1.5rem);
   line-height: 1.35;
