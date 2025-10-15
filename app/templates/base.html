@@ -12,6 +12,7 @@
   <body>
     <div class="background"></div>
     <main class="layout{% block layout_modifier %}{% endblock %}">
+      {% block masthead %}
       <header class="masthead">
         <h1 class="brand">
           <a class="brand-link" href="{{ url_for('main.dashboard') }}">
@@ -22,6 +23,7 @@
           </a>
         </h1>
       </header>
+      {% endblock %}
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           <ul class="flash-messages">

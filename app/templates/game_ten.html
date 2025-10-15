@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block masthead %}{% endblock %}
 {% block title %}Игра «10» · Panenka Live{% endblock %}
 {% block layout_modifier %} layout--full layout--game-ten{% endblock %}
 {% block content %}
@@ -6,6 +7,16 @@
   <p class="game-ten__error" data-role="error" hidden></p>
 
   <section class="card game-ten__hud">
+    <div class="game-ten__brand">
+      <h1 class="brand brand--hud">
+        <a class="brand-link" href="{{ url_for('main.dashboard') }}">
+          <span aria-hidden="true" class="brand-logo">
+            <span class="brand-logo__inner">10</span>
+          </span>
+          <span class="brand-name">ДЕСЯТЬ</span>
+        </a>
+      </h1>
+    </div>
     <div class="game-ten__hud-meta">
       <div class="game-ten__question-badge">
         <span class="game-ten__question-number" data-role="question-number">–</span>
@@ -67,11 +78,7 @@
   </section>
 
   <section class="card game-ten__reveal">
-    <div class="game-ten__reveal-header">
-      <h2 class="game-ten__reveal-title">Комментарий</h2>
-      <p class="game-ten__reveal-hint">Нажмите на плитку, чтобы отметить её статус и показать пояснение из game_active.json.</p>
-    </div>
-    <div class="game-ten__reveal-body" data-role="reveal-body">Выберите ответ, чтобы увидеть комментарий.</div>
+    <div class="game-ten__reveal-body" data-role="reveal-body" hidden></div>
   </section>
 </div>
 {% endblock %}
@@ -760,11 +767,18 @@
         const selected = state.selectedAnswer;
         const answer = answers[selected];
         if (!answer) {
-          revealBody.textContent = 'Выберите ответ, чтобы увидеть комментарий.';
+          revealBody.textContent = '';
+          revealBody.hidden = true;
           return;
         }
-        const comment = answer.comment || answer.reveal || 'Комментарий отсутствует в game_active.json.';
-        revealBody.textContent = comment;
+        const comment = answer.comment || answer.reveal || '';
+        if (comment) {
+          revealBody.textContent = comment;
+          revealBody.hidden = false;
+        } else {
+          revealBody.textContent = '';
+          revealBody.hidden = true;
+        }
       }
 
       tiles.forEach((tile, index) => {
