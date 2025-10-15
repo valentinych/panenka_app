@@ -793,6 +793,31 @@ def _parse_s3_reference(reference, *, default_key=DEFAULT_S3_KEY):
     return None, None
 
 
+def _build_sibling_s3_key(reference_key, sibling_basename):
+    """Return a key that lives next to ``reference_key`` with a new basename.
+
+    Если ``reference_key`` содержит путь наподобие ``folder/auth.json``,
+    функция вернёт ``folder/<sibling_basename>``. При отсутствии каталога
+    возвращается ``sibling_basename``.
+    """
+
+    if not reference_key:
+        return sibling_basename
+
+    normalized = reference_key.strip("/")
+    if not normalized:
+        return sibling_basename
+
+    prefix, separator, _ = normalized.rpartition("/")
+    if not separator:
+        return sibling_basename
+
+    if not prefix:
+        return sibling_basename
+
+    return f"{prefix}/{sibling_basename}"
+
+
 def _load_from_url(url):
     if not url:
         logger.info("_load_from_url: empty URL provided")
@@ -1121,6 +1146,35 @@ def _load_game_ten_active_payload():
         )
         return _download_json_from_s3(
             bucket_name, object_key, context_label=context_label
+        )
+
+    auth_bucket = (
+        _get_sanitized_env(AUTH_S3_BUCKET_ENV)
+        or _get_sanitized_env(AUTH_S3_BUCKET_FALLBACK_ENV)
+    )
+    auth_key_reference = _get_sanitized_env(AUTH_S3_KEY_ENV)
+    auth_uri_reference = _get_sanitized_env(AUTH_S3_URI_ENV)
+    if auth_uri_reference:
+        parsed_bucket, parsed_key = _parse_s3_reference(
+            auth_uri_reference, default_key=DEFAULT_S3_KEY
+        )
+        if parsed_bucket:
+            auth_bucket = parsed_bucket
+        if parsed_key:
+            auth_key_reference = parsed_key
+
+    if auth_bucket:
+        sibling_key = _build_sibling_s3_key(
+            auth_key_reference, GAME_TEN_ACTIVE_DEFAULT_KEY
+        )
+        current_app.logger.info(
+            "Загружаем %s из S3 рядом с auth.json: bucket=%s key=%s",
+            context_label,
+            auth_bucket,
+            sibling_key,
+        )
+        return _download_json_from_s3(
+            auth_bucket, sibling_key, context_label=context_label
         )
 
     if GAME_TEN_ACTIVE_LOCAL_PATH.exists():

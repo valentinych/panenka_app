@@ -130,3 +130,52 @@ def test_game_ten_active_local_file(monkeypatch, tmp_path):
 
     assert response.status_code == 200
     assert response.get_json() == expected_payload
+
+
+def test_game_ten_active_uses_auth_bucket(monkeypatch):
+    expected_payload = {"question": {"title": "Auth bucket"}, "answers": []}
+    captured_calls = []
+
+    def _fake_download(bucket, key, *, context_label):
+        captured_calls.append((bucket, key, context_label))
+        return expected_payload
+
+    monkeypatch.setenv("AUTH_JSON_S3_BUCKET", "secure-bucket")
+    monkeypatch.setenv("AUTH_JSON_S3_KEY", "private/auth.json")
+    monkeypatch.setattr("app.routes._download_json_from_s3", _fake_download)
+
+    app = create_app()
+    with app.test_client() as client:
+        _login(client)
+        response = client.get("/api/game-ten/active")
+
+    assert response.status_code == 200
+    assert response.get_json() == expected_payload
+    assert captured_calls == [
+        ("secure-bucket", "private/game_active.json", "game_active.json")
+    ]
+
+
+def test_game_ten_active_uses_auth_uri(monkeypatch):
+    expected_payload = {"question": {"title": "Auth URI"}, "answers": []}
+    captured_calls = []
+
+    def _fake_download(bucket, key, *, context_label):
+        captured_calls.append((bucket, key, context_label))
+        return expected_payload
+
+    monkeypatch.setenv(
+        "AUTH_JSON_S3_URI", "s3://another-bucket/nested/deeper/auth.json"
+    )
+    monkeypatch.setattr("app.routes._download_json_from_s3", _fake_download)
+
+    app = create_app()
+    with app.test_client() as client:
+        _login(client)
+        response = client.get("/api/game-ten/active")
+
+    assert response.status_code == 200
+    assert response.get_json() == expected_payload
+    assert captured_calls == [
+        ("another-bucket", "nested/deeper/game_active.json", "game_active.json")
+    ]
