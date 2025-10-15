@@ -415,7 +415,7 @@ select:focus {
 }
 
 .game-ten__theme {
-  font-size: 0.85rem;
+  font-size: 1.275rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-muted);
@@ -503,7 +503,7 @@ select:focus {
 
 .game-ten__team-name {
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 1.575rem;
   white-space: nowrap;
   min-width: 0;
   overflow: hidden;
@@ -603,18 +603,18 @@ select:focus {
 .game-ten__players {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .game-ten__player {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.4rem 0.55rem;
+  gap: 0.6rem;
+  padding: 0.5rem 0.7rem;
   border-radius: 0.55rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(12, 20, 43, 0.55);
-  font-size: 0.9rem;
+  font-size: 1.35rem;
 }
 
 .game-ten__player.is-active {
@@ -629,19 +629,19 @@ select:focus {
 
 .game-ten__player-lives {
   display: flex;
-  gap: 0.3rem;
+  gap: 0.45rem;
 }
 
 .game-ten__life {
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 2.4rem;
+  height: 2.4rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.08);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: 1.275rem;
   cursor: pointer;
   transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
 }
@@ -837,7 +837,7 @@ select:focus {
   background: rgba(12, 20, 43, 0.85);
   font-weight: 600;
   text-align: center;
-  font-size: clamp(0.85rem, 1.4vw, 1rem);
+  font-size: clamp(1.275rem, 2.1vw, 1.5rem);
   line-height: 1.35;
   word-break: break-word;
 }
