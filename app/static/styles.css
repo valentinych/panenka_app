@@ -781,29 +781,33 @@ select:focus {
 }
 
 .game-ten__selection-card.is-used::after {
-  content: "Использовано";
+  content: "✕";
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.8);
-  padding: 0.25rem 0.5rem;
+  color: #ff4d4f;
   border-radius: 999px;
-  background: rgba(255, 183, 3, 0.28);
+  background: rgba(255, 77, 79, 0.15);
 }
 
 .game-ten__selection-number {
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  opacity: 0.75;
+  opacity: 0.9;
+  color: #ffffff;
 }
 
 .game-ten__selection-theme {
-  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-size: clamp(1.35rem, 2.7vw, 1.7rem);
   font-weight: 700;
+  color: #ffffff;
 }
 
 .game-ten__selection-title-text {
