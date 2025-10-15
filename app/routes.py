@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import re
 import secrets
@@ -24,6 +25,8 @@ from flask import (
 )
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 from .historical_results_loader import load_historical_dataset
 from .lobby_store import lobby_store
@@ -723,6 +726,9 @@ def _parse_s3_reference(reference, *, default_key=DEFAULT_S3_KEY):
     """
 
     if not reference:
+        logger.info(
+            "_parse_s3_reference: empty reference received, returning defaults"
+        )
         return None, None
 
     parsed = urlparse(reference)
@@ -734,6 +740,9 @@ def _parse_s3_reference(reference, *, default_key=DEFAULT_S3_KEY):
     if scheme == "s3":
         bucket = host.strip()
         key = path or default_key
+        logger.info(
+            "_parse_s3_reference: parsed s3 URI %r -> bucket=%r, key=%r", reference, bucket, key
+        )
         return bucket or None, key
 
     if scheme in {"https", "http"} and host:
@@ -745,7 +754,14 @@ def _parse_s3_reference(reference, *, default_key=DEFAULT_S3_KEY):
                 if marker in host_lower:
                     bucket = host_lower.split(marker, 1)[0]
                     if bucket:
-                        return bucket or None, path or default_key
+                        resolved_key = path or default_key
+                        logger.info(
+                            "_parse_s3_reference: parsed virtual-host URL %r -> bucket=%r, key=%r",
+                            reference,
+                            bucket,
+                            resolved_key,
+                        )
+                        return bucket or None, resolved_key
 
         # Path-style URLs (s3.amazonaws.com/bucket/key, s3.us-east-1.amazonaws.com/bucket/key, s3-accelerate.amazonaws.com/bucket/key)
         path_style_hosts = {
@@ -762,13 +778,24 @@ def _parse_s3_reference(reference, *, default_key=DEFAULT_S3_KEY):
                 if parts[0]:
                     bucket = parts[0]
                     key = parts[1] if len(parts) == 2 else default_key
-                    return bucket or None, key or default_key
+                    resolved_key = key or default_key
+                    logger.info(
+                        "_parse_s3_reference: parsed path-style URL %r -> bucket=%r, key=%r",
+                        reference,
+                        bucket,
+                        resolved_key,
+                    )
+                    return bucket or None, resolved_key
 
+    logger.info(
+        "_parse_s3_reference: unable to determine bucket/key from %r", reference
+    )
     return None, None
 
 
 def _load_from_url(url):
     if not url:
+        logger.info("_load_from_url: empty URL provided")
         return None
     try:
         from urllib.request import urlopen
@@ -807,6 +834,9 @@ def _load_from_url(url):
                 new_path = f"/{key_from_url}"
             parsed = parsed._replace(path=new_path)
             url = urlunparse(parsed)
+            logger.info(
+                "_load_from_url: normalized URL to include key -> %r", url
+            )
 
     try:
         with urlopen(url) as response:
@@ -826,18 +856,29 @@ def _load_from_url(url):
 
 
 def _load_from_s3():
-    import logging
-    logger = logging.getLogger(__name__)
+    bucket_env = _get_sanitized_env(AUTH_S3_BUCKET_ENV)
+    bucket_fallback_env = _get_sanitized_env(AUTH_S3_BUCKET_FALLBACK_ENV)
+    key_env = _get_sanitized_env(AUTH_S3_KEY_ENV)
+    uri_reference = _get_sanitized_env(AUTH_S3_URI_ENV)
 
-    bucket_name = _get_sanitized_env(AUTH_S3_BUCKET_ENV) or _get_sanitized_env(
-        AUTH_S3_BUCKET_FALLBACK_ENV
+    bucket_name = bucket_env or bucket_fallback_env
+    object_key = key_env or DEFAULT_S3_KEY
+
+    logger.info(
+        "S3 Config - initial bucket=%r (fallback=%r), key=%r (default=%r)",
+        bucket_env,
+        bucket_fallback_env,
+        key_env,
+        DEFAULT_S3_KEY,
     )
-    object_key = _get_sanitized_env(AUTH_S3_KEY_ENV) or DEFAULT_S3_KEY
-    
-    logger.info(f"S3 Config - Bucket: {bucket_name}, Key: {object_key}")
-    logger.info(f"Environment variables: AUTH_S3_BUCKET={_get_sanitized_env(AUTH_S3_BUCKET_ENV)}, AUTH_S3_KEY={_get_sanitized_env(AUTH_S3_KEY_ENV)}")
 
-    bucket_from_uri, key_from_uri = _parse_s3_reference(_get_sanitized_env(AUTH_S3_URI_ENV))
+    bucket_from_uri, key_from_uri = _parse_s3_reference(uri_reference)
+    logger.info(
+        "S3 URI override - raw=%r parsed bucket=%r key=%r",
+        uri_reference,
+        bucket_from_uri,
+        key_from_uri,
+    )
     if bucket_from_uri:
         bucket_name = bucket_from_uri
         logger.info(f"Updated bucket from URI: {bucket_name}")
@@ -845,9 +886,16 @@ def _load_from_s3():
         object_key = key_from_uri
         logger.info(f"Updated key from URI: {object_key}")
 
+    logger.info(
+        "S3 download target resolved to bucket=%r, key=%r",
+        bucket_name,
+        object_key,
+    )
+
     if not bucket_name:
-        logger.info("No bucket name found, trying URL fallback")
-        return _load_from_url(_get_sanitized_env(AUTH_JSON_URL_ENV))
+        url_fallback = _get_sanitized_env(AUTH_JSON_URL_ENV)
+        logger.info("No bucket name found, trying URL fallback: %r", url_fallback)
+        return _load_from_url(url_fallback)
 
     try:
         import boto3
