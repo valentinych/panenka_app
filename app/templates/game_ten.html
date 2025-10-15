@@ -18,15 +18,21 @@
       </h1>
     </div>
     <div class="game-ten__hud-meta">
-      <div class="game-ten__question-badge">
-        <span class="game-ten__question-number" data-role="question-number">–</span>
-        <div class="game-ten__question-meta">
-          <div class="game-ten__theme" data-role="theme">Тема вопроса</div>
-          <div class="game-ten__subtitle" data-role="subtitle" hidden>Текст вопроса будет загружен</div>
+      <div class="game-ten__question-header">
+        <div class="game-ten__question-badge">
+          <span class="game-ten__question-number" data-role="question-number">–</span>
+          <div class="game-ten__question-meta">
+            <div class="game-ten__theme" data-role="theme">Тема вопроса</div>
+            <div class="game-ten__subtitle" data-role="subtitle" hidden>Текст вопроса будет загружен</div>
+          </div>
+        </div>
+        <div class="game-ten__active-player">
+          <label class="game-ten__active-label" for="game-ten-active-player">Игрок на вопросе</label>
+          <div class="game-ten__active-select-wrapper">
+            <select id="game-ten-active-player" class="game-ten__active-select" data-role="active-player"></select>
+          </div>
         </div>
       </div>
-      <label class="game-ten__active-label" for="game-ten-active-player">Игрок на вопросе</label>
-      <select id="game-ten-active-player" class="game-ten__active-select" data-role="active-player"></select>
     </div>
     <div class="game-ten__hud-teams">
       {% for idx in range(2) %}
@@ -36,26 +42,26 @@
             <div class="game-ten__team-name" data-role="team-name">Команда {{ idx + 1 }}</div>
             <div class="game-ten__hints" data-role="hints"></div>
           </div>
+          <div class="game-ten__timer-bar">
+            <div class="game-ten__timer-display" data-role="timer-display">20:00</div>
+            <div class="game-ten__timer-controls">
+              <button
+                type="button"
+                class="game-ten__timer-btn game-ten__timer-btn--icon"
+                data-action="toggle"
+                aria-label="Запустить или остановить таймер"
+              >
+                <span class="game-ten__timer-icon" aria-hidden="true">▶</span>
+                <span class="sr-only">Переключить таймер</span>
+              </button>
+              <button type="button" class="game-ten__timer-btn" data-action="plus">+10</button>
+              <button type="button" class="game-ten__timer-btn" data-action="minus">-10</button>
+            </div>
+          </div>
           <button type="button" class="game-ten__team-life" data-role="team-life" aria-pressed="true">
             <span class="sr-only">Командная жизнь</span>
           </button>
         </header>
-        <div class="game-ten__timer-bar">
-          <div class="game-ten__timer-display" data-role="timer-display">20:00</div>
-          <div class="game-ten__timer-controls">
-            <button
-              type="button"
-              class="game-ten__timer-btn game-ten__timer-btn--icon"
-              data-action="toggle"
-              aria-label="Запустить или остановить таймер"
-            >
-              <span class="game-ten__timer-icon" aria-hidden="true">▶</span>
-              <span class="sr-only">Переключить таймер</span>
-            </button>
-            <button type="button" class="game-ten__timer-btn" data-action="plus">+10</button>
-            <button type="button" class="game-ten__timer-btn" data-action="minus">-10</button>
-          </div>
-        </div>
         <div class="game-ten__players" data-role="players"></div>
       </article>
       {% endfor %}
@@ -146,6 +152,42 @@
         throw new Error(`Не удалось загрузить данные (${response.status}).`);
       }
       return response.json();
+    }
+
+    function autosizeSelect(select) {
+      if (!select || !document.body) {
+        return;
+      }
+      const computed = window.getComputedStyle(select);
+      const measure = document.createElement('span');
+      measure.style.visibility = 'hidden';
+      measure.style.position = 'absolute';
+      measure.style.whiteSpace = 'pre';
+      measure.style.font = computed.font || `${computed.fontWeight} ${computed.fontSize} ${computed.fontFamily}`;
+      measure.style.letterSpacing = computed.letterSpacing;
+      measure.style.padding = '0';
+      measure.style.border = '0';
+      document.body.appendChild(measure);
+      let maxWidth = 0;
+      Array.from(select.options).forEach((option) => {
+        measure.textContent = option.textContent || option.label || '';
+        const width = measure.getBoundingClientRect().width;
+        if (width > maxWidth) {
+          maxWidth = width;
+        }
+      });
+      measure.remove();
+      if (!(maxWidth > 0)) {
+        select.style.width = '';
+        return;
+      }
+      const paddingLeft = Number.parseFloat(computed.paddingLeft) || 0;
+      const paddingRight = Number.parseFloat(computed.paddingRight) || 0;
+      const borderLeft = Number.parseFloat(computed.borderLeftWidth) || 0;
+      const borderRight = Number.parseFloat(computed.borderRightWidth) || 0;
+      const extra = 28; // ширина стрелки и запас на прокрутку
+      const finalWidth = Math.ceil(maxWidth + paddingLeft + paddingRight + borderLeft + borderRight + extra);
+      select.style.width = `${finalWidth}px`;
     }
 
     function formatTime(totalSeconds) {
@@ -685,6 +727,7 @@
         return;
       }
       select.innerHTML = '';
+      select.style.width = '';
       const teams = Array.isArray(activeData?.teams) ? activeData.teams : [];
       const options = [];
       teams.forEach((team, teamIndex) => {
@@ -706,11 +749,13 @@
       const fallback = options.includes(state.activePlayerId) ? state.activePlayerId : options[0] || '';
       state.activePlayerId = fallback || null;
       select.value = fallback || '';
-      select.addEventListener('change', () => {
+      autosizeSelect(select);
+      select.onchange = () => {
         state.activePlayerId = select.value || null;
         updateActivePlayerHighlight(state);
         scheduleSave(state);
-      });
+        autosizeSelect(select);
+      };
       updateActivePlayerHighlight(state);
     }
 
