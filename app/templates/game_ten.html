@@ -11,7 +11,7 @@
         <span class="game-ten__question-number" data-role="question-number">–</span>
         <div class="game-ten__question-meta">
           <div class="game-ten__theme" data-role="theme">Тема вопроса</div>
-          <div class="game-ten__subtitle" data-role="subtitle">Текст вопроса будет загружен</div>
+          <div class="game-ten__subtitle" data-role="subtitle" hidden>Текст вопроса будет загружен</div>
         </div>
       </div>
       <label class="game-ten__active-label" for="game-ten-active-player">Игрок на вопросе</label>
@@ -29,10 +29,17 @@
         <div class="game-ten__timer-bar">
           <div class="game-ten__timer-display" data-role="timer-display">20:00</div>
           <div class="game-ten__timer-controls">
-            <button type="button" class="game-ten__timer-btn" data-action="toggle">Старт</button>
+            <button
+              type="button"
+              class="game-ten__timer-btn game-ten__timer-btn--icon"
+              data-action="toggle"
+              aria-label="Запустить или остановить таймер"
+            >
+              <span class="game-ten__timer-icon" aria-hidden="true">▶</span>
+              <span class="sr-only">Переключить таймер</span>
+            </button>
             <button type="button" class="game-ten__timer-btn" data-action="plus">+10</button>
             <button type="button" class="game-ten__timer-btn" data-action="minus">-10</button>
-            <button type="button" class="game-ten__timer-btn" data-action="reset">Сброс</button>
           </div>
         </div>
         <div class="game-ten__players" data-role="players"></div>
@@ -44,7 +51,6 @@
 
   <section class="card game-ten__board">
     <div class="game-ten__prompt">
-      <div class="game-ten__prompt-theme" data-role="prompt-theme">Тема вопроса</div>
       <div class="game-ten__prompt-text" data-role="prompt-text">Текст вопроса появится после загрузки game_active.json</div>
     </div>
     <div class="game-ten__grid">
@@ -328,7 +334,7 @@
         const toggleBtn = teamCard.querySelector('[data-action="toggle"]');
         const plusBtn = teamCard.querySelector('[data-action="plus"]');
         const minusBtn = teamCard.querySelector('[data-action="minus"]');
-        const resetBtn = teamCard.querySelector('[data-action="reset"]');
+        const toggleIcon = toggleBtn?.querySelector('.game-ten__timer-icon');
         const timerState = state.timers[teamId];
         if (!timerDisplay || !timerState) {
           return;
@@ -342,7 +348,13 @@
         function updateDisplay() {
           timerDisplay.textContent = formatTime(timerState.remaining);
           if (toggleBtn) {
-            toggleBtn.textContent = timerState.running ? 'Пауза' : 'Старт';
+            toggleBtn.setAttribute('aria-pressed', timerState.running ? 'true' : 'false');
+            const toggleLabel = timerState.running ? 'Пауза таймера' : 'Запустить таймер';
+            toggleBtn.title = toggleLabel;
+            toggleBtn.setAttribute('aria-label', toggleLabel);
+            if (toggleIcon) {
+              toggleIcon.textContent = timerState.running ? '⏸' : '▶';
+            }
           }
         }
 
@@ -414,19 +426,6 @@
           scheduleSave(state);
         }
 
-        function resetTimer() {
-          const baseTimer = Number.isFinite(state.initialTimers?.[teamId])
-            ? state.initialTimers[teamId]
-            : DEFAULT_TIMER_SECONDS;
-          timerState.remaining = baseTimer;
-          stopTimer({ silent: true });
-          controller.lastTick = Date.now();
-          timerState.running = false;
-          timerState.lastStartedAt = null;
-          updateDisplay();
-          scheduleSave(state);
-        }
-
         updateDisplay();
 
         if (timerState.running && timerState.lastStartedAt) {
@@ -455,8 +454,6 @@
 
         plusBtn?.addEventListener('click', () => adjust(10));
         minusBtn?.addEventListener('click', () => adjust(-10));
-        resetBtn?.addEventListener('click', resetTimer);
-
         timerControllers.set(teamId, controller);
       });
     }
@@ -548,10 +545,11 @@
         button.dataset.hintId = hintId;
         button.setAttribute('aria-pressed', stateHints[hintId] ? 'true' : 'false');
         const icon = hint?.icon || HINT_ICONS[hintId] || '💡';
-        button.innerHTML = `<span class="game-ten__hint-icon" aria-hidden="true">${icon}</span><span class="game-ten__hint-label">${hint?.label || `Подсказка ${index + 1}`}</span>`;
-        if (hint?.description) {
-          button.title = hint.description;
-        }
+        const labelText = hint?.label || `Подсказка ${index + 1}`;
+        button.setAttribute('aria-label', labelText);
+        button.innerHTML = `<span class="game-ten__hint-icon" aria-hidden="true">${icon}</span><span class="sr-only">${labelText}</span>`;
+        const description = hint?.description;
+        button.title = description || labelText;
         button.addEventListener('click', () => {
           state.hints[teamId][hintId] = !state.hints[teamId][hintId];
           button.setAttribute('aria-pressed', state.hints[teamId][hintId] ? 'true' : 'false');
@@ -640,15 +638,28 @@
       }
       const subtitleEl = gameRoot.querySelector('[data-role="subtitle"]');
       if (subtitleEl) {
-        subtitleEl.textContent = question.subtitle || question.title || 'Загружаем вопрос…';
-      }
-      const promptThemeEl = gameRoot.querySelector('[data-role="prompt-theme"]');
-      if (promptThemeEl) {
-        promptThemeEl.textContent = question.title || question.theme || 'Вопрос';
+        const rawSubtitle = typeof question.subtitle === 'string' ? question.subtitle.trim() : '';
+        const titleText = typeof question.title === 'string' ? question.title.trim() : '';
+        const promptText = typeof question.prompt === 'string' ? question.prompt.trim() : '';
+        const normalizedSubtitle = rawSubtitle.toLowerCase();
+        const shouldHideSubtitle = !rawSubtitle
+          || rawSubtitle === titleText
+          || rawSubtitle === promptText
+          || normalizedSubtitle === 'только ведущий управляет игрой';
+        if (shouldHideSubtitle) {
+          subtitleEl.hidden = true;
+          subtitleEl.textContent = '';
+        } else {
+          subtitleEl.hidden = false;
+          subtitleEl.textContent = rawSubtitle;
+        }
       }
       const promptTextEl = gameRoot.querySelector('[data-role="prompt-text"]');
       if (promptTextEl) {
-        promptTextEl.textContent = question.prompt || question.title || '—';
+        const promptValue = typeof question.prompt === 'string' && question.prompt.trim()
+          ? question.prompt.trim()
+          : (typeof question.title === 'string' && question.title.trim() ? question.title.trim() : '—');
+        promptTextEl.textContent = promptValue;
       }
     }
 
