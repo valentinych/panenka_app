@@ -256,13 +256,14 @@ select:focus {
 }
 
 .layout--game-ten {
-  width: min(1800px, 98vw);
+  width: min(1800px, 100vw);
   max-width: 100vw;
   height: 100vh;
   max-height: 100vh;
-  padding: clamp(1rem, 2vw, 1.5rem);
-  gap: 0.75rem;
+  padding: clamp(0.75rem, 1.6vw, 1.25rem);
+  gap: 0.65rem;
   grid-template-rows: min-content 1fr;
+  overflow: hidden;
 }
 
 .layout--game-ten .masthead {
@@ -278,7 +279,8 @@ select:focus {
 }
 
 .layout--game-ten .brand-link {
-  padding: 0.25rem 0.8rem;
+  padding: 0.2rem 0.65rem;
+  gap: 0.55rem;
 }
 
 .layout--game-ten .card {
@@ -318,15 +320,29 @@ select:focus {
 
 .game-ten__hud {
   display: grid;
-  gap: 0.75rem;
-  grid-template-columns: minmax(0, 240px) 1fr;
-  align-items: stretch;
+  gap: 0.65rem;
+  grid-template-columns: minmax(170px, 220px) 1fr;
+  grid-auto-rows: min-content;
+  align-items: start;
 }
 
 .game-ten__brand {
-  grid-column: 1 / -1;
+  grid-column: 1;
+  grid-row: 1;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.game-ten__hud-meta {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: stretch;
+  min-width: 0;
+}
+
+.game-ten__hud-teams {
+  grid-column: 1 / -1;
 }
 
 .brand--hud {
@@ -336,6 +352,14 @@ select:focus {
 @media (max-width: 1080px) {
   .game-ten__hud {
     grid-template-columns: 1fr;
+  }
+
+  .game-ten__brand {
+    justify-content: center;
+  }
+
+  .game-ten__hud-meta {
+    grid-column: 1;
   }
 }
 
@@ -414,11 +438,11 @@ select:focus {
 
 .game-ten__team-card {
   display: grid;
-  gap: 0.6rem;
+  gap: 0.55rem;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0.85rem;
-  padding: 0.65rem;
+  padding: 0.6rem 0.65rem;
   min-height: 0;
 }
 
@@ -429,10 +453,21 @@ select:focus {
   gap: 0.75rem;
 }
 
+.game-ten__team-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .game-ten__team-name {
   font-weight: 600;
   font-size: 1.05rem;
   white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .game-ten__team-life {
@@ -592,22 +627,23 @@ select:focus {
 
 .game-ten__hints {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.3rem;
+  flex: 0 0 auto;
 }
 
 .game-ten__hint {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.3rem;
-  height: 2.3rem;
-  padding: 0.35rem;
-  border-radius: 0.6rem;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.3rem;
+  border-radius: 0.55rem;
   border: 1px solid rgba(255, 255, 255, 0.16);
   background: rgba(12, 20, 43, 0.65);
   color: inherit;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
 }
