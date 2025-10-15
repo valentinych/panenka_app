@@ -8,7 +8,7 @@ from app import create_app
 
 def _login(client):
     with client.session_transaction() as session:
-        session["user_id"] = "tester"
+        session["user_id"] = "888"
 
 
 @pytest.fixture(autouse=True)
@@ -31,12 +31,12 @@ def test_game_ten_active_template_fallback():
     with template_path.open("r", encoding="utf-8") as handle:
         template_payload = json.load(handle)
 
-    assert payload["question"]["title"] == template_payload["question"]["title"]
-    assert len(payload.get("answers", [])) == len(template_payload.get("answers", []))
+    assert payload["questions"][0]["title"] == template_payload["questions"][0]["title"]
+    assert len(payload.get("questions", [])) == len(template_payload.get("questions", []))
 
 
 def test_game_ten_active_http_source(monkeypatch):
-    expected_payload = {"question": {"title": "HTTP source"}, "answers": []}
+    expected_payload = {"questions": [{"title": "HTTP source"}]}
 
     class _DummyResponse:
         status_code = 200
@@ -63,7 +63,7 @@ def test_game_ten_active_http_source(monkeypatch):
 
 
 def test_game_ten_active_s3_http_url_prefers_http(monkeypatch):
-    expected_payload = {"question": {"title": "HTTP over S3"}, "answers": []}
+    expected_payload = {"questions": [{"title": "HTTP over S3"}]}
     captured_urls = []
 
     def _fake_http(url, *, context_label):
@@ -92,7 +92,7 @@ def test_game_ten_active_s3_http_url_prefers_http(monkeypatch):
 
 
 def test_game_ten_active_s3_url_without_key_uses_default(monkeypatch):
-    expected_payload = {"question": {"title": "S3 source"}, "answers": []}
+    expected_payload = {"questions": [{"title": "S3 source"}]}
     captured_calls = []
 
     def _fake_download(bucket, key, *, context_label):
@@ -117,7 +117,7 @@ def test_game_ten_active_s3_url_without_key_uses_default(monkeypatch):
 
 
 def test_game_ten_active_local_file(monkeypatch, tmp_path):
-    expected_payload = {"question": {"title": "Local file"}, "answers": [1, 2, 3]}
+    expected_payload = {"questions": [{"title": "Local file", "answers": [1, 2, 3]}]}
     local_file = tmp_path / "game_active.json"
     local_file.write_text(json.dumps(expected_payload), encoding="utf-8")
 
@@ -133,7 +133,7 @@ def test_game_ten_active_local_file(monkeypatch, tmp_path):
 
 
 def test_game_ten_active_uses_auth_bucket(monkeypatch):
-    expected_payload = {"question": {"title": "Auth bucket"}, "answers": []}
+    expected_payload = {"questions": [{"title": "Auth bucket"}]}
     captured_calls = []
 
     def _fake_download(bucket, key, *, context_label):
@@ -157,7 +157,7 @@ def test_game_ten_active_uses_auth_bucket(monkeypatch):
 
 
 def test_game_ten_active_uses_auth_uri(monkeypatch):
-    expected_payload = {"question": {"title": "Auth URI"}, "answers": []}
+    expected_payload = {"questions": [{"title": "Auth URI"}]}
     captured_calls = []
 
     def _fake_download(bucket, key, *, context_label):
@@ -179,3 +179,69 @@ def test_game_ten_active_uses_auth_uri(monkeypatch):
     assert captured_calls == [
         ("another-bucket", "nested/deeper/game_active.json", "game_active.json")
     ]
+
+
+def test_game_ten_run_missing_returns_404(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        "app.routes.GAME_TEN_RUN_LOCAL_PATH", tmp_path / "game_run.json"
+    )
+
+    app = create_app()
+    with app.test_client() as client:
+        _login(client)
+        response = client.get("/api/game-ten/run")
+
+    assert response.status_code == 404
+
+
+def test_game_ten_run_put_uses_s3(monkeypatch):
+    captured = []
+
+    def _fake_upload(bucket, key, payload, *, context_label):
+        captured.append((bucket, key, context_label, payload))
+
+    monkeypatch.setenv("GAME_TEN_ACTIVE_URL", "s3://my-bucket/path/game_active.json")
+    monkeypatch.setattr("app.routes._upload_json_to_s3", _fake_upload)
+
+    app = create_app()
+    with app.test_client() as client:
+        _login(client)
+        response = client.put("/api/game-ten/run", json={"foo": "bar"})
+
+    assert response.status_code == 200
+    assert captured == [
+        ("my-bucket", "path/game_run.json", "game_run.json", {"foo": "bar"})
+    ]
+
+
+def test_game_ten_run_get_reads_s3(monkeypatch):
+    expected_payload = {"state": "ok"}
+
+    def _fake_download(bucket, key, *, context_label):
+        assert bucket == "bucket"
+        assert key == "folder/game_run.json"
+        assert context_label == "game_run.json"
+        return expected_payload
+
+    monkeypatch.setenv("GAME_TEN_ACTIVE_URL", "s3://bucket/folder/game_active.json")
+    monkeypatch.setattr(
+        "app.routes._download_json_from_s3_optional", _fake_download
+    )
+
+    app = create_app()
+    with app.test_client() as client:
+        _login(client)
+        response = client.get("/api/game-ten/run")
+
+    assert response.status_code == 200
+    assert response.get_json() == expected_payload
+
+
+def test_game_ten_route_forbidden_for_non_admin():
+    app = create_app()
+    with app.test_client() as client:
+        with client.session_transaction() as session:
+            session["user_id"] = "123"
+        response = client.get("/game-ten")
+
+    assert response.status_code == 403
