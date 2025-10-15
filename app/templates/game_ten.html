@@ -32,7 +32,10 @@
       {% for idx in range(2) %}
       <article class="game-ten__team-card" data-team-slot="{{ idx }}">
         <header class="game-ten__team-header">
-          <div class="game-ten__team-name" data-role="team-name">Команда {{ idx + 1 }}</div>
+          <div class="game-ten__team-title">
+            <div class="game-ten__team-name" data-role="team-name">Команда {{ idx + 1 }}</div>
+            <div class="game-ten__hints" data-role="hints"></div>
+          </div>
           <button type="button" class="game-ten__team-life" data-role="team-life" aria-pressed="true">
             <span class="sr-only">Командная жизнь</span>
           </button>
@@ -54,7 +57,6 @@
           </div>
         </div>
         <div class="game-ten__players" data-role="players"></div>
-        <div class="game-ten__hints" data-role="hints"></div>
       </article>
       {% endfor %}
     </div>
@@ -164,7 +166,7 @@
         version: 1,
         updatedAt: new Date().toISOString(),
         activePlayerId: typeof activeData?.active_player_id === 'string' ? activeData.active_player_id : null,
-        selectedAnswer: 0,
+        selectedAnswer: null,
         answers: answers.map(() => ({ status: 'neutral', revealed: false })),
         timers: {},
         players: {},
@@ -218,7 +220,14 @@
       }
 
       if (Number.isInteger(savedState.selectedAnswer)) {
-        merged.selectedAnswer = Math.min(Math.max(savedState.selectedAnswer, 0), merged.answers.length - 1);
+        if (merged.answers.length > 0) {
+          merged.selectedAnswer = Math.min(
+            Math.max(savedState.selectedAnswer, 0),
+            merged.answers.length - 1,
+          );
+        } else {
+          merged.selectedAnswer = null;
+        }
       }
 
       if (Array.isArray(savedState.answers)) {
@@ -764,8 +773,8 @@
         if (!revealBody) {
           return;
         }
-        const selected = state.selectedAnswer;
-        const answer = answers[selected];
+        const selected = Number.isInteger(state.selectedAnswer) ? state.selectedAnswer : null;
+        const answer = selected !== null ? answers[selected] : null;
         if (!answer) {
           revealBody.textContent = '';
           revealBody.hidden = true;
@@ -805,10 +814,10 @@
         });
       });
 
-      if (Number.isInteger(state.selectedAnswer)) {
+      if (Number.isInteger(state.selectedAnswer) && answers.length > 0) {
         state.selectedAnswer = Math.min(Math.max(state.selectedAnswer, 0), answers.length - 1);
       } else {
-        state.selectedAnswer = 0;
+        state.selectedAnswer = null;
       }
       tiles.forEach((_, idx) => applyAnswerState(idx));
       updateReveal();
