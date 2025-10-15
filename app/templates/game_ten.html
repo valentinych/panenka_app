@@ -771,34 +771,19 @@
           subtitleEl.hidden = false;
           subtitleEl.textContent = 'Нажмите на карточку, чтобы открыть вопрос.';
         } else {
-          const rawSubtitle = questionMeta.subtitle || '';
-          const titleText = questionMeta.title || '';
-          const promptText = questionMeta.prompt || '';
-          const normalizedSubtitle = rawSubtitle.toLowerCase();
-          const shouldHideSubtitle = !rawSubtitle
-            || rawSubtitle === titleText
-            || rawSubtitle === promptText
-            || normalizedSubtitle === 'только ведущий управляет игрой';
-          if (shouldHideSubtitle) {
-            subtitleEl.hidden = true;
-            subtitleEl.textContent = '';
-          } else {
-            subtitleEl.hidden = false;
-            subtitleEl.textContent = rawSubtitle;
-          }
+          subtitleEl.hidden = true;
+          subtitleEl.textContent = '';
         }
       }
 
       const promptTextEl = gameRoot.querySelector('[data-role="prompt-text"]');
       if (promptTextEl) {
         if (!questionMeta) {
+          promptTextEl.hidden = false;
           promptTextEl.textContent = 'Выберите вопрос, чтобы начать раунд.';
         } else {
-          const promptValue = questionMeta.prompt
-            || questionMeta.title
-            || questionMeta.theme
-            || '—';
-          promptTextEl.textContent = promptValue;
+          promptTextEl.hidden = true;
+          promptTextEl.textContent = '';
         }
       }
     }
@@ -869,8 +854,8 @@
 
         const titleEl = document.createElement('span');
         titleEl.className = 'game-ten__selection-title-text';
-        const description = question.title || question.prompt || 'Описание появится после выбора.';
-        titleEl.textContent = description;
+        titleEl.hidden = true;
+        titleEl.textContent = '';
         card.appendChild(titleEl);
 
         card.addEventListener('click', () => {
