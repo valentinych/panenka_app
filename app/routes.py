@@ -855,6 +855,40 @@ def _load_from_url(url):
         raise ValueError("auth.json file downloaded from URL contains invalid JSON.") from exc
 
 
+def _normalize_s3_http_url(url, default_key):
+    parsed = urlparse(url)
+    host_lower = (parsed.netloc or "").lower()
+    path_no_slash = parsed.path.strip("/")
+    path_segments = [segment for segment in parsed.path.split("/") if segment]
+
+    path_style_hosts = {
+        "s3.amazonaws.com",
+        "s3-accelerate.amazonaws.com",
+    }
+    is_path_style_host = (
+        host_lower in path_style_hosts
+        or host_lower.startswith("s3.")
+        or host_lower.startswith("s3-")
+    )
+
+    missing_key = False
+    if not path_no_slash:
+        missing_key = True
+    elif is_path_style_host and len(path_segments) == 1:
+        missing_key = True
+
+    if missing_key:
+        if is_path_style_host and path_segments:
+            bucket_segment = path_segments[0]
+            new_path = f"/{bucket_segment}/{default_key}"
+        else:
+            new_path = f"/{default_key}"
+        parsed = parsed._replace(path=new_path)
+        url = urlunparse(parsed)
+
+    return url
+
+
 def _load_from_s3():
     bucket_env = _get_sanitized_env(AUTH_S3_BUCKET_ENV)
     bucket_fallback_env = _get_sanitized_env(AUTH_S3_BUCKET_FALLBACK_ENV)
@@ -937,10 +971,15 @@ def _load_from_s3():
 
 
 def _download_json_from_s3(bucket_name, object_key, *, context_label):
+    current_app.logger.info(
+        "S3 загрузка %s: bucket=%s key=%s", context_label, bucket_name, object_key
+    )
+
     try:
         import boto3
         from botocore.exceptions import BotoCoreError, ClientError
     except ImportError as exc:  # pragma: no cover - requires optional dependency
+        current_app.logger.error("boto3 недоступен для загрузки %s", context_label)
         raise ValueError(
             f"Загрузка {context_label} из S3 требует установленного пакета boto3."
         ) from exc
@@ -949,6 +988,9 @@ def _download_json_from_s3(bucket_name, object_key, *, context_label):
         s3_client = boto3.client("s3")
         response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
     except (BotoCoreError, ClientError) as exc:
+        current_app.logger.error(
+            "Ошибка S3 при загрузке %s: %s", context_label, exc
+        )
         raise ValueError(
             f"Не удалось загрузить {context_label} из S3 (s3://{bucket_name}/{object_key}). Ошибка: {exc}"
         ) from exc
@@ -1019,11 +1061,29 @@ def _load_game_ten_active_payload():
             raw_reference, default_key=GAME_TEN_ACTIVE_DEFAULT_KEY
         )
         if bucket:
+            resolved_key = key or GAME_TEN_ACTIVE_DEFAULT_KEY
+
+            lowered = raw_reference.lower()
+            if lowered.startswith(("http://", "https://")):
+                normalized_url = _normalize_s3_http_url(raw_reference, resolved_key)
+                current_app.logger.info(
+                    "Пробуем загрузить %s по HTTP из %s", context_label, normalized_url
+                )
+                try:
+                    return _load_json_from_http(normalized_url, context_label=context_label)
+                except ValueError as exc:
+                    current_app.logger.warning(
+                        "HTTP загрузка %s из %s не удалась: %s. Пытаемся через S3.",
+                        context_label,
+                        normalized_url,
+                        exc,
+                    )
+
             current_app.logger.info(
                 "Загружаем %s из S3 по конфигурации GAME_TEN_ACTIVE_URL", context_label
             )
             return _download_json_from_s3(
-                bucket, key or GAME_TEN_ACTIVE_DEFAULT_KEY, context_label=context_label
+                bucket, resolved_key, context_label=context_label
             )
 
         lowered = raw_reference.lower()
