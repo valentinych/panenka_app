@@ -323,6 +323,16 @@ select:focus {
   align-items: stretch;
 }
 
+.game-ten__brand {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.brand--hud {
+  margin: 0;
+}
+
 @media (max-width: 1080px) {
   .game-ten__hud {
     grid-template-columns: 1fr;
