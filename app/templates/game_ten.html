@@ -166,6 +166,80 @@
       return response.json();
     }
 
+    let tileSizingFrame = null;
+
+    function updateGridSizing() {
+      const grid = gameRoot.querySelector('[data-role="answer-grid"]');
+      const questionView = gameRoot.querySelector('[data-role="question-view"]');
+      if (!grid) {
+        return;
+      }
+      if (!questionView || questionView.hidden) {
+        grid.style.gridAutoRows = '';
+        return;
+      }
+
+      const computed = window.getComputedStyle(grid);
+      const templateColumns = computed.gridTemplateColumns || '';
+      const columnCount = templateColumns
+        .split(' ')
+        .map((value) => value.trim())
+        .filter(Boolean)
+        .length || 1;
+
+      const tiles = Array.from(grid.querySelectorAll('.game-ten__tile')).filter(
+        (tile) => !tile.classList.contains('is-hidden'),
+      );
+      const totalTiles = tiles.length || 10;
+      const rows = Math.max(1, Math.ceil(totalTiles / columnCount));
+
+      const columnGap = Number.parseFloat(computed.columnGap || computed.gap || '0') || 0;
+      const rowGap = Number.parseFloat(computed.rowGap || computed.gap || '0') || 0;
+      const gridWidth = grid.clientWidth;
+      const tilesWidth = gridWidth - Math.max(0, columnCount - 1) * columnGap;
+      const maxTileWidth = columnCount > 0 ? tilesWidth / columnCount : gridWidth;
+
+      const layout = gameRoot.closest('.layout');
+      const layoutStyle = layout ? window.getComputedStyle(layout) : null;
+      const layoutPaddingBottom = layoutStyle ? Number.parseFloat(layoutStyle.paddingBottom || '0') || 0 : 0;
+      const rootGap = Number.parseFloat(window.getComputedStyle(gameRoot).gap || '0') || 0;
+
+      const reveal = gameRoot.querySelector('.game-ten__reveal');
+      const revealRect = reveal && !reveal.hidden ? reveal.getBoundingClientRect() : null;
+
+      const gridRect = grid.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+      let availableHeight = viewportHeight - gridRect.top - layoutPaddingBottom;
+
+      if (revealRect) {
+        availableHeight = Math.min(availableHeight, revealRect.top - gridRect.top - rootGap);
+      }
+
+      const rowsHeight = availableHeight - Math.max(0, rows - 1) * rowGap;
+      const maxTileHeight = rowsHeight > 0 ? rowsHeight / rows : maxTileWidth;
+
+      const tileSize = Math.max(96, Math.min(maxTileWidth, maxTileHeight));
+
+      if (Number.isFinite(tileSize)) {
+        grid.style.gridAutoRows = `${tileSize}px`;
+      } else {
+        grid.style.gridAutoRows = '';
+      }
+    }
+
+    function scheduleGridSizing() {
+      if (tileSizingFrame !== null) {
+        return;
+      }
+      tileSizingFrame = window.requestAnimationFrame(() => {
+        tileSizingFrame = null;
+        updateGridSizing();
+      });
+    }
+
+    window.addEventListener('resize', scheduleGridSizing);
+    window.addEventListener('orientationchange', scheduleGridSizing);
+
     function autosizeSelect(select) {
       if (!select || !document.body) {
         return;
@@ -771,8 +845,14 @@
           subtitleEl.hidden = false;
           subtitleEl.textContent = 'Нажмите на карточку, чтобы открыть вопрос.';
         } else {
-          subtitleEl.hidden = true;
-          subtitleEl.textContent = '';
+          const subtitleText = questionMeta.subtitle || questionMeta.title || '';
+          if (subtitleText) {
+            subtitleEl.hidden = false;
+            subtitleEl.textContent = subtitleText;
+          } else {
+            subtitleEl.hidden = true;
+            subtitleEl.textContent = '';
+          }
         }
       }
 
@@ -782,10 +862,13 @@
           promptTextEl.hidden = false;
           promptTextEl.textContent = 'Выберите вопрос, чтобы начать раунд.';
         } else {
-          promptTextEl.hidden = true;
-          promptTextEl.textContent = '';
+          const promptText = questionMeta.prompt || questionMeta.title || 'Текст вопроса не указан.';
+          promptTextEl.hidden = false;
+          promptTextEl.textContent = promptText;
         }
       }
+
+      scheduleGridSizing();
     }
 
     function ensureQuestionState(state, questionMeta) {
@@ -886,6 +969,7 @@
       state.selectedQuestionId = null;
       renderQuestionHeader(null);
       updateQuestionSelectionCards(state);
+      scheduleGridSizing();
       if (!skipSave && previousSelected !== null) {
         scheduleSave(state);
       }
@@ -944,6 +1028,7 @@
           revealBody.textContent = '';
           revealBody.hidden = true;
         }
+        scheduleGridSizing();
       }
 
       tiles.forEach((tile, index) => {
@@ -1043,6 +1128,7 @@
 
       tiles.forEach((_, idx) => applyAnswerState(idx));
       updateRevealBody();
+      scheduleGridSizing();
     }
 
     function showQuestion(questionMeta, state, { skipSave = false } = {}) {
@@ -1076,6 +1162,7 @@
       renderQuestionHeader(questionMeta);
       renderAnswersForQuestion(questionMeta, questionState, state);
       updateQuestionSelectionCards(state);
+      scheduleGridSizing();
 
       if (!skipSave && (previousSelected !== questionMeta.id || !wasUsed)) {
         scheduleSave(state);
