@@ -949,7 +949,7 @@ select:focus {
   font-weight: 600;
   color: #fff;
   text-align: center;
-  font-size: clamp(0.8rem, 1.3vw, 1.05rem);
+  font-size: clamp(1.2rem, 1.95vw, 1.575rem);
   line-height: 1.3;
   word-break: break-word;
   flex: 0 0 auto;
