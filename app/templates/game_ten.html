@@ -1024,6 +1024,15 @@
         if (comment) {
           revealBody.textContent = comment;
           revealBody.hidden = false;
+          if (typeof revealBody.scrollIntoView === 'function') {
+            window.requestAnimationFrame(() => {
+              try {
+                revealBody.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+              } catch (error) {
+                revealBody.scrollIntoView();
+              }
+            });
+          }
         } else {
           revealBody.textContent = '';
           revealBody.hidden = true;
