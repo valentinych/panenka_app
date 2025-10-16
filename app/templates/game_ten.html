@@ -133,6 +133,21 @@
     const timerControllers = new Map();
     let saveTimerId = null;
 
+    function setSectionVisibility(section, shouldShow) {
+      if (!section) {
+        return;
+      }
+      if (shouldShow) {
+        section.hidden = false;
+        section.classList.remove('is-hidden');
+        section.setAttribute('aria-hidden', 'false');
+      } else {
+        section.hidden = true;
+        section.classList.add('is-hidden');
+        section.setAttribute('aria-hidden', 'true');
+      }
+    }
+
     function showError(message) {
       if (!errorNode) {
         return;
@@ -954,12 +969,8 @@
     function showQuestionSelection(state, { skipSave = false } = {}) {
       const selection = gameRoot.querySelector('[data-role="question-selection"]');
       const questionView = gameRoot.querySelector('[data-role="question-view"]');
-      if (selection) {
-        selection.hidden = false;
-      }
-      if (questionView) {
-        questionView.hidden = true;
-      }
+      setSectionVisibility(selection, true);
+      setSectionVisibility(questionView, false);
       const revealBody = gameRoot.querySelector('[data-role="reveal-body"]');
       if (revealBody) {
         revealBody.textContent = '';
@@ -1148,12 +1159,8 @@
 
       const selection = gameRoot.querySelector('[data-role="question-selection"]');
       const questionView = gameRoot.querySelector('[data-role="question-view"]');
-      if (selection) {
-        selection.hidden = true;
-      }
-      if (questionView) {
-        questionView.hidden = false;
-      }
+      setSectionVisibility(selection, false);
+      setSectionVisibility(questionView, true);
 
       const questionState = ensureQuestionState(state, questionMeta);
       if (!questionState) {
