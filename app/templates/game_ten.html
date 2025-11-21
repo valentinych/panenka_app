@@ -54,8 +54,8 @@
                 <span class="game-ten__timer-icon" aria-hidden="true">▶</span>
                 <span class="sr-only">Переключить таймер</span>
               </button>
-              <button type="button" class="game-ten__timer-btn" data-action="plus">+10</button>
-              <button type="button" class="game-ten__timer-btn" data-action="minus">-10</button>
+              <button type="button" class="game-ten__timer-btn" data-action="plus">+20</button>
+              <button type="button" class="game-ten__timer-btn" data-action="minus">-20</button>
             </div>
           </div>
           <button type="button" class="game-ten__team-life" data-role="team-life" aria-pressed="true">
@@ -667,8 +667,8 @@
           }
         });
 
-        plusBtn?.addEventListener('click', () => adjust(10));
-        minusBtn?.addEventListener('click', () => adjust(-10));
+        plusBtn?.addEventListener('click', () => adjust(20));
+        minusBtn?.addEventListener('click', () => adjust(-20));
         timerControllers.set(teamId, controller);
       });
     }
